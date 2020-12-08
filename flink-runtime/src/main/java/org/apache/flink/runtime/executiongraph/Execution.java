@@ -834,7 +834,6 @@ public class Execution implements AccessExecution, Archiveable<ArchivedExecution
 	 */
 	@Override
 	public void fail(Throwable t) {
-		processFail(t, false);
 	}
 
 	public CompletableFuture<Acknowledge> sendOperatorEvent(OperatorID operatorId, SerializedValue<OperatorEvent> event) {
@@ -861,7 +860,6 @@ public class Execution implements AccessExecution, Archiveable<ArchivedExecution
 	 * @param t The exception that caused the task to fail.
 	 */
 	void markFailed(Throwable t) {
-		processFail(t, true);
 	}
 
 	void markFinished(Map<String, Accumulator<?, ?>> userAccumulators) {
@@ -1009,36 +1007,6 @@ public class Execution implements AccessExecution, Archiveable<ArchivedExecution
 
 	private boolean isLegacyScheduling() {
 		return getVertex().isLegacyScheduling();
-	}
-
-	private void processFail(Throwable t, boolean isCallback) {
-		processFail(t, isCallback, null, null, true, false);
-	}
-
-	private void processFail(Throwable t, boolean isCallback, Map<String, Accumulator<?, ?>> userAccumulators, IOMetrics metrics, boolean releasePartitions, boolean fromSchedulerNg) {
-	}
-
-	private void maybeReleasePartitionsAndSendCancelRpcCall(
-			final ExecutionState stateBeforeFailed,
-			final boolean isCallback,
-			final boolean releasePartitions) {
-
-		handlePartitionCleanup(releasePartitions, releasePartitions);
-
-		if (!isCallback && (stateBeforeFailed == RUNNING || stateBeforeFailed == DEPLOYING)) {
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Sending out cancel request, to remove task execution from TaskManager.");
-			}
-
-			try {
-				if (assignedResource != null) {
-					sendCancelRpcCall(NUM_CANCEL_CALL_TRIES);
-				}
-			} catch (Throwable tt) {
-				// no reason this should ever happen, but log it to be safe
-				LOG.error("Error triggering cancel call while marking task {} as failed.", getVertex().getTaskNameWithSubtaskIndex(), tt);
-			}
-		}
 	}
 
 	boolean switchToRunning() {

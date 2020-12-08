@@ -75,29 +75,10 @@ public abstract class SlotProviderStrategy {
 		Time allocationTimeout) {
 
 		switch (scheduleMode) {
-			case LAZY_FROM_SOURCES_WITH_BATCH_SLOT_REQUEST:
-				return new BatchSlotProviderStrategy(slotProvider);
-			case LAZY_FROM_SOURCES:
 			case EAGER:
 				return new NormalSlotProviderStrategy(slotProvider, allocationTimeout);
 			default:
 				throw new IllegalArgumentException(String.format("Unknown scheduling mode: %s", scheduleMode));
-		}
-	}
-
-	SlotProvider asSlotProvider() {
-		return slotProvider;
-	}
-
-	static class BatchSlotProviderStrategy extends SlotProviderStrategy {
-
-		BatchSlotProviderStrategy(SlotProvider slotProvider) {
-			super(slotProvider);
-		}
-
-		@Override
-		public CompletableFuture<LogicalSlot> allocateSlot(SlotRequestId slotRequestId, ScheduledUnit scheduledUnit, SlotProfile slotProfile) {
-			return slotProvider.allocateBatchSlot(slotRequestId, scheduledUnit, slotProfile);
 		}
 	}
 
