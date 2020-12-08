@@ -1,21 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.flink.runtime.taskexecutor;
 
 import org.apache.flink.api.common.JobID;
@@ -45,23 +27,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * {@link TaskExecutor} RPC gateway interface.
- */
 public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEventGateway {
 
-	/**
-	 * Requests a slot from the TaskManager.
-	 *
-	 * @param slotId slot id for the request
-	 * @param jobId for which to request a slot
-	 * @param allocationId id for the request
-	 * @param resourceProfile of requested slot, used only for dynamic slot allocation and will be ignored otherwise
-	 * @param targetAddress to which to offer the requested slots
-	 * @param resourceManagerId current leader id of the ResourceManager
-	 * @param timeout for the operation
-	 * @return answer to the slot request
-	 */
 	CompletableFuture<Acknowledge> requestSlot(
 		SlotID slotId,
 		JobID jobId,
@@ -76,95 +43,20 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
 		int requestId,
 		@RpcTimeout Time timeout);
 
-	/**
-	 * Submit a {@link Task} to the {@link TaskExecutor}.
-	 *
-	 * @param tdd describing the task to submit
-	 * @param jobMasterId identifying the submitting JobMaster
-	 * @param timeout of the submit operation
-	 * @return Future acknowledge of the successful operation
-	 */
 	CompletableFuture<Acknowledge> submitTask(
 		TaskDeploymentDescriptor tdd,
 		JobMasterId jobMasterId,
 		@RpcTimeout Time timeout);
 
-	/**
-	 * Update the task where the given partitions can be found.
-	 *
-	 * @param executionAttemptID identifying the task
-	 * @param partitionInfos telling where the partition can be retrieved from
-	 * @param timeout for the update partitions operation
-	 * @return Future acknowledge if the partitions have been successfully updated
-	 */
 	CompletableFuture<Acknowledge> updatePartitions(
 		ExecutionAttemptID executionAttemptID,
 		Iterable<PartitionInfo> partitionInfos,
 		@RpcTimeout Time timeout);
 
-	/**
-	 * Batch release/promote intermediate result partitions.
-	 * @param jobId id of the job that the partitions belong to
-	 * @param partitionToRelease partition ids to release
-	 * @param partitionsToPromote partitions ids to promote
-	 */
 	void releaseOrPromotePartitions(JobID jobId, Set<ResultPartitionID> partitionToRelease, Set<ResultPartitionID> partitionsToPromote);
 
-	/**
-	 * Releases all cluster partitions belong to any of the given data sets.
-	 *
-	 * @param dataSetsToRelease data sets for which all cluster partitions should be released
-	 * @param timeout for the partitions release operation
-	 * @return Future acknowledge that the request was received
-	 */
 	CompletableFuture<Acknowledge> releaseClusterPartitions(Collection<IntermediateDataSetID> dataSetsToRelease, @RpcTimeout Time timeout);
 
-	/**
-	 * Trigger the checkpoint for the given task. The checkpoint is identified by the checkpoint ID
-	 * and the checkpoint timestamp.
-	 *
-	 * @param executionAttemptID identifying the task
-	 * @param checkpointID unique id for the checkpoint
-	 * @param checkpointTimestamp is the timestamp when the checkpoint has been initiated
-	 * @param checkpointOptions for performing the checkpoint
-	 * @param advanceToEndOfEventTime Flag indicating if the source should inject a {@code MAX_WATERMARK} in the pipeline
-	 *                              to fire any registered event-time timers
-	 * @return Future acknowledge if the checkpoint has been successfully triggered
-	 */
-//	CompletableFuture<Acknowledge> triggerCheckpoint(
-//			ExecutionAttemptID executionAttemptID,
-//			long checkpointID,
-//			long checkpointTimestamp,
-//			CheckpointOptions checkpointOptions,
-//			boolean advanceToEndOfEventTime);
-
-	/**
-	 * Confirm a checkpoint for the given task. The checkpoint is identified by the checkpoint ID
-	 * and the checkpoint timestamp.
-	 *
-	 * @param executionAttemptID identifying the task
-	 * @param checkpointId unique id for the checkpoint
-	 * @param checkpointTimestamp is the timestamp when the checkpoint has been initiated
-	 * @return Future acknowledge if the checkpoint has been successfully confirmed
-	 */
-	CompletableFuture<Acknowledge> confirmCheckpoint(ExecutionAttemptID executionAttemptID, long checkpointId, long checkpointTimestamp);
-
-	/**
-	 * Abort a checkpoint for the given task. The checkpoint is identified by the checkpoint ID
-	 * and the checkpoint timestamp.
-	 *
-	 * @param executionAttemptID identifying the task
-	 * @param checkpointId unique id for the checkpoint
-	 * @param checkpointTimestamp is the timestamp when the checkpoint has been initiated
-	 * @return Future acknowledge if the checkpoint has been successfully confirmed
-	 */
-	CompletableFuture<Acknowledge> abortCheckpoint(ExecutionAttemptID executionAttemptID, long checkpointId, long checkpointTimestamp);
-
-	/**
-	 * Heartbeat request from the job manager.
-	 *
-	 * @param heartbeatOrigin unique id of the job manager
-	 */
 	void heartbeatFromJobManager(ResourceID heartbeatOrigin, AllocatedSlotReport allocatedSlotReport);
 
 	/**

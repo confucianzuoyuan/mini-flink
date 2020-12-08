@@ -78,26 +78,12 @@ public class CheckpointBarrierAligner extends CheckpointBarrierHandler {
 	}
 
 	@Override
-	public void releaseBlocksAndResetBarriers() throws IOException {
-	}
-
-	@Override
-	public boolean isBlocked(InputChannelInfo channelInfo) {
-		return blockedChannels.get(channelInfo);
-	}
-
-	@Override
 	public long getAlignmentDurationNanos() {
 		if (startOfAlignmentTimestamp <= 0) {
 			return latestAlignmentDurationNanos;
 		} else {
 			return System.nanoTime() - startOfAlignmentTimestamp;
 		}
-	}
-
-	@Override
-	protected boolean isCheckpointPending() {
-		return numBarriersReceived > 0;
 	}
 
 	@VisibleForTesting
