@@ -168,9 +168,4 @@ public class TupleSerializer<T extends Tuple> extends TupleSerializerBase<T> imp
 			throw new RuntimeException("Cannot instantiate tuple.", e);
 		}
 	}
-
-	@Override
-	public TypeSerializerSchemaCompatibility<T> resolveSchemaCompatibilityViaRedirectingToNewSnapshotClass(TypeSerializerConfigSnapshot<T> deprecatedConfigSnapshot) {
-		return TypeSerializerSchemaCompatibility.compatibleAfterMigration();
-	}
 }

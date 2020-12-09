@@ -100,18 +100,5 @@ public abstract class TypeSerializerConfigSnapshot<T> extends VersionedIOReadabl
 	 */
 	@Internal
 	public interface SelfResolvingTypeSerializer<E> {
-
-		/**
-		 * Resolve Schema Compatibility.
-		 *
-		 * <p>Given an instance of a {@code TypeSerializerConfigSnapshot} this method should redirect the compatibility
-		 * check to the new {@code TypeSerializerSnapshot} class along with the relevant information as present in the
-		 * given {@code deprecatedConfigSnapshot}.
-		 *
-		 * @param deprecatedConfigSnapshot the not yet migrated config snapshot class.
-		 * @return the compatibility result of the {@code deprecatedConfigSnapshot} with {@code this} serializer.
-		 */
-		TypeSerializerSchemaCompatibility<E> resolveSchemaCompatibilityViaRedirectingToNewSnapshotClass(
-			TypeSerializerConfigSnapshot<E> deprecatedConfigSnapshot);
 	}
 }

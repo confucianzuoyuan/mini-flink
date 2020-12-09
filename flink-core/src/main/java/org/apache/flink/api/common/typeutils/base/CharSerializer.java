@@ -84,15 +84,4 @@ public final class CharSerializer extends TypeSerializerSingleton<Character> {
 		target.writeChar(source.readChar());
 	}
 
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class CharSerializerSnapshot extends SimpleTypeSerializerSnapshot<Character> {
-
-		public CharSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

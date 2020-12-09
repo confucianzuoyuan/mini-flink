@@ -84,16 +84,4 @@ public final class BooleanSerializer extends TypeSerializerSingleton<Boolean> {
 		target.writeBoolean(source.readBoolean());
 	}
 
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class BooleanSerializerSnapshot extends SimpleTypeSerializerSnapshot<Boolean> {
-
-		public BooleanSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

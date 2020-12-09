@@ -81,15 +81,4 @@ public final class ByteValueSerializer extends TypeSerializerSingleton<ByteValue
 		target.writeByte(source.readByte());
 	}
 
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class ByteValueSerializerSnapshot extends SimpleTypeSerializerSnapshot<ByteValue> {
-
-		public ByteValueSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

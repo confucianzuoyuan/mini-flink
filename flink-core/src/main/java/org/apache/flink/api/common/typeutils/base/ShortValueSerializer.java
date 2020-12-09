@@ -81,14 +81,4 @@ public final class ShortValueSerializer extends TypeSerializerSingleton<ShortVal
 		target.writeShort(source.readShort());
 	}
 
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class ShortValueSerializerSnapshot extends SimpleTypeSerializerSnapshot<ShortValue> {
-
-		public ShortValueSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

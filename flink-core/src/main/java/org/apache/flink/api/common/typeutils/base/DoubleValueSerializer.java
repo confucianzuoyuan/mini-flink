@@ -81,14 +81,4 @@ public final class DoubleValueSerializer extends TypeSerializerSingleton<DoubleV
 		target.writeDouble(source.readDouble());
 	}
 
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class DoubleValueSerializerSnapshot extends SimpleTypeSerializerSnapshot<DoubleValue> {
-
-		public DoubleValueSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

@@ -113,10 +113,4 @@ public class Tuple0Serializer extends TupleSerializer<Tuple0> implements SelfRes
 	public String toString() {
 		return "Tuple0Serializer";
 	}
-
-	@Override
-	public TypeSerializerSchemaCompatibility<Tuple0> resolveSchemaCompatibilityViaRedirectingToNewSnapshotClass(
-			TypeSerializerConfigSnapshot<Tuple0> deprecatedConfigSnapshot) {
-		return TypeSerializerSchemaCompatibility.compatibleAfterMigration();
-	}
 }

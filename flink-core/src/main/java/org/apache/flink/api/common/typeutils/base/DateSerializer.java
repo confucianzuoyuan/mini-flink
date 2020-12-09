@@ -100,14 +100,4 @@ public final class DateSerializer extends TypeSerializerSingleton<Date> {
 		target.writeLong(source.readLong());
 	}
 
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class DateSerializerSnapshot extends SimpleTypeSerializerSnapshot<Date> {
-
-		public DateSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

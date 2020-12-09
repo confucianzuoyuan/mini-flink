@@ -189,22 +189,6 @@ public class TypeSerializerSnapshotSerializationUtil {
 				@Nullable TypeSerializer<T> serializer) throws IOException {
 
 			TypeSerializerSnapshot<T> snapshot = readAndInstantiateSnapshotClass(in, cl);
-
-			// if the snapshot was created before Flink 1.7, we need to distinguish the following cases:
-			//   - old snapshot type that needs serializer from the outside
-			//   - new snapshot type that understands the old format and can produce a restore serializer from it
-			if (snapshot instanceof TypeSerializerConfigSnapshot) {
-				TypeSerializerConfigSnapshot<T> oldTypeSnapshot = (TypeSerializerConfigSnapshot<T>) snapshot;
-				oldTypeSnapshot.setPriorSerializer(serializer);
-				oldTypeSnapshot.setUserCodeClassLoader(cl);
-				oldTypeSnapshot.read(in);
-			}
-			else {
-				// new type, simple case
-				int readVersion = in.readInt();
-				snapshot.readSnapshot(readVersion, in, cl);
-			}
-
 			return snapshot;
 		}
 
