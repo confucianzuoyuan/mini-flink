@@ -124,43 +124,4 @@ public final class CopyableValueSerializer<T extends CopyableValue<T>> extends T
 			return false;
 		}
 	}
-
-	// --------------------------------------------------------------------------------------------
-	// Serializer configuration snapshotting & compatibility
-	// --------------------------------------------------------------------------------------------
-
-	/**
-	 * {@link TypeSerializerSnapshot} for the {@code CopyableValueSerializer}.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class CopyableValueSerializerSnapshot<T extends CopyableValue<T>>
-		extends GenericTypeSerializerSnapshot<T, CopyableValueSerializer> {
-
-		/**
-		 * Used for reflective instantiation.
-		 */
-		@SuppressWarnings("unused")
-		public CopyableValueSerializerSnapshot() {
-		}
-
-		CopyableValueSerializerSnapshot(Class<T> typeClass) {
-			super(typeClass);
-		}
-
-		@Override
-		protected TypeSerializer<T> createSerializer(Class<T> typeClass) {
-			return new CopyableValueSerializer<>(typeClass);
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		protected Class<T> getTypeClass(CopyableValueSerializer serializer) {
-			return serializer.getValueClass();
-		}
-
-		@Override
-		protected Class<?> serializerClass() {
-			return CopyableValueSerializer.class;
-		}
-	}
 }
