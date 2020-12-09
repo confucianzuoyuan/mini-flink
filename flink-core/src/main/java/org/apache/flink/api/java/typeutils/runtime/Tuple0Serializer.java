@@ -15,7 +15,6 @@ package org.apache.flink.api.java.typeutils.runtime;
 
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
-import org.apache.flink.api.common.typeutils.TypeSerializerConfigSnapshot.SelfResolvingTypeSerializer;
 import org.apache.flink.api.java.tuple.Tuple0;
 import org.apache.flink.core.memory.DataInputView;
 import org.apache.flink.core.memory.DataOutputView;
@@ -24,7 +23,7 @@ import org.apache.flink.util.Preconditions;
 import java.io.IOException;
 
 @Internal
-public class Tuple0Serializer extends TupleSerializer<Tuple0> implements SelfResolvingTypeSerializer<Tuple0> {
+public class Tuple0Serializer extends TupleSerializer<Tuple0> {
 	
 	private static final long serialVersionUID = 1278813169022975971L;
 

@@ -182,14 +182,6 @@ public class TypeSerializerSnapshotSerializationUtil {
 		private static <T> void setSerializerForWriteIfOldPath(
 				TypeSerializerSnapshot<T> serializerSnapshot,
 				TypeSerializer<T> serializer) {
-
-			// for compatibility with non-upgraded serializers, put the serializer into the
-			// config snapshot if it of the old version
-			if (serializerSnapshot instanceof TypeSerializerConfigSnapshot) {
-				checkState(serializer != null);
-
-				((TypeSerializerConfigSnapshot<T>) serializerSnapshot).setPriorSerializer(serializer);
-			}
 		}
 	}
 }
