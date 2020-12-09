@@ -635,25 +635,7 @@ public final class PojoSerializer<T> extends TypeSerializer<T> {
 		 */
 		@Override
 		public TypeSerializerSchemaCompatibility<T> resolveSchemaCompatibility(TypeSerializer<T> newSerializer) {
-			LinkedHashMap<String, TypeSerializerSnapshot<?>> legacyFieldSerializerSnapshots =
-				preprocessLegacySerializerSnapshotTuples(fieldToSerializerConfigSnapshot);
-
-			int numFields = legacyFieldSerializerSnapshots.size();
-			ArrayList<Field> fields = new ArrayList<>(numFields);
-			ArrayList<TypeSerializerSnapshot<?>> fieldSerializerSnapshots = new ArrayList<>(numFields);
-			legacyFieldSerializerSnapshots.forEach((fieldName, fieldSerializerSnapshot) -> {
-				fields.add(PojoFieldUtils.getField(fieldName, getTypeClass()));
-				fieldSerializerSnapshots.add(fieldSerializerSnapshot);
-			});
-
-			PojoSerializerSnapshot<T> newSnapshot = new PojoSerializerSnapshot<>(
-				getTypeClass(),
-				fields.toArray(new Field[numFields]),
-				fieldSerializerSnapshots.toArray(new TypeSerializerSnapshot[numFields]),
-				preprocessLegacySerializerSnapshotTuples(registeredSubclassesToSerializerConfigSnapshots),
-				preprocessLegacySerializerSnapshotTuples(nonRegisteredSubclassesToSerializerConfigSnapshots));
-
-			return newSnapshot.resolveSchemaCompatibility(newSerializer);
+			return TypeSerializerSchemaCompatibility.compatibleAfterMigration();
 		}
 
 		@SuppressWarnings("unchecked")
