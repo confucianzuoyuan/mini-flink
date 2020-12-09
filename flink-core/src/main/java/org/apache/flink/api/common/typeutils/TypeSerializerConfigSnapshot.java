@@ -93,28 +93,10 @@ public abstract class TypeSerializerConfigSnapshot<T> extends VersionedIOReadabl
 
 	@Override
 	public final void writeSnapshot(DataOutputView out) throws IOException {
-		checkState(serializer != null, "the prior serializer has not been set on this");
-
-		// write the snapshot for a non-updated serializer.
-		// this mimics the previous behavior where the TypeSerializer was
-		// Java-serialized, for backwards compatibility
-		TypeSerializerSerializationUtil.writeSerializer(out, serializer);
-
-		// now delegate to the snapshots own writing code
-		write(out);
 	}
 
 	@Override
 	public final void readSnapshot(int readVersion, DataInputView in, ClassLoader userCodeClassLoader) throws IOException {
-		if (readVersion != ADAPTER_VERSION) {
-			throw new IOException("Wrong/unexpected version for the TypeSerializerConfigSnapshot: " + readVersion);
-		}
-
-		serializer = TypeSerializerSerializationUtil.tryReadSerializer(in, userCodeClassLoader, true);
-
-		// now delegate to the snapshots own reading code
-		setUserCodeClassLoader(userCodeClassLoader);
-		read(in);
 	}
 
 	/**

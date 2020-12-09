@@ -115,15 +115,6 @@ public class InternalTimerServiceImpl<K, N> implements InternalTimerService<N> {
 		this.localKeyGroupRangeStartIdx = startIdx;
 	}
 
-	/**
-	 * Starts the local {@link InternalTimerServiceImpl} by:
-	 * <ol>
-	 *     <li>Setting the {@code keySerialized} and {@code namespaceSerializer} for the timers it will contain.</li>
-	 *     <li>Setting the {@code triggerTarget} which contains the action to be performed when a timer fires.</li>
-	 *     <li>Re-registering timers that were retrieved after recovering from a node failure, if any.</li>
-	 * </ol>
-	 * This method can be called multiple times, as long as it is called with the same serializers.
-	 */
 	public void startTimerService(
 			TypeSerializer<K> keySerializer,
 			TypeSerializer<N> namespaceSerializer,
@@ -199,52 +190,26 @@ public class InternalTimerServiceImpl<K, N> implements InternalTimerService<N> {
 
 	@Override
 	public void registerProcessingTimeTimer(N namespace, long time) {
-		InternalTimer<K, N> oldHead = processingTimeTimersQueue.peek();
-		if (processingTimeTimersQueue.add(new TimerHeapInternalTimer<>(time, (K) keyContext.getCurrentKey(), namespace))) {
-			long nextTriggerTime = oldHead != null ? oldHead.getTimestamp() : Long.MAX_VALUE;
-			// check if we need to re-schedule our timer to earlier
-			if (time < nextTriggerTime) {
-				if (nextTimer != null) {
-					nextTimer.cancel(false);
-				}
-				nextTimer = processingTimeService.registerTimer(time, this::onProcessingTime);
-			}
-		}
 	}
 
 	@Override
 	public void registerEventTimeTimer(N namespace, long time) {
-		eventTimeTimersQueue.add(new TimerHeapInternalTimer<>(time, (K) keyContext.getCurrentKey(), namespace));
 	}
 
 	@Override
 	public void deleteProcessingTimeTimer(N namespace, long time) {
-		processingTimeTimersQueue.remove(new TimerHeapInternalTimer<>(time, (K) keyContext.getCurrentKey(), namespace));
 	}
 
 	@Override
 	public void deleteEventTimeTimer(N namespace, long time) {
-		eventTimeTimersQueue.remove(new TimerHeapInternalTimer<>(time, (K) keyContext.getCurrentKey(), namespace));
 	}
 
 	@Override
 	public void forEachEventTimeTimer(BiConsumerWithException<N, Long, Exception> consumer) throws Exception {
-		foreachTimer(consumer, eventTimeTimersQueue);
 	}
 
 	@Override
 	public void forEachProcessingTimeTimer(BiConsumerWithException<N, Long, Exception> consumer) throws Exception {
-		foreachTimer(consumer, processingTimeTimersQueue);
-	}
-
-	private void foreachTimer(BiConsumerWithException<N, Long, Exception> consumer, KeyGroupedInternalPriorityQueue<TimerHeapInternalTimer<K, N>> queue) throws Exception {
-		try (final CloseableIterator<TimerHeapInternalTimer<K, N>> iterator = queue.iterator()) {
-			while (iterator.hasNext()) {
-				final TimerHeapInternalTimer<K, N> timer = iterator.next();
-				keyContext.setCurrentKey(timer.getKey());
-				consumer.accept(timer.getNamespace(), timer.getTimestamp());
-			}
-		}
 	}
 
 	private void onProcessingTime(long time) throws Exception {
@@ -297,39 +262,6 @@ public class InternalTimerServiceImpl<K, N> implements InternalTimerService<N> {
 
 	public TypeSerializer<N> getNamespaceSerializer() {
 		return namespaceSerializer;
-	}
-
-	/**
-	 * Restore the timers (both processing and event time ones) for a given {@code keyGroupIdx}.
-	 *
-	 * @param restoredSnapshot the restored snapshot containing the key-group's timers,
-	 *                       and the serializers that were used to write them
-	 * @param keyGroupIdx the id of the key-group to be put in the snapshot.
-	 */
-	@SuppressWarnings("unchecked")
-	public void restoreTimersForKeyGroup(InternalTimersSnapshot<?, ?> restoredSnapshot, int keyGroupIdx) {
-		this.restoredTimersSnapshot = (InternalTimersSnapshot<K, N>) restoredSnapshot;
-
-		TypeSerializer<K> restoredKeySerializer = restoredTimersSnapshot.getKeySerializerSnapshot().restoreSerializer();
-		if (this.keyDeserializer != null && !this.keyDeserializer.equals(restoredKeySerializer)) {
-			throw new IllegalArgumentException("Tried to restore timers for the same service with different key serializers.");
-		}
-		this.keyDeserializer = restoredKeySerializer;
-
-		TypeSerializer<N> restoredNamespaceSerializer = restoredTimersSnapshot.getNamespaceSerializerSnapshot().restoreSerializer();
-		if (this.namespaceDeserializer != null && !this.namespaceDeserializer.equals(restoredNamespaceSerializer)) {
-			throw new IllegalArgumentException("Tried to restore timers for the same service with different namespace serializers.");
-		}
-		this.namespaceDeserializer = restoredNamespaceSerializer;
-
-		checkArgument(localKeyGroupRange.contains(keyGroupIdx),
-			"Key Group " + keyGroupIdx + " does not belong to the local range.");
-
-		// restore the event time timers
-		eventTimeTimersQueue.addAll(restoredTimersSnapshot.getEventTimeTimers());
-
-		// restore the processing time timers
-		processingTimeTimersQueue.addAll(restoredTimersSnapshot.getProcessingTimeTimers());
 	}
 
 	@VisibleForTesting

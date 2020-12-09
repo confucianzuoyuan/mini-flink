@@ -148,24 +148,6 @@ public class InternalTimeServiceManager<K> {
 		}
 	}
 
-	//////////////////				Fault Tolerance Methods				///////////////////
-
-	public void restoreStateForKeyGroup(
-			InputStream stream,
-			int keyGroupIdx,
-			ClassLoader userCodeClassLoader) throws IOException {
-
-		InternalTimerServiceSerializationProxy<K> serializationProxy =
-			new InternalTimerServiceSerializationProxy<>(
-				this,
-				userCodeClassLoader,
-				keyGroupIdx);
-
-		serializationProxy.read(stream);
-	}
-
-	////////////////////			Methods used ONLY IN TESTS				////////////////////
-
 	@VisibleForTesting
 	public int numProcessingTimeTimers() {
 		int count = 0;

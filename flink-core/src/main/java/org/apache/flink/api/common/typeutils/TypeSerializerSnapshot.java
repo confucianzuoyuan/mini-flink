@@ -46,18 +46,6 @@ public interface TypeSerializerSnapshot<T> {
 	static <T> TypeSerializerSnapshot<T> readVersionedSnapshot(DataInputView in, ClassLoader cl) throws IOException {
 		final TypeSerializerSnapshot<T> snapshot =
 				TypeSerializerSnapshotSerializationUtil.readAndInstantiateSnapshotClass(in, cl);
-
-		int version = in.readInt();
-
-		if (version == ADAPTER_VERSION && !(snapshot instanceof TypeSerializerConfigSnapshot)) {
-			// the snapshot was upgraded directly in-place from a TypeSerializerConfigSnapshot;
-			// read and drop the previously Java-serialized serializer, and get the actual correct read version.
-			// NOTE: this implicitly assumes that the version was properly written before the actual snapshot content.
-			TypeSerializerSerializationUtil.tryReadSerializer(in, cl, true);
-			version = in.readInt();
-		}
-		snapshot.readSnapshot(version, in, cl);
-
 		return snapshot;
 	}
 }

@@ -38,15 +38,10 @@ public abstract class CompositeTypeSerializerConfigSnapshot<T> extends TypeSeria
 
 	@Override
 	public void write(DataOutputView out) throws IOException {
-		super.write(out);
-		TypeSerializerSerializationUtil.writeSerializersAndConfigsWithResilience(out, nestedSerializersAndConfigs);
 	}
 
 	@Override
 	public void read(DataInputView in) throws IOException {
-		super.read(in);
-		this.nestedSerializersAndConfigs =
-			TypeSerializerSerializationUtil.readSerializersAndConfigsWithResilience(in, getUserCodeClassLoader());
 	}
 
 	public List<Tuple2<TypeSerializer<?>, TypeSerializerSnapshot<?>>> getNestedSerializersAndConfigs() {

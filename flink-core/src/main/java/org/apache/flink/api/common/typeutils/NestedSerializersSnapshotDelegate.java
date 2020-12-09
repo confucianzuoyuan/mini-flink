@@ -185,22 +185,6 @@ public class NestedSerializersSnapshotDelegate {
 		return new NestedSerializersSnapshotDelegate(nestedSnapshots);
 	}
 
-	/**
-	 * Reads the composite snapshot of all the contained serializers in a way that is compatible
-	 * with Version 1 of the deprecated {@link CompositeTypeSerializerConfigSnapshot}.
-	 */
-	public static NestedSerializersSnapshotDelegate legacyReadNestedSerializerSnapshots(DataInputView in, ClassLoader cl) throws IOException {
-		@SuppressWarnings("deprecation")
-		final List<Tuple2<TypeSerializer<?>, TypeSerializerSnapshot<?>>> serializersAndSnapshots =
-				TypeSerializerSerializationUtil.readSerializersAndConfigsWithResilience(in, cl);
-
-		final TypeSerializerSnapshot<?>[] nestedSnapshots = serializersAndSnapshots.stream()
-				.map(t -> t.f1)
-				.toArray(TypeSerializerSnapshot<?>[]::new);
-
-		return new NestedSerializersSnapshotDelegate(nestedSnapshots);
-	}
-
 	// ------------------------------------------------------------------------
 	//  Utilities
 	// ------------------------------------------------------------------------
