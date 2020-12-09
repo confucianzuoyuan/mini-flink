@@ -23,20 +23,6 @@ import org.apache.flink.util.Preconditions;
 
 import javax.annotation.Nullable;
 
-/**
- * A {@code TypeSerializerSchemaCompatibility} represents information about whether or not a {@link TypeSerializer}
- * can be safely used to read data written by a previous type serializer.
- *
- * <p>Typically, the compatibility of the new serializer is resolved by checking the serializer against the
- * {@link TypeSerializerSnapshot} of the previous serializer. Depending on the type of the
- * resolved compatibility result, migration (i.e., reading bytes with the previous serializer and then writing
- * it again with the new serializer) may be required before the new serializer can be used.
- *
- * @param <T> the type of data serialized by the serializer that was being checked.
- *
- * @see TypeSerializer
- * @see TypeSerializerSnapshot#resolveSchemaCompatibility(TypeSerializer)
- */
 @PublicEvolving
 public class TypeSerializerSchemaCompatibility<T> {
 
