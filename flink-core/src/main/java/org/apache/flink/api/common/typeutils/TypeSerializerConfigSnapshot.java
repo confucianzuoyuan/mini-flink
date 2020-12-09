@@ -27,16 +27,6 @@ import org.apache.flink.util.Preconditions;
 
 import java.io.IOException;
 
-import static org.apache.flink.util.Preconditions.checkState;
-
-/**
- * This class bridges between the old serializer config snapshot interface (this class) and the new
- * serializer config snapshot interface ({@link TypeSerializerSnapshot}).
- *
- * <p>Serializers that create snapshots and compatibility checks with the old interfaces extends this class
- * and should migrate to extend {@code TypeSerializerSnapshot} to properly support state evolution/migration
- * and be future-proof.
- */
 @PublicEvolving
 @Deprecated
 public abstract class TypeSerializerConfigSnapshot<T> extends VersionedIOReadableWritable implements TypeSerializerSnapshot<T> {
@@ -58,25 +48,11 @@ public abstract class TypeSerializerConfigSnapshot<T> extends VersionedIOReadabl
 		this.serializer = Preconditions.checkNotNull(serializer);
 	}
 
-	/**
-	 * Set the user code class loader.
-	 * Only relevant if this configuration instance was deserialized from binary form.
-	 *
-	 * <p>This method is not part of the public user-facing API, and cannot be overriden.
-	 *
-	 * @param userCodeClassLoader user code class loader.
-	 */
 	@Internal
 	public final void setUserCodeClassLoader(ClassLoader userCodeClassLoader) {
 		this.userCodeClassLoader = Preconditions.checkNotNull(userCodeClassLoader);
 	}
 
-	/**
-	 * Returns the user code class loader.
-	 * Only relevant if this configuration instance was deserialized from binary form.
-	 *
-	 * @return the user code class loader
-	 */
 	@Internal
 	public final ClassLoader getUserCodeClassLoader() {
 		return userCodeClassLoader;
@@ -99,58 +75,15 @@ public abstract class TypeSerializerConfigSnapshot<T> extends VersionedIOReadabl
 	public final void readSnapshot(int readVersion, DataInputView in, ClassLoader userCodeClassLoader) throws IOException {
 	}
 
-	/**
-	 * Creates a serializer using this configuration, that is capable of reading data
-	 * written by the serializer described by this configuration.
-	 *
-	 * @return the restored serializer.
-	 */
 	@Override
 	public final TypeSerializer<T> restoreSerializer() {
-		if (serializer == null) {
-			throw new IllegalStateException(
-					"Trying to restore the prior serializer via TypeSerializerConfigSnapshot, " +
-					"but the prior serializer has not been set.");
-		}
-		else if (serializer instanceof UnloadableDummyTypeSerializer) {
-			Throwable originalError = ((UnloadableDummyTypeSerializer<?>) serializer).getOriginalError();
-
-			throw new IllegalStateException(
-					"Could not Java-deserialize TypeSerializer while restoring checkpoint metadata for serializer " +
-					"snapshot '" + getClass().getName() + "'. " +
-					"Please update to the TypeSerializerSnapshot interface that removes Java Serialization to avoid " +
-					"this problem in the future.", originalError);
-		} else {
-			return this.serializer;
-		}
+		return this.serializer;
 	}
 
 	@Override
 	public TypeSerializerSchemaCompatibility<T> resolveSchemaCompatibility(
 			TypeSerializer<T> newSerializer) {
-		if (newSerializer instanceof TypeSerializerConfigSnapshot.SelfResolvingTypeSerializer<?>) {
-				@SuppressWarnings("unchecked")
-				SelfResolvingTypeSerializer<T> selfResolvingTypeSerializer = (SelfResolvingTypeSerializer<T>) newSerializer;
-				return selfResolvingTypeSerializer.resolveSchemaCompatibilityViaRedirectingToNewSnapshotClass(this);
-		}
-
-		// we reach here if:
-		// - this legacy config snapshot did not override #resolveSchemaCompatibility to redirect
-		//   the compatibility check to a new TypeSerializerSnapshot
-		// - the corresponding newSerializer does not make use of the SelfResolvingTypeSerializer
-		//   to assist with the redirection
-		throw new UnsupportedOperationException(
-			"Serializer snapshot " + getClass().getName() + " is still implementing the deprecated TypeSerializerConfigSnapshot class.\n" +
-				"Please update it to implement the TypeSerializerSnapshot interface, to enable state evolution as well as being future-proof.\n\n" +
-				"- If possible, you should try to perform the update in-place, i.e. use the same snapshot class under the same name, but change it to implement TypeSerializerSnapshot instead.\n\n" +
-				"- Otherwise, if the above isn't possible (perhaps because the new snapshot is intended to have completely\n" +
-				"  different written contents or intended to have a different class name),\n" +
-				"  retain the old serializer snapshot class (extending TypeSerializerConfigSnapshot) under the same name\n" +
-				"  and give the updated serializer snapshot class (the one extending TypeSerializerSnapshot) a new name.\n" +
-				"  Afterwards, override the TypeSerializerConfigSnapshot#resolveSchemaCompatibility(TypeSerializer)\n" +
-				"  method on the old snapshot to perform the compatibility check based on configuration written by" +
-				"  the old serializer snapshot class."
-		);
+		return TypeSerializerSchemaCompatibility.compatibleAfterMigration();
 	}
 
 	/**

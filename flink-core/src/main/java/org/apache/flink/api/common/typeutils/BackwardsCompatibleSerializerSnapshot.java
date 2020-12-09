@@ -72,8 +72,6 @@ public class BackwardsCompatibleSerializerSnapshot<T> implements TypeSerializerS
 
 	@Override
 	public TypeSerializerSchemaCompatibility<T> resolveSchemaCompatibility(TypeSerializer<T> newSerializer) {
-		// if there is no configuration snapshot to check against,
-		// then we can only assume that the new serializer is compatible as is
 		return TypeSerializerSchemaCompatibility.compatibleAsIs();
 	}
 

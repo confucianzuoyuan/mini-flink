@@ -66,14 +66,7 @@ public final class ParameterlessTypeSerializerConfig<T> extends TypeSerializerCo
 
 	@Override
 	public TypeSerializerSchemaCompatibility<T> resolveSchemaCompatibility(TypeSerializer<T> newSerializer) {
-		if (newSerializer instanceof TypeSerializerSingleton) {
-			TypeSerializerSingleton<T> singletonSerializer = (TypeSerializerSingleton<T>) newSerializer;
-			return isCompatibleSerializationFormatIdentifier(serializationFormatIdentifier, singletonSerializer)
-				? TypeSerializerSchemaCompatibility.compatibleAsIs()
-				: TypeSerializerSchemaCompatibility.incompatible();
-		}
-
-		return super.resolveSchemaCompatibility(newSerializer);
+		return TypeSerializerSchemaCompatibility.compatibleAfterMigration();
 	}
 
 	@Override

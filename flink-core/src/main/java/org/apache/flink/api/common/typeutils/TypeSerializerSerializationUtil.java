@@ -105,26 +105,6 @@ public class TypeSerializerSerializationUtil {
 		}
 	}
 
-	/**
-	 * Write a list of serializers and their corresponding config snapshots to the provided
-	 * data output view. This method writes in a fault tolerant way, so that when read again
-	 * using {@link #readSerializersAndConfigsWithResilience(DataInputView, ClassLoader)}, if
-	 * deserialization of the serializer fails, its configuration snapshot will remain intact.
-	 *
-	 * <p>Specifically, all written serializers and their config snapshots are indexed by their
-	 * offset positions within the serialized bytes. The serialization format is as follows:
-	 * <ul>
-	 *     <li>1. number of serializer and configuration snapshot pairs.</li>
-	 *     <li>2. offsets of each serializer and configuration snapshot, in order.</li>
-	 *     <li>3. total number of bytes for the serialized serializers and the config snapshots.</li>
-	 *     <li>4. serialized serializers and the config snapshots.</li>
-	 * </ul>
-	 *
-	 * @param out the data output view.
-	 * @param serializersAndConfigs serializer and configuration snapshot pairs
-	 *
-	 * @throws IOException
-	 */
 	public static void writeSerializersAndConfigsWithResilience(
 			DataOutputView out,
 			List<Tuple2<TypeSerializer<?>, TypeSerializerSnapshot<?>>> serializersAndConfigs) throws IOException {
@@ -148,20 +128,6 @@ public class TypeSerializerSerializationUtil {
 		}
 	}
 
-	/**
-	 * Reads from a data input view a list of serializers and their corresponding config snapshots
-	 * written using {@link #writeSerializersAndConfigsWithResilience(DataOutputView, List)}.
-	 *
-	 * <p>If deserialization for serializers fails due to any exception, users can opt to use a dummy
-	 * {@link UnloadableDummyTypeSerializer} to hold the serializer bytes
-	 *
-	 * @param in the data input view.
-	 * @param userCodeClassLoader the user code class loader to use.
-	 *
-	 * @return the deserialized serializer and config snapshot pairs.
-	 *
-	 * @throws IOException
-	 */
 	public static List<Tuple2<TypeSerializer<?>, TypeSerializerSnapshot<?>>> readSerializersAndConfigsWithResilience(
 			DataInputView in,
 			ClassLoader userCodeClassLoader) throws IOException {
