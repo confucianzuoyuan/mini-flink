@@ -19,7 +19,6 @@
 package org.apache.flink.streaming.api.operators;
 
 import org.apache.flink.runtime.state.AbstractKeyedStateBackend;
-import org.apache.flink.runtime.state.KeyGroupStatePartitionStreamProvider;
 import org.apache.flink.runtime.state.OperatorStateBackend;
 import org.apache.flink.runtime.state.StatePartitionStreamProvider;
 import org.apache.flink.util.CloseableIterable;
@@ -56,11 +55,5 @@ public interface StreamOperatorStateContext {
 	 * this stream operator.
 	 */
 	CloseableIterable<StatePartitionStreamProvider> rawOperatorStateInputs();
-
-	/**
-	 * Returns an iterable to obtain input streams for previously stored keyed state partitions that are assigned to
-	 * this operator. This method returns null for non-keyed operators.
-	 */
-	CloseableIterable<KeyGroupStatePartitionStreamProvider> rawKeyedStateInputs();
 
 }

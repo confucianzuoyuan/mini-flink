@@ -94,7 +94,6 @@ public class StreamTaskStateInitializerImpl implements StreamTaskStateInitialize
 
 		AbstractKeyedStateBackend<?> keyedStatedBackend = null;
 		OperatorStateBackend operatorStateBackend = null;
-		CloseableIterable<KeyGroupStatePartitionStreamProvider> rawKeyedStateInputs = null;
 		CloseableIterable<StatePartitionStreamProvider> rawOperatorStateInputs = null;
 		InternalTimeServiceManager<?> timeServiceManager;
 
@@ -108,16 +107,12 @@ public class StreamTaskStateInitializerImpl implements StreamTaskStateInitialize
 				streamTaskCloseableRegistry);
 
 			// -------------- Raw State Streams --------------
-			rawKeyedStateInputs = rawKeyedStateInputs(
-				prioritizedOperatorSubtaskStates.getPrioritizedRawKeyedState().iterator());
-			streamTaskCloseableRegistry.registerCloseable(rawKeyedStateInputs);
-
 			rawOperatorStateInputs = rawOperatorStateInputs(
 				prioritizedOperatorSubtaskStates.getPrioritizedRawOperatorState().iterator());
 			streamTaskCloseableRegistry.registerCloseable(rawOperatorStateInputs);
 
 			// -------------- Internal Timer Service Manager --------------
-			timeServiceManager = internalTimeServiceManager(keyedStatedBackend, keyContext, processingTimeService, rawKeyedStateInputs);
+			timeServiceManager = internalTimeServiceManager(keyedStatedBackend, keyContext, processingTimeService);
 
 			// -------------- Preparing return value --------------
 
@@ -126,8 +121,7 @@ public class StreamTaskStateInitializerImpl implements StreamTaskStateInitialize
 				operatorStateBackend,
 				keyedStatedBackend,
 				timeServiceManager,
-				rawOperatorStateInputs,
-				rawKeyedStateInputs);
+				rawOperatorStateInputs);
 		} catch (Exception ex) {
 			throw new Exception("Exception while creating StreamOperatorStateContext.", ex);
 		}
@@ -136,8 +130,7 @@ public class StreamTaskStateInitializerImpl implements StreamTaskStateInitialize
 	protected <K> InternalTimeServiceManager<K> internalTimeServiceManager(
 		AbstractKeyedStateBackend<K> keyedStatedBackend,
 		KeyContext keyContext, //the operator
-		ProcessingTimeService processingTimeService,
-		Iterable<KeyGroupStatePartitionStreamProvider> rawKeyedStates) throws Exception {
+		ProcessingTimeService processingTimeService) throws Exception {
 
 		if (keyedStatedBackend == null) {
 			return null;
@@ -218,156 +211,7 @@ public class StreamTaskStateInitializerImpl implements StreamTaskStateInitialize
 		return CloseableIterable.empty();
 	}
 
-	protected CloseableIterable<KeyGroupStatePartitionStreamProvider> rawKeyedStateInputs(
-		Iterator<StateObjectCollection<KeyedStateHandle>> restoreStateAlternatives) {
-
-		if (restoreStateAlternatives.hasNext()) {
-			Collection<KeyedStateHandle> rawKeyedState = restoreStateAlternatives.next();
-
-			// TODO currently this does not support local state recovery, so we expect there is only one handle.
-			Preconditions.checkState(
-				!restoreStateAlternatives.hasNext(),
-				"Local recovery is currently not implemented for raw keyed state, but found state alternative.");
-
-			if (rawKeyedState != null) {
-				Collection<KeyGroupsStateHandle> keyGroupsStateHandles = transform(rawKeyedState);
-				final CloseableRegistry closeableRegistry = new CloseableRegistry();
-
-				return new CloseableIterable<KeyGroupStatePartitionStreamProvider>() {
-					@Override
-					public void close() throws IOException {
-						closeableRegistry.close();
-					}
-
-					@Override
-					public Iterator<KeyGroupStatePartitionStreamProvider> iterator() {
-						return new KeyGroupStreamIterator(keyGroupsStateHandles.iterator(), closeableRegistry);
-					}
-				};
-			}
-		}
-
-		return CloseableIterable.empty();
-	}
-
 	// =================================================================================================================
-
-	private static class KeyGroupStreamIterator
-		extends AbstractStateStreamIterator<KeyGroupStatePartitionStreamProvider, KeyGroupsStateHandle> {
-
-		private Iterator<Tuple2<Integer, Long>> currentOffsetsIterator;
-
-		KeyGroupStreamIterator(
-			Iterator<KeyGroupsStateHandle> stateHandleIterator, CloseableRegistry closableRegistry) {
-
-			super(stateHandleIterator, closableRegistry);
-		}
-
-		@Override
-		public boolean hasNext() {
-
-			if (null != currentStateHandle && currentOffsetsIterator.hasNext()) {
-
-				return true;
-			}
-
-			closeCurrentStream();
-
-			while (stateHandleIterator.hasNext()) {
-				currentStateHandle = stateHandleIterator.next();
-				if (currentStateHandle.getKeyGroupRange().getNumberOfKeyGroups() > 0) {
-					currentOffsetsIterator = currentStateHandle.getGroupRangeOffsets().iterator();
-
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		@Override
-		public KeyGroupStatePartitionStreamProvider next() {
-
-			if (!hasNext()) {
-
-				throw new NoSuchElementException("Iterator exhausted");
-			}
-
-			Tuple2<Integer, Long> keyGroupOffset = currentOffsetsIterator.next();
-			try {
-				if (null == currentStream) {
-					openCurrentStream();
-				}
-
-				currentStream.seek(keyGroupOffset.f1);
-				return new KeyGroupStatePartitionStreamProvider(currentStream, keyGroupOffset.f0);
-
-			} catch (IOException ioex) {
-				return new KeyGroupStatePartitionStreamProvider(ioex, keyGroupOffset.f0);
-			}
-		}
-	}
-
-	private abstract static class AbstractStateStreamIterator<
-		T extends StatePartitionStreamProvider, H extends StreamStateHandle>
-		implements Iterator<T> {
-
-		protected final Iterator<H> stateHandleIterator;
-		protected final CloseableRegistry closableRegistry;
-
-		protected H currentStateHandle;
-		protected FSDataInputStream currentStream;
-
-		AbstractStateStreamIterator(
-			Iterator<H> stateHandleIterator,
-			CloseableRegistry closableRegistry) {
-
-			this.stateHandleIterator = Preconditions.checkNotNull(stateHandleIterator);
-			this.closableRegistry = Preconditions.checkNotNull(closableRegistry);
-		}
-
-		protected void openCurrentStream() throws IOException {
-
-			Preconditions.checkState(currentStream == null);
-
-			FSDataInputStream stream = currentStateHandle.openInputStream();
-			closableRegistry.registerCloseable(stream);
-			currentStream = stream;
-		}
-
-		protected void closeCurrentStream() {
-			if (closableRegistry.unregisterCloseable(currentStream)) {
-			}
-			currentStream = null;
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException("Read only Iterator");
-		}
-	}
-
-	private static Collection<KeyGroupsStateHandle> transform(Collection<KeyedStateHandle> keyedStateHandles) {
-
-		if (keyedStateHandles == null) {
-			return null;
-		}
-
-		List<KeyGroupsStateHandle> keyGroupsStateHandles = new ArrayList<>(keyedStateHandles.size());
-
-		for (KeyedStateHandle keyedStateHandle : keyedStateHandles) {
-
-			if (keyedStateHandle instanceof KeyGroupsStateHandle) {
-				keyGroupsStateHandles.add((KeyGroupsStateHandle) keyedStateHandle);
-			} else if (keyedStateHandle != null) {
-				throw new IllegalStateException("Unexpected state handle type, " +
-					"expected: " + KeyGroupsStateHandle.class +
-					", but found: " + keyedStateHandle.getClass() + ".");
-			}
-		}
-
-		return keyGroupsStateHandles;
-	}
 
 	private static class StreamOperatorStateContextImpl implements StreamOperatorStateContext {
 
@@ -378,22 +222,19 @@ public class StreamTaskStateInitializerImpl implements StreamTaskStateInitialize
 		private final InternalTimeServiceManager<?> internalTimeServiceManager;
 
 		private final CloseableIterable<StatePartitionStreamProvider> rawOperatorStateInputs;
-		private final CloseableIterable<KeyGroupStatePartitionStreamProvider> rawKeyedStateInputs;
 
 		StreamOperatorStateContextImpl(
 			boolean restored,
 			OperatorStateBackend operatorStateBackend,
 			AbstractKeyedStateBackend<?> keyedStateBackend,
 			InternalTimeServiceManager<?> internalTimeServiceManager,
-			CloseableIterable<StatePartitionStreamProvider> rawOperatorStateInputs,
-			CloseableIterable<KeyGroupStatePartitionStreamProvider> rawKeyedStateInputs) {
+			CloseableIterable<StatePartitionStreamProvider> rawOperatorStateInputs) {
 
 			this.restored = restored;
 			this.operatorStateBackend = operatorStateBackend;
 			this.keyedStateBackend = keyedStateBackend;
 			this.internalTimeServiceManager = internalTimeServiceManager;
 			this.rawOperatorStateInputs = rawOperatorStateInputs;
-			this.rawKeyedStateInputs = rawKeyedStateInputs;
 		}
 
 		@Override
@@ -421,10 +262,6 @@ public class StreamTaskStateInitializerImpl implements StreamTaskStateInitialize
 			return rawOperatorStateInputs;
 		}
 
-		@Override
-		public CloseableIterable<KeyGroupStatePartitionStreamProvider> rawKeyedStateInputs() {
-			return rawKeyedStateInputs;
-		}
 	}
 
 }

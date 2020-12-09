@@ -31,21 +31,6 @@ import java.util.List;
 import static org.apache.flink.runtime.checkpoint.StateObjectCollection.emptyIfNull;
 import static org.apache.flink.runtime.state.AbstractChannelStateHandle.collectUniqueDelegates;
 
-/**
- * This class encapsulates the state for one parallel instance of an operator. The complete state of a (logical)
- * operator (e.g. a flatmap operator) consists of the union of all {@link OperatorSubtaskState}s from all
- * parallel tasks that physically execute parallelized, physical instances of the operator.
- *
- * <p>The full state of the logical operator is represented by {@link OperatorState} which consists of
- * {@link OperatorSubtaskState}s.
- *
- * <p>Typically, we expect all collections in this class to be of size 0 or 1, because there is up to one state handle
- * produced per state type (e.g. managed-keyed, raw-operator, ...). In particular, this holds when taking a snapshot.
- * The purpose of having the state handles in collections is that this class is also reused in restoring state.
- * Under normal circumstances, the expected size of each collection is still 0 or 1, except for scale-down. In
- * scale-down, one operator subtask can become responsible for the state of multiple previous subtasks. The collections
- * can then store all the state handles that are relevant to build up the new subtask state.
- */
 public class OperatorSubtaskState implements CompositeStateHandle {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OperatorSubtaskState.class);
@@ -58,9 +43,6 @@ public class OperatorSubtaskState implements CompositeStateHandle {
 	@Nonnull
 	private final StateObjectCollection<OperatorStateHandle> managedOperatorState;
 
-	/**
-	 * Snapshot written using {@link org.apache.flink.runtime.state.OperatorStateCheckpointOutputStream}.
-	 */
 	@Nonnull
 	private final StateObjectCollection<OperatorStateHandle> rawOperatorState;
 
@@ -70,9 +52,6 @@ public class OperatorSubtaskState implements CompositeStateHandle {
 	@Nonnull
 	private final StateObjectCollection<KeyedStateHandle> managedKeyedState;
 
-	/**
-	 * Snapshot written using {@link org.apache.flink.runtime.state.KeyedStateCheckpointOutputStream}.
-	 */
 	@Nonnull
 	private final StateObjectCollection<KeyedStateHandle> rawKeyedState;
 
