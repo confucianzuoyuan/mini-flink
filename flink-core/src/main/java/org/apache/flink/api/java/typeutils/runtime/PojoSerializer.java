@@ -117,10 +117,6 @@ public final class PojoSerializer<T> extends TypeSerializer<T> {
 		this.subclassSerializerCache = new HashMap<>();
 	}
 
-	/**
-	 * Constructor to create a restore serializer or a reconfigured serializer
-	 * from a {@link PojoSerializerSnapshot}.
-	 */
 	PojoSerializer(
 			Class<T> clazz,
 			Field[] fields,
@@ -557,10 +553,6 @@ public final class PojoSerializer<T> extends TypeSerializer<T> {
 	// Serializer configuration snapshotting & compatibility
 	// --------------------------------------------------------------------------------------------
 
-	/**
-	 * @deprecated This snapshot class is no longer being used.
-	 *             It has been fully replaced by {@link PojoSerializerSnapshot}.
-	 */
 	@Deprecated
 	public static final class PojoSerializerConfigSnapshot<T> extends GenericTypeSerializerConfigSnapshot<T> {
 
@@ -630,34 +622,9 @@ public final class PojoSerializer<T> extends TypeSerializer<T> {
 			this.ignoreTypeSerializerSerialization = ignoreTypeSerializerSerialization;
 		}
 
-		/**
-		 * This legacy snapshot delegates compatibility checks to the {@link PojoSerializerSnapshot}.
-		 */
 		@Override
 		public TypeSerializerSchemaCompatibility<T> resolveSchemaCompatibility(TypeSerializer<T> newSerializer) {
 			return TypeSerializerSchemaCompatibility.compatibleAfterMigration();
-		}
-
-		@SuppressWarnings("unchecked")
-		private static <K> LinkedHashMap<K, TypeSerializerSnapshot<?>> preprocessLegacySerializerSnapshotTuples(Map<K, Tuple2<TypeSerializer<?>, TypeSerializerSnapshot<?>>> originalMap) {
-			LinkedHashMap<K, TypeSerializerSnapshot<?>> converted = new LinkedHashMap<>(originalMap.size());
-
-			originalMap.forEach((key, serializerSnapshotTuple) -> {
-				TypeSerializer<?> serializer = serializerSnapshotTuple.f0;
-				TypeSerializerSnapshot<?> snapshot = serializerSnapshotTuple.f1;
-
-				if (snapshot instanceof TypeSerializerConfigSnapshot) {
-					((TypeSerializerConfigSnapshot) snapshot).setPriorSerializer(serializer);
-				}
-
-				if (serializer instanceof LegacySerializerSnapshotTransformer) {
-					snapshot = ((LegacySerializerSnapshotTransformer) serializer).transformLegacySerializerSnapshot(snapshot);
-				}
-
-				converted.put(key, snapshot);
-			});
-
-			return converted;
 		}
 
 		@Override
@@ -1055,28 +1022,4 @@ public final class PojoSerializer<T> extends TypeSerializer<T> {
 		// can work
 	}
 
-	/**
-	 * Build and return a snapshot of the serializer's parameters and currently cached serializers.
-	 */
-	private static <T> PojoSerializerSnapshot<T> buildSnapshot(
-			Class<T> pojoType,
-			LinkedHashMap<Class<?>, Integer> registeredSubclassesToTags,
-			TypeSerializer<?>[] registeredSubclassSerializers,
-			Field[] fields,
-			TypeSerializer<?>[] fieldSerializers,
-			Map<Class<?>, TypeSerializer<?>> nonRegisteredSubclassSerializerCache) {
-
-		final LinkedHashMap<Class<?>, TypeSerializer<?>> subclassRegistry = new LinkedHashMap<>(registeredSubclassesToTags.size());
-
-		for (Map.Entry<Class<?>, Integer> entry : registeredSubclassesToTags.entrySet()) {
-			subclassRegistry.put(entry.getKey(), registeredSubclassSerializers[entry.getValue()]);
-		}
-
-		return new PojoSerializerSnapshot<>(
-				pojoType,
-				fields,
-				fieldSerializers,
-				subclassRegistry,
-				nonRegisteredSubclassSerializerCache);
-	}
 }
