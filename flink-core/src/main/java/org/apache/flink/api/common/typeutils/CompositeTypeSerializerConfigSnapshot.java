@@ -28,15 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A {@link TypeSerializerConfigSnapshot} for serializers that has multiple nested serializers.
- * The configuration snapshot consists of the configuration snapshots of all nested serializers, and
- * also the nested serializers themselves.
- *
- * <p>Both the nested serializers and the configuration snapshots are written as configuration of
- * composite serializers, so that on restore, the previous serializer may be used in case migration
- * is required.
- */
 @Internal
 public abstract class CompositeTypeSerializerConfigSnapshot<T> extends TypeSerializerConfigSnapshot<T> {
 

@@ -318,49 +318,6 @@ public final class RowSerializer extends TypeSerializer<Row> {
 		return new RowSerializerSnapshot(this);
 	}
 
-	/**
-	 * A snapshot for {@link RowSerializer}.
-	 *
-	 * @deprecated this snapshot class is no longer in use, and is maintained only for backwards compatibility.
-	 *             It is fully replaced by {@link RowSerializerSnapshot}.
-	 */
-	@Deprecated
-	public static final class RowSerializerConfigSnapshot extends CompositeTypeSerializerConfigSnapshot<Row> {
-
-		private static final int VERSION = 1;
-
-		/**
-		 * This empty nullary constructor is required for deserializing the configuration.
-		 */
-		public RowSerializerConfigSnapshot() {
-		}
-
-		public RowSerializerConfigSnapshot(TypeSerializer<?>[] fieldSerializers) {
-			super(fieldSerializers);
-		}
-
-		@Override
-		public int getVersion() {
-			return VERSION;
-		}
-
-		@Override
-		public TypeSerializerSchemaCompatibility<Row> resolveSchemaCompatibility(TypeSerializer<Row> newSerializer) {
-			TypeSerializerSnapshot<?>[] nestedSnapshots = getNestedSerializersAndConfigs()
-				.stream()
-				.map(t -> t.f1)
-				.toArray(TypeSerializerSnapshot[]::new);
-
-			return CompositeTypeSerializerUtil.delegateCompatibilityCheckToNewSnapshot(
-				newSerializer,
-				new RowSerializerSnapshot(),
-				nestedSnapshots);
-		}
-	}
-
-	/**
-	 * A {@link TypeSerializerSnapshot} for RowSerializer.
-	 */
 	public static final class RowSerializerSnapshot extends CompositeTypeSerializerSnapshot<Row, RowSerializer> {
 
 		private static final int VERSION = 3;

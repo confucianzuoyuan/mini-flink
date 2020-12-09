@@ -276,32 +276,6 @@ public final class StreamElementSerializer<T> extends TypeSerializer<StreamEleme
 
 	/**
 	 * Configuration snapshot specific to the {@link StreamElementSerializer}.
-	 * @deprecated see {@link StreamElementSerializerSnapshot}.
-	 */
-	@Deprecated
-	public static final class StreamElementSerializerConfigSnapshot<T> extends CompositeTypeSerializerConfigSnapshot<StreamElement> {
-
-		private static final int VERSION = 1;
-
-		/** This empty nullary constructor is required for deserializing the configuration. */
-		public StreamElementSerializerConfigSnapshot() {}
-
-		@Override
-		public int getVersion() {
-			return VERSION;
-		}
-
-		@Override
-		public TypeSerializerSchemaCompatibility<StreamElement> resolveSchemaCompatibility(TypeSerializer<StreamElement> newSerializer) {
-			return CompositeTypeSerializerUtil.delegateCompatibilityCheckToNewSnapshot(
-				newSerializer,
-				new StreamElementSerializerSnapshot<>(),
-				getSingleNestedSerializerAndConfig().f1);
-		}
-	}
-
-	/**
-	 * Configuration snapshot specific to the {@link StreamElementSerializer}.
 	 */
 	public static final class StreamElementSerializerSnapshot<T>
 		extends CompositeTypeSerializerSnapshot<StreamElement, StreamElementSerializer<T>> {

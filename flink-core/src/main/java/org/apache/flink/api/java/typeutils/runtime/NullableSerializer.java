@@ -239,52 +239,6 @@ public class NullableSerializer<T> extends TypeSerializer<T> {
 		return new NullableSerializerSnapshot<>(this);
 	}
 
-
-	/**
-	 * Configuration snapshot for serializers of nullable types, containing the
-	 * configuration snapshot of its original serializer.
-	 *
-	 * @deprecated this snapshot class is no longer in use, and is maintained only for
-	 *             backwards compatibility purposes. It is fully replaced
-	 *             by {@link NullableSerializerSnapshot}.
-	 */
-	@Deprecated
-	@Internal
-	public static class NullableSerializerConfigSnapshot<T> extends CompositeTypeSerializerConfigSnapshot<T> {
-		private static final int VERSION = 1;
-
-		/**
-		 * This empty nullary constructor is required for deserializing the configuration.
-		 */
-		public NullableSerializerConfigSnapshot() {
-		}
-
-		NullableSerializerConfigSnapshot(TypeSerializer<T> originalSerializer) {
-			super(originalSerializer);
-		}
-
-		@Override
-		public int getVersion() {
-			return VERSION;
-		}
-
-		@Override
-		public TypeSerializerSchemaCompatibility<T> resolveSchemaCompatibility(TypeSerializer<T> newSerializer) {
-			NullableSerializer<T> previousSerializer = (NullableSerializer<T>) restoreSerializer();
-			NullableSerializerSnapshot<T> newCompositeSnapshot = new NullableSerializerSnapshot<>(previousSerializer.nullPaddingLength());
-
-			return CompositeTypeSerializerUtil.delegateCompatibilityCheckToNewSnapshot(
-				newSerializer,
-				newCompositeSnapshot,
-				getSingleNestedSerializerAndConfig().f1
-			);
-		}
-	}
-
-	/**
-	 * Snapshot for serializers of nullable types, containing the
-	 * snapshot of its original serializer.
-	 */
 	@SuppressWarnings({"unchecked", "WeakerAccess"})
 	public static class NullableSerializerSnapshot<T> extends CompositeTypeSerializerSnapshot<T, NullableSerializer<T>> {
 
