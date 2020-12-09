@@ -20,7 +20,6 @@ package org.apache.flink.runtime.state;
 
 import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.api.common.typeutils.TypeSerializerSchemaCompatibility;
-import org.apache.flink.api.common.typeutils.TypeSerializerSnapshot;
 import org.apache.flink.runtime.state.metainfo.StateMetaInfoSnapshot;
 import org.apache.flink.util.Preconditions;
 
@@ -40,17 +39,6 @@ public class RegisteredPriorityQueueStateBackendMetaInfo<T> extends RegisteredSt
 		@Nonnull TypeSerializer<T> elementSerializer) {
 
 		this(name, StateSerializerProvider.fromNewRegisteredSerializer(elementSerializer));
-	}
-
-	@SuppressWarnings("unchecked")
-	public RegisteredPriorityQueueStateBackendMetaInfo(StateMetaInfoSnapshot snapshot) {
-		this(
-			snapshot.getName(),
-			StateSerializerProvider.fromPreviousSerializerSnapshot(
-				(TypeSerializerSnapshot<T>) Preconditions.checkNotNull(
-					snapshot.getTypeSerializerSnapshot(StateMetaInfoSnapshot.CommonSerializerKeys.VALUE_SERIALIZER))));
-
-		Preconditions.checkState(StateMetaInfoSnapshot.BackendStateType.PRIORITY_QUEUE == snapshot.getBackendStateType());
 	}
 
 	private RegisteredPriorityQueueStateBackendMetaInfo(

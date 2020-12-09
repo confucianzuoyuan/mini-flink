@@ -21,7 +21,6 @@ package org.apache.flink.runtime.state;
 import org.apache.flink.api.common.state.StateDescriptor;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.api.common.typeutils.TypeSerializerSchemaCompatibility;
-import org.apache.flink.api.common.typeutils.TypeSerializerSnapshot;
 import org.apache.flink.runtime.state.StateSnapshotTransformer.StateSnapshotTransformFactory;
 import org.apache.flink.runtime.state.metainfo.StateMetaInfoSnapshot;
 import org.apache.flink.util.Preconditions;
@@ -76,22 +75,6 @@ public class RegisteredKeyValueStateBackendMetaInfo<N, S> extends RegisteredStat
 			stateSnapshotTransformFactory);
 	}
 
-	@SuppressWarnings("unchecked")
-	public RegisteredKeyValueStateBackendMetaInfo(@Nonnull StateMetaInfoSnapshot snapshot) {
-		this(
-			StateDescriptor.Type.valueOf(snapshot.getOption(StateMetaInfoSnapshot.CommonOptionsKeys.KEYED_STATE_TYPE)),
-			snapshot.getName(),
-			StateSerializerProvider.fromPreviousSerializerSnapshot(
-				(TypeSerializerSnapshot<N>) Preconditions.checkNotNull(
-					snapshot.getTypeSerializerSnapshot(StateMetaInfoSnapshot.CommonSerializerKeys.NAMESPACE_SERIALIZER))),
-			StateSerializerProvider.fromPreviousSerializerSnapshot(
-				(TypeSerializerSnapshot<S>) Preconditions.checkNotNull(
-					snapshot.getTypeSerializerSnapshot(StateMetaInfoSnapshot.CommonSerializerKeys.VALUE_SERIALIZER))),
-			StateSnapshotTransformFactory.noTransform());
-
-		Preconditions.checkState(StateMetaInfoSnapshot.BackendStateType.KEY_VALUE == snapshot.getBackendStateType());
-	}
-
 	private RegisteredKeyValueStateBackendMetaInfo(
 		@Nonnull StateDescriptor.Type stateType,
 		@Nonnull String name,
@@ -139,20 +122,6 @@ public class RegisteredKeyValueStateBackendMetaInfo<N, S> extends RegisteredStat
 	@Nullable
 	public TypeSerializer<S> getPreviousStateSerializer() {
 		return stateSerializerProvider.previousSchemaSerializer();
-	}
-
-	@Nullable
-	public TypeSerializerSnapshot<S> getPreviousStateSerializerSnapshot() {
-		return stateSerializerProvider.previousSerializerSnapshot;
-	}
-
-	@Nonnull
-	public StateSnapshotTransformFactory<S> getStateSnapshotTransformFactory() {
-		return stateSnapshotTransformFactory;
-	}
-
-	public void updateSnapshotTransformFactory(StateSnapshotTransformFactory<S> stateSnapshotTransformFactory) {
-		this.stateSnapshotTransformFactory = stateSnapshotTransformFactory;
 	}
 
 	@Override

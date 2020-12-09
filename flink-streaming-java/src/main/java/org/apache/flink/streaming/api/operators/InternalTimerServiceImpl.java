@@ -129,34 +129,9 @@ public class InternalTimerServiceImpl<K, N> implements InternalTimerService<N> {
 				throw new IllegalStateException("The TimerService has already been initialized.");
 			}
 
-			// the following is the case where we restore
-			if (restoredTimersSnapshot != null) {
-				TypeSerializerSchemaCompatibility<K> keySerializerCompatibility =
-					restoredTimersSnapshot.getKeySerializerSnapshot().resolveSchemaCompatibility(keySerializer);
 
-				if (keySerializerCompatibility.isIncompatible() || keySerializerCompatibility.isCompatibleAfterMigration()) {
-					throw new IllegalStateException(
-						"Tried to initialize restored TimerService with new key serializer that requires migration or is incompatible.");
-				}
-
-				TypeSerializerSchemaCompatibility<N> namespaceSerializerCompatibility =
-					restoredTimersSnapshot.getNamespaceSerializerSnapshot().resolveSchemaCompatibility(namespaceSerializer);
-
-				restoredTimersSnapshot = null;
-
-				if (namespaceSerializerCompatibility.isIncompatible() || namespaceSerializerCompatibility.isCompatibleAfterMigration()) {
-					throw new IllegalStateException(
-						"Tried to initialize restored TimerService with new namespace serializer that requires migration or is incompatible.");
-				}
-
-				this.keySerializer = keySerializerCompatibility.isCompatibleAsIs()
-					? keySerializer : keySerializerCompatibility.getReconfiguredSerializer();
-				this.namespaceSerializer = namespaceSerializerCompatibility.isCompatibleAsIs()
-					? namespaceSerializer : namespaceSerializerCompatibility.getReconfiguredSerializer();
-			} else {
-				this.keySerializer = keySerializer;
-				this.namespaceSerializer = namespaceSerializer;
-			}
+			this.keySerializer = keySerializer;
+			this.namespaceSerializer = namespaceSerializer;
 
 			this.keyDeserializer = null;
 			this.namespaceDeserializer = null;

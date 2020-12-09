@@ -20,7 +20,6 @@ package org.apache.flink.runtime.state.metainfo;
 
 import org.apache.flink.api.common.state.StateDescriptor;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
-import org.apache.flink.api.common.typeutils.TypeSerializerSnapshot;
 import org.apache.flink.runtime.state.RegisteredKeyValueStateBackendMetaInfo;
 
 import javax.annotation.Nonnull;
@@ -78,10 +77,6 @@ public class StateMetaInfoSnapshot {
 	@Nonnull
 	private final Map<String, String> options;
 
-	/** The configurations of all the type serializers used with the state. */
-	@Nonnull
-	private final Map<String, TypeSerializerSnapshot<?>> serializerSnapshots;
-
 	// TODO this will go away once all serializers have the restoreSerializer() factory method properly implemented.
 	/** The serializers used by the state. */
 	@Nonnull
@@ -90,9 +85,8 @@ public class StateMetaInfoSnapshot {
 	public StateMetaInfoSnapshot(
 		@Nonnull String name,
 		@Nonnull BackendStateType backendStateType,
-		@Nonnull Map<String, String> options,
-		@Nonnull Map<String, TypeSerializerSnapshot<?>> serializerSnapshots) {
-		this(name, backendStateType, options, serializerSnapshots, new HashMap<>());
+		@Nonnull Map<String, String> options) {
+		this(name, backendStateType, options, new HashMap<>());
 	}
 
 	/**
@@ -105,28 +99,16 @@ public class StateMetaInfoSnapshot {
 		@Nonnull String name,
 		@Nonnull BackendStateType backendStateType,
 		@Nonnull Map<String, String> options,
-		@Nonnull Map<String, TypeSerializerSnapshot<?>> serializerSnapshots,
 		@Nonnull Map<String, TypeSerializer<?>> serializers) {
 		this.name = name;
 		this.backendStateType = backendStateType;
 		this.options = options;
-		this.serializerSnapshots = serializerSnapshots;
 		this.serializers = serializers;
 	}
 
 	@Nonnull
 	public BackendStateType getBackendStateType() {
 		return backendStateType;
-	}
-
-	@Nullable
-	public TypeSerializerSnapshot<?> getTypeSerializerSnapshot(@Nonnull String key) {
-		return serializerSnapshots.get(key);
-	}
-
-	@Nullable
-	public TypeSerializerSnapshot<?> getTypeSerializerSnapshot(@Nonnull CommonSerializerKeys key) {
-		return getTypeSerializerSnapshot(key.toString());
 	}
 
 	@Nullable
@@ -147,11 +129,6 @@ public class StateMetaInfoSnapshot {
 	@Nonnull
 	public String getName() {
 		return name;
-	}
-
-	@Nonnull
-	public Map<String, TypeSerializerSnapshot<?>> getSerializerSnapshotsImmutable() {
-		return Collections.unmodifiableMap(serializerSnapshots);
 	}
 
 	/**
