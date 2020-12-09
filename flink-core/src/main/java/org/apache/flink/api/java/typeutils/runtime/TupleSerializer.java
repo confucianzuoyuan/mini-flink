@@ -31,9 +31,6 @@ import org.apache.flink.types.NullFieldException;
 
 import java.io.IOException;
 
-import static org.apache.flink.api.common.typeutils.CompositeTypeSerializerUtil.delegateCompatibilityCheckToNewSnapshot;
-import static org.apache.flink.util.Preconditions.checkArgument;
-
 @Internal
 public class TupleSerializer<T extends Tuple> extends TupleSerializerBase<T> implements SelfResolvingTypeSerializer<T> {
 

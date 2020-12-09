@@ -28,60 +28,6 @@ import static org.apache.flink.util.Preconditions.*;
  */
 @Internal
 public class CompositeTypeSerializerUtil {
-
-	/**
-	 * Delegates compatibility checks to a {@link CompositeTypeSerializerSnapshot} instance.
-	 * This can be used by legacy snapshot classes, which have a newer implementation
-	 * implemented as a {@link CompositeTypeSerializerSnapshot}.
-	 *
-	 * @param newSerializer the new serializer to check for compatibility.
-	 * @param newCompositeSnapshot an instance of the new snapshot class to delegate compatibility checks to.
-	 *                             This instance should already contain the outer snapshot information.
-	 * @param legacyNestedSnapshots the nested serializer snapshots of the legacy composite snapshot.
-	 *
-	 * @return the result compatibility.
-	 */
-	public static <T> TypeSerializerSchemaCompatibility<T> delegateCompatibilityCheckToNewSnapshot(
-			TypeSerializer<T> newSerializer,
-			CompositeTypeSerializerSnapshot<T, ? extends TypeSerializer> newCompositeSnapshot,
-			TypeSerializerSnapshot<?>... legacyNestedSnapshots) {
-
-		checkArgument(legacyNestedSnapshots.length > 0);
-		return newCompositeSnapshot.internalResolveSchemaCompatibility(newSerializer, legacyNestedSnapshots);
-	}
-
-	/**
-	 * Overrides the existing nested serializer's snapshots with the provided {@code nestedSnapshots}.
-	 *
-	 * @param compositeSnapshot the composite snapshot to overwrite its nested serializers.
-	 * @param nestedSnapshots the nested snapshots to overwrite with.
-	 */
-	public static void setNestedSerializersSnapshots(
-		CompositeTypeSerializerSnapshot<?, ?> compositeSnapshot,
-		TypeSerializerSnapshot<?>... nestedSnapshots) {
-
-		NestedSerializersSnapshotDelegate delegate = new NestedSerializersSnapshotDelegate(nestedSnapshots);
-		compositeSnapshot.setNestedSerializersSnapshotDelegate(delegate);
-	}
-
-	/**
-	 * Constructs an {@link IntermediateCompatibilityResult} with the given array of nested serializers and their
-	 * corresponding serializer snapshots.
-	 *
-	 * <p>This result is considered "intermediate", because the actual final result is not yet built if it isn't
-	 * defined. This is the case if the final result is supposed to be
-	 * {@link TypeSerializerSchemaCompatibility#compatibleWithReconfiguredSerializer(TypeSerializer)}, where
-	 * construction of the reconfigured serializer instance should be done by the caller.
-	 *
-	 * <p>For other cases, i.e. {@link TypeSerializerSchemaCompatibility#compatibleAsIs()},
-	 * {@link TypeSerializerSchemaCompatibility#compatibleAfterMigration()}, and
-	 * {@link TypeSerializerSchemaCompatibility#incompatible()}, these results are considered final.
-	 *
-	 * @param newNestedSerializers the new nested serializers to check for compatibility.
-	 * @param nestedSerializerSnapshots the associated nested serializers' snapshots.
-	 *
-	 * @return the intermediate compatibility result of the new nested serializers.
-	 */
 	public static <T> IntermediateCompatibilityResult<T> constructIntermediateCompatibilityResult(
 		TypeSerializer<?>[] newNestedSerializers,
 		TypeSerializerSnapshot<?>[] nestedSerializerSnapshots) {
