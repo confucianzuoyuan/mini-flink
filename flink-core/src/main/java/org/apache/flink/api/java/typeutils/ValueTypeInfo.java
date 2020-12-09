@@ -30,7 +30,6 @@ import org.apache.flink.api.common.typeutils.base.*;
 import org.apache.flink.api.java.typeutils.runtime.CopyableValueComparator;
 import org.apache.flink.api.java.typeutils.runtime.CopyableValueSerializer;
 import org.apache.flink.api.java.typeutils.runtime.ValueComparator;
-import org.apache.flink.api.java.typeutils.runtime.ValueSerializer;
 import org.apache.flink.types.*;
 
 import static org.apache.flink.util.Preconditions.checkArgument;
@@ -146,11 +145,8 @@ public class ValueTypeInfo<T extends Value> extends TypeInformation<T> implement
 		else if (StringValue.class.isAssignableFrom(type)) {
 			return (TypeSerializer<T>) StringValueSerializer.INSTANCE;
 		}
-		else if (CopyableValue.class.isAssignableFrom(type)) {
+		else  {
 			return (TypeSerializer<T>) createCopyableValueSerializer(type.asSubclass(CopyableValue.class));
-		}
-		else {
-			return new ValueSerializer<T>(type);
 		}
 	}
 	

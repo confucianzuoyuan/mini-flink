@@ -64,9 +64,6 @@ public class ValueComparator<T extends Value & Comparable<T>> extends TypeCompar
 
 	@Override
 	public void setReference(T toCompare) {
-		checkKryoInitialized();
-
-		reference = KryoUtils.copy(toCompare, kryo, new ValueSerializer<T>(type));
 	}
 
 	@Override

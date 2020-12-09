@@ -213,20 +213,6 @@ public class StreamExecutionEnvironment {
 		return fromCollection(Arrays.asList(data), typeInfo);
 	}
 
-	/**
-	 * Creates a data stream from the given non-empty collection.
-	 *
-	 * <p>Note that this operation will result in a non-parallel data stream source,
-	 * i.e., a data stream source with parallelism one.
-	 *
-	 * @param data
-	 * 		The collection of elements to create the data stream from
-	 * @param typeInfo
-	 * 		The TypeInformation for the produced data stream
-	 * @param <OUT>
-	 * 		The type of the returned data stream
-	 * @return The data stream representing the given collection
-	 */
 	public <OUT> DataStreamSource<OUT> fromCollection(Collection<OUT> data, TypeInformation<OUT> typeInfo) {
 		Preconditions.checkNotNull(data, "Collection must not be null");
 
@@ -252,17 +238,6 @@ public class StreamExecutionEnvironment {
 		return new DataStreamSource<>(this, resolvedTypeInfo, sourceOperator, isParallel, sourceName);
 	}
 
-	/**
-	 * Triggers the program execution. The environment will execute all parts of
-	 * the program that have resulted in a "sink" operation. Sink operations are
-	 * for example printing results or forwarding them to a message queue.
-	 *
-	 * <p>The program execution will be logged and displayed with a generated
-	 * default name.
-	 *
-	 * @return The result of the job execution, containing elapsed time and accumulators.
-	 * @throws Exception which occurs during job execution.
-	 */
 	public JobExecutionResult execute() throws Exception {
 		return execute(DEFAULT_JOB_NAME);
 	}

@@ -21,7 +21,6 @@ package org.apache.flink.util;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.api.common.typeutils.TypeSerializerSerializationUtil;
-import org.apache.flink.api.java.typeutils.runtime.KryoRegistrationSerializerConfigSnapshot;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.io.IOReadableWritable;
 import org.apache.flink.core.memory.DataInputView;
@@ -279,12 +278,7 @@ public final class InstantiationUtil {
 	 * and it can be removed in 1.6, as the path would be Flink-{< 1.5} -> Flink-1.5 -> Flink-{>= 1.6}.
 	 */
 	private enum MigrationUtil {
-
-		// To add a new mapping just pick a name and add an entry as the following:
-
-		GENERIC_DATA_ARRAY_SERIALIZER(
-				"org.apache.avro.generic.GenericData$Array",
-				ObjectStreamClass.lookup(KryoRegistrationSerializerConfigSnapshot.DummyRegisteredClass.class)); // added in 1.5
+; // added in 1.5
 
 		/** An internal unmodifiable map containing the mappings between deprecated and new serializers. */
 		private static final Map<String, ObjectStreamClass> EQUIVALENCE_MAP = Collections.unmodifiableMap(initMap());

@@ -293,27 +293,6 @@ public class Types {
 		return new PojoTypeInfo<>(pojoClass, pojoFields);
 	}
 
-	/**
-	 * Returns generic type information for any Java object. The serialization logic will
-	 * use the general purpose serializer Kryo.
-	 *
-	 * <p>Generic types are black-boxes for Flink, but allow any object and null values in fields.
-	 *
-	 * <p>By default, serialization of this type is not very efficient. Please read the documentation
-	 * about how to improve efficiency (namely by pre-registering classes).
-	 *
-	 * @param genericClass any Java class
-	 */
-	public static <T> TypeInformation<T> GENERIC(Class<T> genericClass) {
-		return new GenericTypeInfo<>(genericClass);
-	}
-
-	/**
-	 * Returns type information for Java arrays of primitive type (such as <code>byte[]</code>). The array
-	 * must not be null.
-	 *
-	 * @param elementType element type of the array (e.g. Types.BOOLEAN, Types.INT, Types.DOUBLE)
-	 */
 	public static TypeInformation<?> PRIMITIVE_ARRAY(TypeInformation<?> elementType) {
 		if (elementType == BOOLEAN) {
 			return PrimitiveArrayTypeInfo.BOOLEAN_PRIMITIVE_ARRAY_TYPE_INFO;
@@ -349,23 +328,6 @@ public class Types {
 		return ObjectArrayTypeInfo.getInfoFor(elementType);
 	}
 
-	/**
-	 * Returns type information for Flink value types (classes that implement
-	 * {@link org.apache.flink.types.Value}). Built-in value types do not support null values (except
-	 * for {@link org.apache.flink.types.StringValue}).
-	 *
-	 * <p>Value types describe their serialization and deserialization manually. Instead of going
-	 * through a general purpose serialization framework. A value type is reasonable when general purpose
-	 * serialization would be highly inefficient. The wrapped value can be altered, allowing programmers to
-	 * reuse objects and take pressure off the garbage collector.
-	 *
-	 * <p>Flink provides built-in value types for all Java primitive types (such as
-	 * {@link org.apache.flink.types.BooleanValue}, {@link org.apache.flink.types.IntValue}) as well
-	 * as {@link org.apache.flink.types.StringValue}, {@link org.apache.flink.types.NullValue},
-	 * {@link org.apache.flink.types.ListValue}, and {@link org.apache.flink.types.MapValue}.
-	 *
-	 * @param valueType class that implements {@link org.apache.flink.types.Value}
-	 */
 	public static <V extends Value> TypeInformation<V> VALUE(Class<V> valueType) {
 		return new ValueTypeInfo<>(valueType);
 	}
@@ -374,29 +336,12 @@ public class Types {
 		return new ListTypeInfo<>(elementType);
 	}
 
-	/**
-	 * Returns type information for Java enumerations. Null values are not supported.
-	 *
-	 * @param enumType enumeration class extending {@link java.lang.Enum}
-	 */
 	public static <E extends Enum<E>> TypeInformation<E> ENUM(Class<E> enumType) {
 		return new EnumTypeInfo<>(enumType);
 	}
 
-	/**
-	 * Returns type information for Flink's {@link org.apache.flink.types.Either} type. Null values
-	 * are not supported.
-	 *
-	 * <p>Either type can be used for a value of two possible types.
-	 *
-	 * <p>Example use: <code>Types.EITHER(Types.VOID, Types.INT)</code>
-	 *
-	 * @param leftType type information of left side / {@link org.apache.flink.types.Either.Left}
-	 * @param rightType type information of right side / {@link org.apache.flink.types.Either.Right}
-	 */
 	public static <L, R> TypeInformation<Either<L, R>> EITHER(TypeInformation<L> leftType, TypeInformation<R> rightType) {
 		return new EitherTypeInfo<>(leftType, rightType);
 	}
 
-	//CHECKSTYLE.ON: MethodName
 }

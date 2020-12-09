@@ -29,7 +29,6 @@ import org.apache.flink.api.common.typeutils.TypeComparator;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.api.java.typeutils.runtime.PojoComparator;
 import org.apache.flink.api.java.typeutils.runtime.PojoSerializer;
-import org.apache.flink.api.java.typeutils.runtime.kryo.KryoSerializer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -300,14 +299,6 @@ public class PojoTypeInfo<T> extends CompositeType<T> {
 	@PublicEvolving
 	@SuppressWarnings("unchecked")
 	public TypeSerializer<T> createSerializer(ExecutionConfig config) {
-		if (config.isForceKryoEnabled()) {
-			return new KryoSerializer<>(getTypeClass(), config);
-		}
-
-		if (config.isForceAvroEnabled()) {
-			return AvroUtils.getAvroUtils().createAvroSerializer(getTypeClass());
-		}
-
 		return createPojoSerializer(config);
 	}
 

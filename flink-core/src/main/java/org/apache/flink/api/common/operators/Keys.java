@@ -26,7 +26,6 @@ import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.common.typeutils.CompositeType;
 import org.apache.flink.api.common.typeutils.CompositeType.FlatFieldDescriptor;
 import org.apache.flink.api.java.functions.KeySelector;
-import org.apache.flink.api.java.typeutils.GenericTypeInfo;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
 
 import java.util.ArrayList;
@@ -170,7 +169,7 @@ public abstract class Keys<T> {
 			}
 
 			// only check if type is known and not a generic type
-			if (typeInfo != null && !(typeInfo instanceof GenericTypeInfo)) {
+			if (typeInfo != null) {
 				// check equality of key and partitioner type
 				if (!keyType.equals(typeInfo)) {
 					throw new InvalidProgramException("The partitioner is incompatible with the key type. "
@@ -396,7 +395,7 @@ public abstract class Keys<T> {
 				}
 			}
 
-			if (typeInfo != null && !(typeInfo instanceof GenericTypeInfo)) {
+			if (typeInfo != null) {
 				// only check type compatibility if type is known and not a generic type
 
 				TypeInformation<?> keyType = keyFields.get(0).getType();
