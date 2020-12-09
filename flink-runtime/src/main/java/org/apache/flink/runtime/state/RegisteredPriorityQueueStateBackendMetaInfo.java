@@ -64,12 +64,6 @@ public class RegisteredPriorityQueueStateBackendMetaInfo<T> extends RegisteredSt
 	}
 
 	@Nonnull
-	@Override
-	public StateMetaInfoSnapshot snapshot() {
-		return computeSnapshot();
-	}
-
-	@Nonnull
 	public TypeSerializer<T> getElementSerializer() {
 		return elementSerializerProvider.currentSchemaSerializer();
 	}
@@ -82,25 +76,6 @@ public class RegisteredPriorityQueueStateBackendMetaInfo<T> extends RegisteredSt
 	@Nullable
 	public TypeSerializer<T> getPreviousElementSerializer() {
 		return elementSerializerProvider.previousSchemaSerializer();
-	}
-
-	private StateMetaInfoSnapshot computeSnapshot() {
-		TypeSerializer<T> elementSerializer = getElementSerializer();
-		Map<String, TypeSerializer<?>> serializerMap =
-			Collections.singletonMap(
-				StateMetaInfoSnapshot.CommonSerializerKeys.VALUE_SERIALIZER.toString(),
-				elementSerializer.duplicate());
-		Map<String, TypeSerializerSnapshot<?>> serializerSnapshotMap =
-			Collections.singletonMap(
-				StateMetaInfoSnapshot.CommonSerializerKeys.VALUE_SERIALIZER.toString(),
-				elementSerializer.snapshotConfiguration());
-
-		return new StateMetaInfoSnapshot(
-			name,
-			StateMetaInfoSnapshot.BackendStateType.PRIORITY_QUEUE,
-			Collections.emptyMap(),
-			serializerSnapshotMap,
-			serializerMap);
 	}
 
 	public RegisteredPriorityQueueStateBackendMetaInfo deepCopy() {

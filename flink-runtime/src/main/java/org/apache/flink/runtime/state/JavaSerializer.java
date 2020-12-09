@@ -101,21 +101,4 @@ public final class JavaSerializer<T extends Serializable> extends TypeSerializer
 		serialize(tmp, target);
 	}
 
-	// ------------------------------------------------------------------------
-
-	@Override
-	public TypeSerializerSnapshot<T> snapshotConfiguration() {
-		return new JavaSerializerSnapshot<>();
-	}
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class JavaSerializerSnapshot<T extends Serializable> extends SimpleTypeSerializerSnapshot<T> {
-
-		public JavaSerializerSnapshot() {
-			super(JavaSerializer::new);
-		}
-	}
 }

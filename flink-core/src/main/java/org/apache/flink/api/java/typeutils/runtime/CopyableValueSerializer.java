@@ -129,11 +129,6 @@ public final class CopyableValueSerializer<T extends CopyableValue<T>> extends T
 	// Serializer configuration snapshotting & compatibility
 	// --------------------------------------------------------------------------------------------
 
-	@Override
-	public TypeSerializerSnapshot<T> snapshotConfiguration() {
-		return new CopyableValueSerializerSnapshot<>(valueClass);
-	}
-
 	/**
 	 * {@link TypeSerializerSnapshot} for the {@code CopyableValueSerializer}.
 	 */

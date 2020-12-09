@@ -163,11 +163,6 @@ public class TupleSerializer<T extends Tuple> extends TupleSerializerBase<T> imp
 		return reuse;
 	}
 
-	@Override
-	public TypeSerializerSnapshot<T> snapshotConfiguration() {
-		return new TupleSerializerSnapshot<>(this);
-	}
-
 	private T instantiateRaw() {
 		try {
 			return tupleClass.newInstance();

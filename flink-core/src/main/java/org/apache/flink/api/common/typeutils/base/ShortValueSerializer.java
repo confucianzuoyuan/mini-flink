@@ -81,13 +81,6 @@ public final class ShortValueSerializer extends TypeSerializerSingleton<ShortVal
 		target.writeShort(source.readShort());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<ShortValue> snapshotConfiguration() {
-		return new ShortValueSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Serializer configuration snapshot for compatibility and format evolution.
 	 */

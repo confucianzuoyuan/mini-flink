@@ -194,12 +194,4 @@ public class EitherSerializer<L, R> extends TypeSerializer<Either<L, R>> {
 		return 17 * leftSerializer.hashCode() + rightSerializer.hashCode();
 	}
 
-	// ------------------------------------------------------------------------
-	// Serializer configuration snapshotting & compatibility
-	// ------------------------------------------------------------------------
-
-	@Override
-	public JavaEitherSerializerSnapshot<L, R> snapshotConfiguration() {
-		return new JavaEitherSerializerSnapshot<>(this);
-	}
 }

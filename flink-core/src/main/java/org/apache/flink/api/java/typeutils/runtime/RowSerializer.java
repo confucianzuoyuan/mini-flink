@@ -313,11 +313,6 @@ public final class RowSerializer extends TypeSerializer<Row> {
 	// Serializer configuration snapshoting & compatibility
 	// --------------------------------------------------------------------------------------------
 
-	@Override
-	public TypeSerializerSnapshot<Row> snapshotConfiguration() {
-		return new RowSerializerSnapshot(this);
-	}
-
 	public static final class RowSerializerSnapshot extends CompositeTypeSerializerSnapshot<Row, RowSerializer> {
 
 		private static final int VERSION = 3;

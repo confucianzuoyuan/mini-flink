@@ -84,21 +84,4 @@ public final class LongSerializer extends TypeSerializerSingleton<Long> {
 		target.writeLong(source.readLong());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<Long> snapshotConfiguration() {
-		return new LongSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class LongSerializerSnapshot extends SimpleTypeSerializerSnapshot<Long> {
-
-		public LongSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

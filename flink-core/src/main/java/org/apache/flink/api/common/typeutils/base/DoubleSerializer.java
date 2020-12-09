@@ -84,21 +84,4 @@ public final class DoubleSerializer extends TypeSerializerSingleton<Double> {
 		target.writeDouble(source.readDouble());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<Double> snapshotConfiguration() {
-		return new DoubleSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class DoubleSerializerSnapshot extends SimpleTypeSerializerSnapshot<Double> {
-
-		public DoubleSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

@@ -452,9 +452,5 @@ public class InternalTimersSnapshotReaderWriters {
 			return getClass().hashCode();
 		}
 
-		@Override
-		public TypeSerializerSnapshot<TimerHeapInternalTimer<K, N>> snapshotConfiguration() {
-			throw new UnsupportedOperationException("This serializer is not registered for managed state.");
-		}
 	}
 }

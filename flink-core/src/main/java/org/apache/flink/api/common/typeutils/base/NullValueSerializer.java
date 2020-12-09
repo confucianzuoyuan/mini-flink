@@ -77,21 +77,4 @@ public final class NullValueSerializer extends TypeSerializerSingleton<NullValue
 	public void copy(DataInputView source, DataOutputView target) throws IOException {
 	}
 
-	@Override
-	public TypeSerializerSnapshot<NullValue> snapshotConfiguration() {
-		return new NullValueSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class NullValueSerializerSnapshot extends SimpleTypeSerializerSnapshot<NullValue> {
-
-		public NullValueSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

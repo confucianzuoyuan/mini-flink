@@ -38,38 +38,7 @@ public final class TypeSerializerUtils {
 				.map(TypeSerializerUtils::snapshotBackwardsCompatible)
 				.toArray(TypeSerializerSnapshot[]::new);
 	}
-
-	/**
-	 * Takes a snapshot of the given serializer. In case where the snapshot
-	 * is still extending the old {@code TypeSerializerConfigSnapshot} class, the snapshot
-	 * is set up properly (with its originating serializer) such that the backwards
-	 * compatible code paths work.
-	 */
-	public static <T> TypeSerializerSnapshot<T> snapshotBackwardsCompatible(TypeSerializer<T> originatingSerializer) {
-		return configureForBackwardsCompatibility(originatingSerializer.snapshotConfiguration(), originatingSerializer);
-	}
-
-	/**
-	 * Utility method to bind the serializer and serializer snapshot to a common
-	 * generic type variable.
-	 */
-	@SuppressWarnings({"unchecked", "deprecation"})
-	private static <T> TypeSerializerSnapshot<T> configureForBackwardsCompatibility(
-			TypeSerializerSnapshot<?> snapshot,
-			TypeSerializer<?> serializer) {
-
-		TypeSerializerSnapshot<T> typedSnapshot = (TypeSerializerSnapshot<T>) snapshot;
-		TypeSerializer<T> typedSerializer = (TypeSerializer<T>) serializer;
-
-		if (snapshot instanceof TypeSerializerConfigSnapshot) {
-			((TypeSerializerConfigSnapshot<T>) typedSnapshot).setPriorSerializer(typedSerializer);
-		}
-
-		return typedSnapshot;
-	}
-
 	// ------------------------------------------------------------------------
-
 	/** This class is not meanto to be instantiated. */
 	private TypeSerializerUtils() {}
 }

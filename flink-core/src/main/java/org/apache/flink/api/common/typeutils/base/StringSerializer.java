@@ -85,21 +85,4 @@ public final class StringSerializer extends TypeSerializerSingleton<String> {
 		StringValue.copyString(source, target);
 	}
 
-	@Override
-	public TypeSerializerSnapshot<String> snapshotConfiguration() {
-		return new StringSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class StringSerializerSnapshot extends SimpleTypeSerializerSnapshot<String> {
-
-		public StringSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

@@ -100,13 +100,6 @@ public class Tuple0Serializer extends TupleSerializer<Tuple0> implements SelfRes
 	}
 
 	@Override
-	public TypeSerializerSnapshot<Tuple0> snapshotConfiguration() {
-		return new Tuple0SerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	@Override
 	public int hashCode() {
 		return Tuple0Serializer.class.hashCode();
 	}

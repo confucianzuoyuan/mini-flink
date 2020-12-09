@@ -40,9 +40,6 @@ public abstract class RegisteredStateMetaInfoBase {
 		return name;
 	}
 
-	@Nonnull
-	public abstract StateMetaInfoSnapshot snapshot();
-
 	public static RegisteredStateMetaInfoBase fromMetaInfoSnapshot(@Nonnull StateMetaInfoSnapshot snapshot) {
 
 		final StateMetaInfoSnapshot.BackendStateType backendStateType = snapshot.getBackendStateType();

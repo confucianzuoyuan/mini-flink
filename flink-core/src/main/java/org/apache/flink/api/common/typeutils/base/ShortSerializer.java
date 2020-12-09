@@ -84,21 +84,4 @@ public final class ShortSerializer extends TypeSerializerSingleton<Short> {
 		target.writeShort(source.readShort());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<Short> snapshotConfiguration() {
-		return new ShortSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class ShortSerializerSnapshot extends SimpleTypeSerializerSnapshot<Short> {
-
-		public ShortSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

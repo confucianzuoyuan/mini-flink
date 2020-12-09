@@ -97,12 +97,6 @@ public class RegisteredOperatorStateBackendMetaInfo<S> extends RegisteredStateMe
 	}
 
 	@Nonnull
-	@Override
-	public StateMetaInfoSnapshot snapshot() {
-		return computeSnapshot();
-	}
-
-	@Nonnull
 	public OperatorStateHandle.Mode getAssignmentMode() {
 		return assignmentMode;
 	}
@@ -155,24 +149,4 @@ public class RegisteredOperatorStateBackendMetaInfo<S> extends RegisteredStateMe
 			'}';
 	}
 
-	@Nonnull
-	private StateMetaInfoSnapshot computeSnapshot() {
-		Map<String, String> optionsMap = Collections.singletonMap(
-			StateMetaInfoSnapshot.CommonOptionsKeys.OPERATOR_STATE_DISTRIBUTION_MODE.toString(),
-			assignmentMode.toString());
-		String valueSerializerKey = StateMetaInfoSnapshot.CommonSerializerKeys.VALUE_SERIALIZER.toString();
-
-		TypeSerializer<S> partitionStateSerializer = getPartitionStateSerializer();
-		Map<String, TypeSerializer<?>> serializerMap =
-			Collections.singletonMap(valueSerializerKey, partitionStateSerializer.duplicate());
-		Map<String, TypeSerializerSnapshot<?>> serializerConfigSnapshotsMap =
-			Collections.singletonMap(valueSerializerKey, partitionStateSerializer.snapshotConfiguration());
-
-		return new StateMetaInfoSnapshot(
-			name,
-			StateMetaInfoSnapshot.BackendStateType.OPERATOR,
-			optionsMap,
-			serializerConfigSnapshotsMap,
-			serializerMap);
-	}
 }

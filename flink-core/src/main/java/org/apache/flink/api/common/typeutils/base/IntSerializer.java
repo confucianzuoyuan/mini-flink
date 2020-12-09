@@ -84,21 +84,4 @@ public final class IntSerializer extends TypeSerializerSingleton<Integer> {
 		target.writeInt(source.readInt());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<Integer> snapshotConfiguration() {
-		return new IntSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	public static final class IntSerializerSnapshot extends SimpleTypeSerializerSnapshot<Integer> {
-
-		@SuppressWarnings("WeakerAccess")
-		public IntSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

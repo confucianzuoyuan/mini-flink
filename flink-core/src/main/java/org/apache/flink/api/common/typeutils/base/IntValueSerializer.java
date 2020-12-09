@@ -81,21 +81,4 @@ public final class IntValueSerializer extends TypeSerializerSingleton<IntValue> 
 		target.writeInt(source.readInt());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<IntValue> snapshotConfiguration() {
-		return new IntValueSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class IntValueSerializerSnapshot extends SimpleTypeSerializerSnapshot<IntValue> {
-
-		public IntValueSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

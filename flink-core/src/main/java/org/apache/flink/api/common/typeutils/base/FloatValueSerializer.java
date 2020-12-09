@@ -81,21 +81,4 @@ public class FloatValueSerializer extends TypeSerializerSingleton<FloatValue> {
 		target.writeFloat(source.readFloat());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<FloatValue> snapshotConfiguration() {
-		return new FloatValueSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class FloatValueSerializerSnapshot extends SimpleTypeSerializerSnapshot<FloatValue> {
-
-		public FloatValueSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

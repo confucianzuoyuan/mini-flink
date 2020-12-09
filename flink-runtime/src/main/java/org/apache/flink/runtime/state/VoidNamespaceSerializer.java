@@ -87,21 +87,4 @@ public final class VoidNamespaceSerializer extends TypeSerializerSingleton<VoidN
 		target.write(source.readByte());
 	}
 
-	// -----------------------------------------------------------------------------------
-
-	@Override
-	public TypeSerializerSnapshot<VoidNamespace> snapshotConfiguration() {
-		return new VoidNamespaceSerializerSnapshot();
-	}
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class VoidNamespaceSerializerSnapshot extends SimpleTypeSerializerSnapshot<VoidNamespace> {
-
-		public VoidNamespaceSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

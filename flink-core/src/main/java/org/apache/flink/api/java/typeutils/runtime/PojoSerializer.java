@@ -557,17 +557,6 @@ public final class PojoSerializer<T> extends TypeSerializer<T> {
 	// Serializer configuration snapshotting & compatibility
 	// --------------------------------------------------------------------------------------------
 
-	@Override
-	public PojoSerializerSnapshot<T> snapshotConfiguration() {
-		return buildSnapshot(
-				clazz,
-				registeredClasses,
-				registeredSerializers,
-				fields,
-				fieldSerializers,
-				subclassSerializerCache);
-	}
-
 	/**
 	 * @deprecated This snapshot class is no longer being used.
 	 *             It has been fully replaced by {@link PojoSerializerSnapshot}.

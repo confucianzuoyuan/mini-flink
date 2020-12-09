@@ -100,13 +100,6 @@ public final class DateSerializer extends TypeSerializerSingleton<Date> {
 		target.writeLong(source.readLong());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<Date> snapshotConfiguration() {
-		return new DateSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Serializer configuration snapshot for compatibility and format evolution.
 	 */

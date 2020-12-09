@@ -84,11 +84,6 @@ public final class BooleanSerializer extends TypeSerializerSingleton<Boolean> {
 		target.writeBoolean(source.readBoolean());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<Boolean> snapshotConfiguration() {
-		return new BooleanSerializerSnapshot();
-	}
-
 	// ------------------------------------------------------------------------
 
 	/**

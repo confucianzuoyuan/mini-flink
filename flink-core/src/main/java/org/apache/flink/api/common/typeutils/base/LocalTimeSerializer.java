@@ -97,21 +97,4 @@ public final class LocalTimeSerializer extends TypeSerializerSingleton<LocalTime
 		target.writeInt(source.readInt());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<LocalTime> snapshotConfiguration() {
-		return new LocalTimeSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class LocalTimeSerializerSnapshot extends SimpleTypeSerializerSnapshot<LocalTime> {
-
-		public LocalTimeSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

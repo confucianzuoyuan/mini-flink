@@ -94,21 +94,4 @@ public final class LocalDateSerializer extends TypeSerializerSingleton<LocalDate
 		target.writeShort(source.readShort());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<LocalDate> snapshotConfiguration() {
-		return new LocalDateSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class LocalDateSerializerSnapshot extends SimpleTypeSerializerSnapshot<LocalDate> {
-
-		public LocalDateSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

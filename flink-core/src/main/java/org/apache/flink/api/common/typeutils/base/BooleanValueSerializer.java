@@ -83,13 +83,6 @@ public final class BooleanValueSerializer extends TypeSerializerSingleton<Boolea
 		target.writeBoolean(source.readBoolean());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<BooleanValue> snapshotConfiguration() {
-		return new BooleanValueSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Serializer configuration snapshot for compatibility and format evolution.
 	 */

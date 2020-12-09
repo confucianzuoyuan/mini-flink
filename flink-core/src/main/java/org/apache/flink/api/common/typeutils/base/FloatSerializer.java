@@ -83,22 +83,4 @@ public final class FloatSerializer extends TypeSerializerSingleton<Float> {
 	public void copy(DataInputView source, DataOutputView target) throws IOException {
 		target.writeFloat(source.readFloat());
 	}
-
-	@Override
-	public TypeSerializerSnapshot<Float> snapshotConfiguration() {
-		return new FloatSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class FloatSerializerSnapshot extends SimpleTypeSerializerSnapshot<Float> {
-
-		public FloatSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

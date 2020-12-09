@@ -195,12 +195,4 @@ public final class GenericArraySerializer<C> extends TypeSerializer<C[]> {
 		return "Serializer " + componentClass.getName() + "[]";
 	}
 
-	// --------------------------------------------------------------------------------------------
-	// Serializer configuration snapshotting & compatibility
-	// --------------------------------------------------------------------------------------------
-
-	@Override
-	public GenericArraySerializerSnapshot<C> snapshotConfiguration() {
-		return new GenericArraySerializerSnapshot<>(this);
-	}
 }

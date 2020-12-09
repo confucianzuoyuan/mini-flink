@@ -141,11 +141,6 @@ public final class BigIntSerializer extends TypeSerializerSingleton<BigInteger> 
 		return len == 0; // returns true if the copied record was null
 	}
 
-	@Override
-	public TypeSerializerSnapshot<BigInteger> snapshotConfiguration() {
-		return new BigIntSerializerSnapshot();
-	}
-
 	// ------------------------------------------------------------------------
 
 	/**

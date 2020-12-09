@@ -94,14 +94,11 @@ final class PojoSerializerSnapshotData<T> {
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
 			String fieldName = (field == null) ? getDummyNameForMissingField(i) : field.getName();
-			fieldSerializerSnapshots.put(fieldName, field, TypeSerializerUtils.snapshotBackwardsCompatible(fieldSerializers[i]));
 		}
 
 		LinkedHashMap<Class<?>, TypeSerializerSnapshot<?>> registeredSubclassSerializerSnapshots = new LinkedHashMap<>(registeredSubclassSerializers.size());
-		registeredSubclassSerializers.forEach((k, v) -> registeredSubclassSerializerSnapshots.put(k, TypeSerializerUtils.snapshotBackwardsCompatible(v)));
 
 		Map<Class<?>, TypeSerializerSnapshot<?>> nonRegisteredSubclassSerializerSnapshots = new HashMap<>(nonRegisteredSubclassSerializers.size());
-		nonRegisteredSubclassSerializers.forEach((k, v) -> nonRegisteredSubclassSerializerSnapshots.put(k, TypeSerializerUtils.snapshotBackwardsCompatible(v)));
 
 		return new PojoSerializerSnapshotData<>(
 			pojoClass,

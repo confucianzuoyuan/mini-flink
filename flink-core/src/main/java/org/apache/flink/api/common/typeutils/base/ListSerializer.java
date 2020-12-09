@@ -164,12 +164,4 @@ public final class ListSerializer<T> extends TypeSerializer<List<T>> {
 		return elementSerializer.hashCode();
 	}
 
-	// --------------------------------------------------------------------------------------------
-	// Serializer configuration snapshot & compatibility
-	// --------------------------------------------------------------------------------------------
-
-	@Override
-	public TypeSerializerSnapshot<List<T>> snapshotConfiguration() {
-		return new ListSerializerSnapshot<>(this);
-	}
 }

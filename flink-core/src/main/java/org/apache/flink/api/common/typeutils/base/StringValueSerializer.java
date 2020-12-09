@@ -106,13 +106,6 @@ public final class StringValueSerializer extends TypeSerializerSingleton<StringV
 		}
 	}
 
-	@Override
-	public TypeSerializerSnapshot<StringValue> snapshotConfiguration() {
-		return new StringValueSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Serializer configuration snapshot for compatibility and format evolution.
 	 */

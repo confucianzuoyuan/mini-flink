@@ -98,21 +98,4 @@ public final class LocalDateTimeSerializer extends TypeSerializerSingleton<Local
 		LocalTimeSerializer.INSTANCE.copy(source, target);
 	}
 
-	@Override
-	public TypeSerializerSnapshot<LocalDateTime> snapshotConfiguration() {
-		return new LocalDateTimeSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class LocalDateTimeSerializerSnapshot extends SimpleTypeSerializerSnapshot<LocalDateTime> {
-
-		public LocalDateTimeSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

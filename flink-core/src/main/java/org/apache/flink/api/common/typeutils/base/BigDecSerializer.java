@@ -137,13 +137,6 @@ public final class BigDecSerializer extends TypeSerializerSingleton<BigDecimal> 
 		return new BigDecimal(unscaledValue, scale);
 	}
 
-	@Override
-	public TypeSerializerSnapshot<BigDecimal> snapshotConfiguration() {
-		return new BigDecSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Serializer configuration snapshot for compatibility and format evolution.
 	 */

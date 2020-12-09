@@ -48,11 +48,6 @@ public class InternalTimersSnapshot<K, N> {
 			@Nullable Set<TimerHeapInternalTimer<K, N>> eventTimeTimers,
 			@Nullable Set<TimerHeapInternalTimer<K, N>> processingTimeTimers) {
 
-		Preconditions.checkNotNull(keySerializer);
-		this.keySerializerSnapshot = TypeSerializerUtils.snapshotBackwardsCompatible(keySerializer);
-		Preconditions.checkNotNull(namespaceSerializer);
-		this.namespaceSerializerSnapshot = TypeSerializerUtils.snapshotBackwardsCompatible(namespaceSerializer);
-
 		this.eventTimeTimers = eventTimeTimers;
 		this.processingTimeTimers = processingTimeTimers;
 	}

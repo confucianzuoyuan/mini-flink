@@ -196,11 +196,6 @@ public class TimerSerializer<K, N> extends TypeSerializer<TimerHeapInternalTimer
 		return Objects.hash(keySerializer, namespaceSerializer);
 	}
 
-	@Override
-	public TimerSerializerSnapshot<K, N> snapshotConfiguration() {
-		return new TimerSerializerSnapshot<>(this);
-	}
-
 	@Nonnull
 	public TypeSerializer<K> getKeySerializer() {
 		return keySerializer;

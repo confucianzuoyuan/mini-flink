@@ -126,44 +126,6 @@ public class SingleThreadAccessCheckingTypeSerializer<T> extends TypeSerializer<
 		}
 	}
 
-	@Override
-	public TypeSerializerSnapshot<T> snapshotConfiguration() {
-		try (SingleThreadAccessCheck ignored = singleThreadAccessChecker.startSingleThreadAccessCheck()) {
-			return new SingleThreadAccessCheckingTypeSerializerSnapshot<>(this);
-		}
-	}
-
-	public static class SingleThreadAccessCheckingTypeSerializerSnapshot<T>
-		extends CompositeTypeSerializerSnapshot<T, SingleThreadAccessCheckingTypeSerializer<T>> {
-
-		@SuppressWarnings({"unchecked", "unused"})
-		public SingleThreadAccessCheckingTypeSerializerSnapshot() {
-			super((Class<SingleThreadAccessCheckingTypeSerializer<T>>) (Class<?>) SingleThreadAccessCheckingTypeSerializer.class);
-		}
-
-		SingleThreadAccessCheckingTypeSerializerSnapshot(SingleThreadAccessCheckingTypeSerializer<T> serializerInstance) {
-			super(serializerInstance);
-		}
-
-		@Override
-		protected int getCurrentOuterSnapshotVersion() {
-			return 1;
-		}
-
-		@Override
-		protected TypeSerializer<?>[] getNestedSerializers(SingleThreadAccessCheckingTypeSerializer<T> outerSerializer) {
-			return new TypeSerializer[] { outerSerializer.originalSerializer };
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		protected SingleThreadAccessCheckingTypeSerializer<T> createOuterSerializerWithNestedSerializers(
-			TypeSerializer<?>[] nestedSerializers) {
-
-			return new SingleThreadAccessCheckingTypeSerializer<>((TypeSerializer<T>) nestedSerializers[0]);
-		}
-	}
-
 	private void writeObject(ObjectOutputStream outputStream) throws IOException {
 		try (SingleThreadAccessCheck ignored = singleThreadAccessChecker.startSingleThreadAccessCheck()) {
 			outputStream.defaultWriteObject();

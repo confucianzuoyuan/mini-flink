@@ -102,22 +102,4 @@ public final class InstantSerializer extends TypeSerializerSingleton<Instant> {
 		target.writeLong(source.readLong());
 		target.writeInt(source.readInt());
 	}
-
-	@Override
-	public TypeSerializerSnapshot<Instant> snapshotConfiguration() {
-		return new InstantSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class InstantSerializerSnapshot extends SimpleTypeSerializerSnapshot<Instant> {
-
-		public InstantSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }

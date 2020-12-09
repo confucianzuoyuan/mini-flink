@@ -84,13 +84,6 @@ public final class ByteSerializer extends TypeSerializerSingleton<Byte> {
 		target.writeByte(source.readByte());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<Byte> snapshotConfiguration() {
-		return new ByteSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Serializer configuration snapshot for compatibility and format evolution.
 	 */

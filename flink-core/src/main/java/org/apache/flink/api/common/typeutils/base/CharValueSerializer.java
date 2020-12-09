@@ -81,13 +81,6 @@ public class CharValueSerializer extends TypeSerializerSingleton<CharValue> {
 		target.writeChar(source.readChar());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<CharValue> snapshotConfiguration() {
-		return new CharValueSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Serializer configuration snapshot for compatibility and format evolution.
 	 */

@@ -85,21 +85,4 @@ public final class VoidSerializer extends TypeSerializerSingleton<Void> {
 		target.write(source.readByte());
 	}
 
-	@Override
-	public TypeSerializerSnapshot<Void> snapshotConfiguration() {
-		return new VoidSerializerSnapshot();
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Serializer configuration snapshot for compatibility and format evolution.
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public static final class VoidSerializerSnapshot extends SimpleTypeSerializerSnapshot<Void> {
-
-		public VoidSerializerSnapshot() {
-			super(() -> INSTANCE);
-		}
-	}
 }
