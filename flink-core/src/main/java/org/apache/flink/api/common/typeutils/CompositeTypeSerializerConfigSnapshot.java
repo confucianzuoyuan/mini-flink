@@ -36,17 +36,6 @@ public abstract class CompositeTypeSerializerConfigSnapshot<T> extends TypeSeria
 	/** This empty nullary constructor is required for deserializing the configuration. */
 	public CompositeTypeSerializerConfigSnapshot() {}
 
-	public CompositeTypeSerializerConfigSnapshot(TypeSerializer<?>... nestedSerializers) {
-		Preconditions.checkNotNull(nestedSerializers);
-
-		this.nestedSerializersAndConfigs = new ArrayList<>(nestedSerializers.length);
-		for (TypeSerializer<?> nestedSerializer : nestedSerializers) {
-			TypeSerializerSnapshot<?> configSnapshot = nestedSerializer.snapshotConfiguration();
-			this.nestedSerializersAndConfigs.add(
-				new Tuple2<>(nestedSerializer.duplicate(), Preconditions.checkNotNull(configSnapshot)));
-		}
-	}
-
 	@Override
 	public void write(DataOutputView out) throws IOException {
 		super.write(out);

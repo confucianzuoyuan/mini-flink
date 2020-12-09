@@ -38,15 +38,6 @@ public final class TupleSerializerConfigSnapshot<T> extends CompositeTypeSeriali
 
 	private Class<T> tupleClass;
 
-	/** This empty nullary constructor is required for deserializing the configuration. */
-	public TupleSerializerConfigSnapshot() {}
-
-	public TupleSerializerConfigSnapshot(Class<T> tupleClass, TypeSerializer<?>[] fieldSerializers) {
-		super(fieldSerializers);
-
-		this.tupleClass = Preconditions.checkNotNull(tupleClass);
-	}
-
 	@Override
 	public void write(DataOutputView out) throws IOException {
 		super.write(out);
