@@ -377,43 +377,6 @@ public abstract class AbstractStreamOperator<OUT>
 	//  Watermark handling
 	// ------------------------------------------------------------------------
 
-	/**
-	 * Returns a {@link InternalTimerService} that can be used to query current processing time
-	 * and event time and to set timers. An operator can have several timer services, where
-	 * each has its own namespace serializer. Timer services are differentiated by the string
-	 * key that is given when requesting them, if you call this method with the same key
-	 * multiple times you will get the same timer service instance in subsequent requests.
-	 *
-	 * <p>Timers are always scoped to a key, the currently active key of a keyed stream operation.
-	 * When a timer fires, this key will also be set as the currently active key.
-	 *
-	 * <p>Each timer has attached metadata, the namespace. Different timer services
-	 * can have a different namespace type. If you don't need namespace differentiation you
-	 * can use {@link VoidNamespaceSerializer} as the namespace serializer.
-	 *
-	 * @param name The name of the requested timer service. If no service exists under the given
-	 *             name a new one will be created and returned.
-	 * @param namespaceSerializer {@code TypeSerializer} for the timer namespace.
-	 * @param triggerable The {@link Triggerable} that should be invoked when timers fire
-	 *
-	 * @param <N> The type of the timer namespace.
-	 */
-	public <K, N> InternalTimerService<N> getInternalTimerService(
-			String name,
-			TypeSerializer<N> namespaceSerializer,
-			Triggerable<K, N> triggerable) {
-		if (timeServiceManager == null) {
-			throw new RuntimeException("The timer service has not been initialized.");
-		}
-		@SuppressWarnings("unchecked")
-		InternalTimeServiceManager<K> keyedTimeServiceHandler = (InternalTimeServiceManager<K>) timeServiceManager;
-		return keyedTimeServiceHandler.getInternalTimerService(
-			name,
-			namespaceSerializer,
-			triggerable,
-			stateHandler.getKeyedStateBackend());
-	}
-
 	public void processWatermark(Watermark mark) throws Exception {
 		if (timeServiceManager != null) {
 			timeServiceManager.advanceWatermark(mark);
@@ -421,37 +384,9 @@ public abstract class AbstractStreamOperator<OUT>
 		output.emitWatermark(mark);
 	}
 
-	public void processWatermark1(Watermark mark) throws Exception {
-		input1Watermark = mark.getTimestamp();
-		long newMin = Math.min(input1Watermark, input2Watermark);
-		if (newMin > combinedWatermark) {
-			combinedWatermark = newMin;
-			processWatermark(new Watermark(combinedWatermark));
-		}
-	}
-
-	public void processWatermark2(Watermark mark) throws Exception {
-		input2Watermark = mark.getTimestamp();
-		long newMin = Math.min(input1Watermark, input2Watermark);
-		if (newMin > combinedWatermark) {
-			combinedWatermark = newMin;
-			processWatermark(new Watermark(combinedWatermark));
-		}
-	}
-
 	@Override
 	public OperatorID getOperatorID() {
 		return config.getOperatorID();
-	}
-
-	@VisibleForTesting
-	public int numProcessingTimeTimers() {
-		return timeServiceManager == null ? 0 : timeServiceManager.numProcessingTimeTimers();
-	}
-
-	@VisibleForTesting
-	public int numEventTimeTimers() {
-		return timeServiceManager == null ? 0 : timeServiceManager.numEventTimeTimers();
 	}
 
 	protected Optional<InternalTimeServiceManager<?>> getTimeServiceManager() {

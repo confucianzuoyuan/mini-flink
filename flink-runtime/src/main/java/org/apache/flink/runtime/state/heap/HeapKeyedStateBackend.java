@@ -109,60 +109,6 @@ public class HeapKeyedStateBackend<K> extends AbstractKeyedStateBackend<K> {
 	//  state backend operations
 	// ------------------------------------------------------------------------
 
-	@SuppressWarnings("unchecked")
-	@Nonnull
-	@Override
-	public <T extends HeapPriorityQueueElement & PriorityComparable & Keyed> KeyGroupedInternalPriorityQueue<T> create(
-		@Nonnull String stateName,
-		@Nonnull TypeSerializer<T> byteOrderedElementSerializer) {
-
-		final HeapPriorityQueueSnapshotRestoreWrapper existingState = registeredPQStates.get(stateName);
-
-		if (existingState != null) {
-			// TODO we implement the simple way of supporting the current functionality, mimicking keyed state
-			// because this should be reworked in FLINK-9376 and then we should have a common algorithm over
-			// StateMetaInfoSnapshot that avoids this code duplication.
-
-			TypeSerializerSchemaCompatibility<T> compatibilityResult =
-				existingState.getMetaInfo().updateElementSerializer(byteOrderedElementSerializer);
-
-			if (compatibilityResult.isIncompatible()) {
-				throw new FlinkRuntimeException(new StateMigrationException("For heap backends, the new priority queue serializer must not be incompatible."));
-			} else {
-				registeredPQStates.put(
-					stateName,
-					existingState.forUpdatedSerializer(byteOrderedElementSerializer));
-			}
-
-			return existingState.getPriorityQueue();
-		} else {
-			final RegisteredPriorityQueueStateBackendMetaInfo<T> metaInfo =
-				new RegisteredPriorityQueueStateBackendMetaInfo<>(stateName, byteOrderedElementSerializer);
-			return createInternal(metaInfo);
-		}
-	}
-
-	@Nonnull
-	private <T extends HeapPriorityQueueElement & PriorityComparable & Keyed> KeyGroupedInternalPriorityQueue<T> createInternal(
-		RegisteredPriorityQueueStateBackendMetaInfo<T> metaInfo) {
-
-		final String stateName = metaInfo.getName();
-		final HeapPriorityQueueSet<T> priorityQueue = priorityQueueSetFactory.create(
-			stateName,
-			metaInfo.getElementSerializer());
-
-		HeapPriorityQueueSnapshotRestoreWrapper<T> wrapper =
-			new HeapPriorityQueueSnapshotRestoreWrapper<>(
-				priorityQueue,
-				metaInfo,
-				KeyExtractorFunction.forKeyedObjects(),
-				keyGroupRange,
-				numberOfKeyGroups);
-
-		registeredPQStates.put(stateName, wrapper);
-		return priorityQueue;
-	}
-
 	private <N, V> StateTable<K, N, V> tryRegisterStateTable(
 		TypeSerializer<N> namespaceSerializer,
 		StateDescriptor<?, V> stateDesc,

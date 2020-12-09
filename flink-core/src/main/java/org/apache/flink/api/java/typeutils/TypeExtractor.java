@@ -1496,22 +1496,6 @@ public class TypeExtractor {
 			}
 			return new TupleTypeInfo(value.getClass(), infos);
 		}
-		else if (value instanceof Row) {
-			Row row = (Row) value;
-			int arity = row.getArity();
-			for (int i = 0; i < arity; i++) {
-				if (row.getField(i) == null) {
-					LOG.warn("Cannot extract type of Row field, because of Row field[" + i + "] is null. " +
-						"Should define RowTypeInfo explicitly.");
-					return privateGetForClass((Class<X>) value.getClass(), new ArrayList<Type>());
-				}
-			}
-			TypeInformation<?>[] typeArray = new TypeInformation<?>[arity];
-			for (int i = 0; i < arity; i++) {
-				typeArray[i] = TypeExtractor.getForObject(row.getField(i));
-			}
-			return (TypeInformation<X>) new RowTypeInfo(typeArray);
-		}
 		else {
 			return privateGetForClass((Class<X>) value.getClass(), new ArrayList<Type>());
 		}

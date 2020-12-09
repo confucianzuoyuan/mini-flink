@@ -24,8 +24,4 @@ import org.apache.flink.runtime.state.heap.HeapPriorityQueueElement;
 import javax.annotation.Nonnull;
 
 public interface PriorityQueueSetFactory {
-	@Nonnull
-	<T extends HeapPriorityQueueElement & PriorityComparable & Keyed> KeyGroupedInternalPriorityQueue<T> create(
-		@Nonnull String stateName,
-		@Nonnull TypeSerializer<T> byteOrderedElementSerializer);
 }

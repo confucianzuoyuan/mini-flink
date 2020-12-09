@@ -82,64 +82,6 @@ public class InternalTimeServiceManager<K> {
 		this.timerServices = new HashMap<>();
 	}
 
-	public <N> InternalTimerService<N> getInternalTimerService(
-			String name,
-			TypeSerializer<N> namespaceSerializer,
-			Triggerable<K, N> triggerable,
-			KeyedStateBackend<K> keyedStateBackend) {
-		checkNotNull(keyedStateBackend, "Timers can only be used on keyed operators.");
-
-		TypeSerializer<K> keySerializer = keyedStateBackend.getKeySerializer();
-		// the following casting is to overcome type restrictions.
-		TimerSerializer<K, N> timerSerializer = new TimerSerializer<>(keySerializer, namespaceSerializer);
-		return getInternalTimerService(name, timerSerializer, triggerable);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <N> InternalTimerService<N> getInternalTimerService(
-		String name,
-		TimerSerializer<K, N> timerSerializer,
-		Triggerable<K, N> triggerable) {
-
-		InternalTimerServiceImpl<K, N> timerService = registerOrGetTimerService(name, timerSerializer);
-
-		timerService.startTimerService(
-			timerSerializer.getKeySerializer(),
-			timerSerializer.getNamespaceSerializer(),
-			triggerable);
-
-		return timerService;
-	}
-
-	@SuppressWarnings("unchecked")
-	<N> InternalTimerServiceImpl<K, N> registerOrGetTimerService(String name, TimerSerializer<K, N> timerSerializer) {
-		InternalTimerServiceImpl<K, N> timerService = (InternalTimerServiceImpl<K, N>) timerServices.get(name);
-		if (timerService == null) {
-
-			timerService = new InternalTimerServiceImpl<>(
-				localKeyGroupRange,
-				keyContext,
-				processingTimeService,
-				createTimerPriorityQueue(PROCESSING_TIMER_PREFIX + name, timerSerializer),
-				createTimerPriorityQueue(EVENT_TIMER_PREFIX + name, timerSerializer));
-
-			timerServices.put(name, timerService);
-		}
-		return timerService;
-	}
-
-	Map<String, InternalTimerServiceImpl<K, ?>> getRegisteredTimerServices() {
-		return Collections.unmodifiableMap(timerServices);
-	}
-
-	private <N> KeyGroupedInternalPriorityQueue<TimerHeapInternalTimer<K, N>> createTimerPriorityQueue(
-		String name,
-		TimerSerializer<K, N> timerSerializer) {
-		return priorityQueueSetFactory.create(
-			name,
-			timerSerializer);
-	}
-
 	public void advanceWatermark(Watermark watermark) throws Exception {
 		for (InternalTimerServiceImpl<?, ?> service : timerServices.values()) {
 			service.advanceWatermark(watermark.getTimestamp());

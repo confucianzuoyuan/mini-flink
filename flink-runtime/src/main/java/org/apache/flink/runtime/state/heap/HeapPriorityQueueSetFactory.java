@@ -48,17 +48,4 @@ public class HeapPriorityQueueSetFactory implements PriorityQueueSetFactory {
 		this.minimumCapacity = minimumCapacity;
 	}
 
-	@Nonnull
-	@Override
-	public <T extends HeapPriorityQueueElement & PriorityComparable & Keyed> HeapPriorityQueueSet<T> create(
-		@Nonnull String stateName,
-		@Nonnull TypeSerializer<T> byteOrderedElementSerializer) {
-
-		return new HeapPriorityQueueSet<>(
-			PriorityComparator.forPriorityComparableObjects(),
-			KeyExtractorFunction.forKeyedObjects(),
-			minimumCapacity,
-			keyGroupRange,
-			totalKeyGroups);
-	}
 }
