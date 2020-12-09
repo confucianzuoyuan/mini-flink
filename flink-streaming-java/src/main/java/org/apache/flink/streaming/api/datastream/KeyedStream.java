@@ -23,7 +23,6 @@ import org.apache.flink.annotation.Public;
 import org.apache.flink.api.common.InvalidProgramException;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.typeinfo.BasicArrayTypeInfo;
-import org.apache.flink.api.common.typeinfo.PrimitiveArrayTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.typeutils.*;
@@ -145,21 +144,6 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
 		return keyType;
 	}
 
-	/**
-	 * Validates that a given type of element (as encoded by the provided {@link TypeInformation}) can be
-	 * used as a key in the {@code DataStream.keyBy()} operation.
-	 *
-	 * @param type The {@link TypeInformation} of the type to check.
-	 * @return {@code false} if:
-	 * <ol>
-	 *     <li>it is a POJO type but does not override the {@link #hashCode()} method and relies on
-	 *     the {@link Object#hashCode()} implementation.</li>
-	 *     <li>it is an array of any type (see {@link PrimitiveArrayTypeInfo}, {@link BasicArrayTypeInfo},
-	 *     {@link ObjectArrayTypeInfo}).</li>
-	 *     <li>it is enum type</li>
-	 * </ol>,
-	 * {@code true} otherwise.
-	 */
 	private boolean validateKeyTypeIsHashable(TypeInformation<?> type) {
 		try {
 			return (type instanceof PojoTypeInfo)
@@ -172,7 +156,7 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
 	}
 
 	private static boolean isArrayType(TypeInformation<?> type) {
-		return type instanceof PrimitiveArrayTypeInfo || type instanceof BasicArrayTypeInfo || type instanceof ObjectArrayTypeInfo;
+		return type instanceof BasicArrayTypeInfo || type instanceof ObjectArrayTypeInfo;
 	}
 
 	private static boolean isEnumType(TypeInformation<?> type) {

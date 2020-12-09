@@ -801,20 +801,6 @@ public class TypeExtractor {
 				info = createTypeInfoFromInput(returnTypeVar, inputTypeHierarchy, resolvedInType, inTypeInfo);
 			}
 		}
-		// input is an array
-		else if (inType instanceof GenericArrayType) {
-			TypeInformation<?> componentInfo = null;
-			if (inTypeInfo instanceof BasicArrayTypeInfo) {
-				componentInfo = ((BasicArrayTypeInfo<?,?>) inTypeInfo).getComponentInfo();
-			}
-			else if (inTypeInfo instanceof PrimitiveArrayTypeInfo) {
-				componentInfo = BasicTypeInfo.getInfoFor(inTypeInfo.getTypeClass().getComponentType());
-			}
-			else if (inTypeInfo instanceof ObjectArrayTypeInfo) {
-				componentInfo = ((ObjectArrayTypeInfo<?,?>) inTypeInfo).getComponentInfo();
-			}
-			info = createTypeInfoFromInput(returnTypeVar, inputTypeHierarchy, ((GenericArrayType) inType).getGenericComponentType(), componentInfo);
-		}
 		// the input is a tuple
 		else if (inTypeInfo instanceof TupleTypeInfo && isClassType(inType) && Tuple.class.isAssignableFrom(typeToClass(inType))) {
 			ParameterizedType tupleBaseClass;
@@ -1137,24 +1123,6 @@ public class TypeExtractor {
 
 				for (int i = 0; i < subTypes.length; i++) {
 					validateInfo(new ArrayList<Type>(typeHierarchy), subTypes[i], tti.getTypeAt(i));
-				}
-			}
-			// check for primitive array
-			else if (typeInfo instanceof PrimitiveArrayTypeInfo) {
-				Type component;
-				// check if array at all
-				if (!(type instanceof Class<?> && ((Class<?>) type).isArray() && (component = ((Class<?>) type).getComponentType()) != null)
-						&& !(type instanceof GenericArrayType && (component = ((GenericArrayType) type).getGenericComponentType()) != null)) {
-					throw new InvalidTypesException("Array type expected.");
-				}
-				if (component instanceof TypeVariable<?>) {
-					component = materializeTypeVariable(typeHierarchy, (TypeVariable<?>) component);
-					if (component instanceof TypeVariable) {
-						return;
-					}
-				}
-				if (!(component instanceof Class<?> && ((Class<?>)component).isPrimitive())) {
-					throw new InvalidTypesException("Primitive component expected.");
 				}
 			}
 			// check for basic array

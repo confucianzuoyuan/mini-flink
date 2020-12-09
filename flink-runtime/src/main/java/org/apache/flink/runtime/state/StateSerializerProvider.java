@@ -31,27 +31,6 @@ import javax.annotation.Nullable;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
-/**
- * A {@link StateSerializerProvider} wraps logic on how to obtain serializers for registered state,
- * either with the previous schema of state in checkpoints or the current schema of state.
- *
- * <p>A provider can be created from either a registered state serializer, or the snapshot
- * of the previous state serializer. For the former case, if the state was restored and a
- * snapshot of the previous state serializer was retrieved later on, the snapshot can be set
- * on the provider which also additionally checks the compatibility of the initially registered
- * serializer. Similarly for the latter case, if a new state serializer is registered later on,
- * it can be set on the provider, which then also checks the compatibility of the new registered
- * serializer.
- *
- * <p>Simply put, the provider works both directions - either creating it first with a registered
- * serializer or the previous serializer's snapshot, and then setting the previous serializer's
- * snapshot (if the provider was created with a registered serializer) or a new registered state
- * serializer (if the provider was created with a serializer snapshot). Either way,
- * the new registered serializer is checked for schema compatibility once both the new serializer
- * and the previous serializer snapshot is present.
- *
- * @param <T> the type of the state.
- */
 @Internal
 public abstract class StateSerializerProvider<T> {
 
@@ -89,17 +68,6 @@ public abstract class StateSerializerProvider<T> {
 
 	private boolean isRegisteredWithIncompatibleSerializer = false;
 
-	/**
-	 * Creates a {@link StateSerializerProvider} for restored state from the previous serializer's snapshot.
-	 *
-	 * <p>Once a new serializer is registered for the state, it should be provided via
-	 * the {@link #registerNewSerializerForRestoredState(TypeSerializer)} method.
-	 *
-	 * @param stateSerializerSnapshot the previous serializer's snapshot.
-	 * @param <T> the type of the state.
-	 *
-	 * @return a new {@link StateSerializerProvider}.
-	 */
 	public static <T> StateSerializerProvider<T> fromPreviousSerializerSnapshot(TypeSerializerSnapshot<T> stateSerializerSnapshot) {
 		return new LazilyRegisteredStateSerializerProvider<>(stateSerializerSnapshot);
 	}
@@ -134,17 +102,6 @@ public abstract class StateSerializerProvider<T> {
 		return previousSchemaSerializer();
 	}
 
-	/**
-	 * Gets the serializer that recognizes the previous serialization schema of the state.
-	 * This is the serializer that should be used for restoring the state, i.e. when the state
-	 * is still in the previous serialization schema.
-	 *
-	 * <p>This method only returns a serializer if this provider has the previous serializer's
-	 * snapshot. Otherwise, trying to access the previous schema serializer will fail
-	 * with an exception.
-	 *
-	 * @return a serializer that reads and writes in the previous schema of the state.
-	 */
 	@Nonnull
 	public final TypeSerializer<T> previousSchemaSerializer() {
 		if (cachedRestoredSerializer != null) {

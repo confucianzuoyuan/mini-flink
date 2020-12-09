@@ -22,7 +22,6 @@ import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.operators.Keys;
 import org.apache.flink.api.common.typeinfo.BasicArrayTypeInfo;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
-import org.apache.flink.api.common.typeinfo.PrimitiveArrayTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.common.typeutils.CompositeType;
 import org.apache.flink.api.java.typeutils.PojoField;
@@ -54,11 +53,7 @@ public class FieldAccessorFactory implements Serializable {
 	public static <T, F> FieldAccessor<T, F> getAccessor(TypeInformation<T> typeInfo, int pos, ExecutionConfig config){
 
 		// In case of arrays
-		if (typeInfo instanceof BasicArrayTypeInfo || typeInfo instanceof PrimitiveArrayTypeInfo) {
-			return new FieldAccessor.ArrayFieldAccessor<>(pos, typeInfo);
-
-		// In case of basic types
-		} else if (typeInfo instanceof BasicTypeInfo) {
+		if (typeInfo instanceof BasicTypeInfo) {
 			if (pos != 0) {
 				throw new CompositeType.InvalidFieldReferenceException("The " + ((Integer) pos).toString() + ". field selected on a " +
 					"basic type (" + typeInfo.toString() + "). A field expression on a basic type can only select " +
@@ -103,16 +98,7 @@ public class FieldAccessorFactory implements Serializable {
 	public static <T, F> FieldAccessor<T, F> getAccessor(TypeInformation<T> typeInfo, String field, ExecutionConfig config) {
 
 		// In case of arrays
-		if (typeInfo instanceof BasicArrayTypeInfo || typeInfo instanceof PrimitiveArrayTypeInfo) {
-			try {
-				return new FieldAccessor.ArrayFieldAccessor<>(Integer.parseInt(field), typeInfo);
-			} catch (NumberFormatException ex) {
-				throw new CompositeType.InvalidFieldReferenceException
-					("A field expression on an array must be an integer index (that might be given as a string).");
-			}
-
-		// In case of basic types
-		} else if (typeInfo instanceof BasicTypeInfo) {
+		if (typeInfo instanceof BasicTypeInfo) {
 			try {
 				int pos = field.equals(Keys.ExpressionKeys.SELECT_ALL_CHAR) ? 0 : Integer.parseInt(field);
 				return FieldAccessorFactory.getAccessor(typeInfo, pos, config);

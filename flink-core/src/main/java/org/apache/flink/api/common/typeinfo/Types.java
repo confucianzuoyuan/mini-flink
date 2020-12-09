@@ -294,23 +294,6 @@ public class Types {
 	}
 
 	public static TypeInformation<?> PRIMITIVE_ARRAY(TypeInformation<?> elementType) {
-		if (elementType == BOOLEAN) {
-			return PrimitiveArrayTypeInfo.BOOLEAN_PRIMITIVE_ARRAY_TYPE_INFO;
-		} else if (elementType == BYTE) {
-			return PrimitiveArrayTypeInfo.BYTE_PRIMITIVE_ARRAY_TYPE_INFO;
-		} else if (elementType == SHORT) {
-			return PrimitiveArrayTypeInfo.SHORT_PRIMITIVE_ARRAY_TYPE_INFO;
-		} else if (elementType == INT) {
-			return PrimitiveArrayTypeInfo.INT_PRIMITIVE_ARRAY_TYPE_INFO;
-		} else if (elementType == LONG) {
-			return PrimitiveArrayTypeInfo.LONG_PRIMITIVE_ARRAY_TYPE_INFO;
-		} else if (elementType == FLOAT) {
-			return PrimitiveArrayTypeInfo.FLOAT_PRIMITIVE_ARRAY_TYPE_INFO;
-		} else if (elementType == DOUBLE) {
-			return PrimitiveArrayTypeInfo.DOUBLE_PRIMITIVE_ARRAY_TYPE_INFO;
-		} else if (elementType == CHAR) {
-			return PrimitiveArrayTypeInfo.CHAR_PRIMITIVE_ARRAY_TYPE_INFO;
-		}
 		throw new IllegalArgumentException("Invalid element type for a primitive array.");
 	}
 
