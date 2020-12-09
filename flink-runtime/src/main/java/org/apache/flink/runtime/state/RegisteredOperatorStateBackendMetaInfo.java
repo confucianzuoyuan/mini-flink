@@ -19,8 +19,6 @@
 package org.apache.flink.runtime.state;
 
 import org.apache.flink.api.common.typeutils.TypeSerializer;
-import org.apache.flink.api.common.typeutils.TypeSerializerSchemaCompatibility;
-import org.apache.flink.runtime.state.metainfo.StateMetaInfoSnapshot;
 import org.apache.flink.util.Preconditions;
 
 import javax.annotation.Nonnull;
@@ -90,11 +88,6 @@ public class RegisteredOperatorStateBackendMetaInfo<S> extends RegisteredStateMe
 	@Nonnull
 	public TypeSerializer<S> getPartitionStateSerializer() {
 		return partitionStateSerializerProvider.currentSchemaSerializer();
-	}
-
-	@Nonnull
-	public TypeSerializerSchemaCompatibility<S> updatePartitionStateSerializer(TypeSerializer<S> newPartitionStateSerializer) {
-		return partitionStateSerializerProvider.registerNewSerializerForRestoredState(newPartitionStateSerializer);
 	}
 
 	@Nullable

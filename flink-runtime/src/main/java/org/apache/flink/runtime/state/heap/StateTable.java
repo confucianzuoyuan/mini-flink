@@ -23,7 +23,6 @@ import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.runtime.state.KeyGroupRangeAssignment;
 import org.apache.flink.runtime.state.RegisteredKeyValueStateBackendMetaInfo;
 import org.apache.flink.runtime.state.StateEntry;
-import org.apache.flink.runtime.state.StateTransformationFunction;
 import org.apache.flink.runtime.state.internal.InternalKvState.StateIncrementalVisitor;
 import org.apache.flink.util.Preconditions;
 
@@ -31,14 +30,6 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-/**
- * Base class for state tables. Accesses to state are typically scoped by the currently active key, as provided
- * through the {@link InternalKeyContext}.
- *
- * @param <K> type of key
- * @param <N> type of namespace
- * @param <S> type of state
- */
 public abstract class StateTable<K, N, S>
 	implements Iterable<StateEntry<K, N, S>> {
 
@@ -141,58 +132,12 @@ public abstract class StateTable<K, N, S>
 		return containsKey(keyContext.getCurrentKey(), keyContext.getCurrentKeyGroupIndex(), namespace);
 	}
 
-	/**
-	 * Maps the composite of active key and given namespace to the specified state.
-	 *
-	 * @param namespace the namespace. Not null.
-	 * @param state     the state. Can be null.
-	 */
 	public void put(N namespace, S state) {
 		put(keyContext.getCurrentKey(), keyContext.getCurrentKeyGroupIndex(), namespace, state);
 	}
 
-	/**
-	 * Removes the mapping for the composite of active key and given namespace. This method should be preferred
-	 * over {@link #removeAndGetOld(N)} when the caller is not interested in the old state.
-	 *
-	 * @param namespace the namespace of the mapping to remove. Not null.
-	 */
 	public void remove(N namespace) {
 		remove(keyContext.getCurrentKey(), keyContext.getCurrentKeyGroupIndex(), namespace);
-	}
-
-	/**
-	 * Removes the mapping for the composite of active key and given namespace, returning the state that was
-	 * found under the entry.
-	 *
-	 * @param namespace the namespace of the mapping to remove. Not null.
-	 * @return the state of the removed mapping or {@code null} if no mapping
-	 * for the specified key was found.
-	 */
-	public S removeAndGetOld(N namespace) {
-		return removeAndGetOld(keyContext.getCurrentKey(), keyContext.getCurrentKeyGroupIndex(), namespace);
-	}
-
-	/**
-	 * Applies the given {@link StateTransformationFunction} to the state (1st input argument), using the given value as
-	 * second input argument. The result of {@link StateTransformationFunction#apply(Object, Object)} is then stored as
-	 * the new state. This function is basically an optimization for get-update-put pattern.
-	 *
-	 * @param namespace      the namespace. Not null.
-	 * @param value          the value to use in transforming the state. Can be null.
-	 * @param transformation the transformation function.
-	 * @throws Exception if some exception happens in the transformation function.
-	 */
-	public <T> void transform(
-			N namespace,
-			T value,
-			StateTransformationFunction<S, T> transformation) throws Exception {
-		K key = keyContext.getCurrentKey();
-		checkKeyNamespacePreconditions(key, namespace);
-
-		int keyGroup = keyContext.getCurrentKeyGroupIndex();
-		StateMap<K, N, S> stateMap = getMapForKeyGroup(keyGroup);
-		stateMap.transform(key, namespace, value, transformation);
 	}
 
 	// For queryable state ------------------------------------------------------------------------
@@ -254,14 +199,6 @@ public abstract class StateTable<K, N, S>
 
 		StateMap<K, N, S> stateMap = getMapForKeyGroup(keyGroupIndex);
 		stateMap.remove(key, namespace);
-	}
-
-	private S removeAndGetOld(K key, int keyGroupIndex, N namespace) {
-		checkKeyNamespacePreconditions(key, namespace);
-
-		StateMap<K, N, S> stateMap = getMapForKeyGroup(keyGroupIndex);
-
-		return stateMap.removeAndGetOld(key, namespace);
 	}
 
 	// ------------------------------------------------------------------------

@@ -20,7 +20,6 @@ package org.apache.flink.runtime.state;
 
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
-import org.apache.flink.api.common.typeutils.TypeSerializerSchemaCompatibility;
 import org.apache.flink.util.Preconditions;
 
 import javax.annotation.Nonnull;
@@ -71,9 +70,6 @@ public abstract class StateSerializerProvider<T> {
 
 
 
-	@Nonnull
-	public abstract TypeSerializerSchemaCompatibility<T> registerNewSerializerForRestoredState(TypeSerializer<T> newSerializer);
-
 	protected final void invalidateCurrentSchemaSerializerAccess() {
 		this.isRegisteredWithIncompatibleSerializer = true;
 	}
@@ -88,12 +84,5 @@ public abstract class StateSerializerProvider<T> {
 		EagerlyRegisteredStateSerializerProvider(TypeSerializer<T> registeredStateSerializer) {
 			super(Preconditions.checkNotNull(registeredStateSerializer));
 		}
-
-		@Nonnull
-		@Override
-		public TypeSerializerSchemaCompatibility<T> registerNewSerializerForRestoredState(TypeSerializer<T> newSerializer) {
-			throw new UnsupportedOperationException("A serializer has already been registered for the state; re-registration is not allowed.");
-		}
-
 	}
 }

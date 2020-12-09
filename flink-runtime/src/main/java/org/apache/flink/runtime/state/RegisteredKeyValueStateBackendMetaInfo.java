@@ -20,13 +20,9 @@ package org.apache.flink.runtime.state;
 
 import org.apache.flink.api.common.state.StateDescriptor;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
-import org.apache.flink.api.common.typeutils.TypeSerializerSchemaCompatibility;
 import org.apache.flink.runtime.state.StateSnapshotTransformer.StateSnapshotTransformFactory;
-import org.apache.flink.runtime.state.metainfo.StateMetaInfoSnapshot;
-import org.apache.flink.util.Preconditions;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Compound meta information for a registered state in a keyed state backend. This combines all serializers and the
@@ -100,28 +96,8 @@ public class RegisteredKeyValueStateBackendMetaInfo<N, S> extends RegisteredStat
 	}
 
 	@Nonnull
-	public TypeSerializerSchemaCompatibility<N> updateNamespaceSerializer(TypeSerializer<N> newNamespaceSerializer) {
-		return namespaceSerializerProvider.registerNewSerializerForRestoredState(newNamespaceSerializer);
-	}
-
-	@Nullable
-	public TypeSerializer<N> getPreviousNamespaceSerializer() {
-		return namespaceSerializerProvider.previousSchemaSerializer();
-	}
-
-	@Nonnull
 	public TypeSerializer<S> getStateSerializer() {
 		return stateSerializerProvider.currentSchemaSerializer();
-	}
-
-	@Nonnull
-	public TypeSerializerSchemaCompatibility<S> updateStateSerializer(TypeSerializer<S> newStateSerializer) {
-		return stateSerializerProvider.registerNewSerializerForRestoredState(newStateSerializer);
-	}
-
-	@Nullable
-	public TypeSerializer<S> getPreviousStateSerializer() {
-		return stateSerializerProvider.previousSchemaSerializer();
 	}
 
 	@Override

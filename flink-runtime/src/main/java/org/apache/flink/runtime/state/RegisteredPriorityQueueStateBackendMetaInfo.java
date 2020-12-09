@@ -19,9 +19,6 @@
 package org.apache.flink.runtime.state;
 
 import org.apache.flink.api.common.typeutils.TypeSerializer;
-import org.apache.flink.api.common.typeutils.TypeSerializerSchemaCompatibility;
-import org.apache.flink.runtime.state.metainfo.StateMetaInfoSnapshot;
-import org.apache.flink.util.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,11 +49,6 @@ public class RegisteredPriorityQueueStateBackendMetaInfo<T> extends RegisteredSt
 	@Nonnull
 	public TypeSerializer<T> getElementSerializer() {
 		return elementSerializerProvider.currentSchemaSerializer();
-	}
-
-	@Nonnull
-	public TypeSerializerSchemaCompatibility<T> updateElementSerializer(TypeSerializer<T> newElementSerializer) {
-		return elementSerializerProvider.registerNewSerializerForRestoredState(newElementSerializer);
 	}
 
 	@Nullable

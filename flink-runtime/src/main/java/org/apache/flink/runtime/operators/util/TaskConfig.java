@@ -82,17 +82,6 @@ public class TaskConfig implements Serializable {
 	
 	private static final String NUM_BROADCAST_INPUTS = "in.bc.num";
 	
-	/*
-	 * If one input has multiple predecessors (bag union), multiple
-	 * inputs must be grouped together. For a map or reduce there is
-	 * one group and "pact.size.inputGroup.0" will be equal to
-	 * "pact.in.num"
-	 * 
-	 * In the case of a dual input pact (eg. match) there might be
-	 * 2 predecessors for the first group and one for the second group.
-	 * Hence, "pact.in.num" would be 3, "pact.size.inputGroup.0"
-	 * would be 2, and "pact.size.inputGroup.1" would be 1.
-	 */
 	private static final String INPUT_GROUP_SIZE_PREFIX = "in.groupsize.";
 	
 	private static final String BROADCAST_INPUT_GROUP_SIZE_PREFIX = "in.bc.groupsize.";
@@ -266,11 +255,6 @@ public class TaskConfig implements Serializable {
 		return this.config.getString(TASK_NAME, null);
 	}
 
-	public boolean hasStubWrapper() {
-		return this.config.containsKey(STUB_OBJECT);
-	}
-	
-	
 	public void setStubWrapper(UserCodeWrapper<?> wrapper) {
 		try {
 			InstantiationUtil.writeObjectToConfig(wrapper, this.config, STUB_OBJECT);
@@ -403,27 +387,7 @@ public class TaskConfig implements Serializable {
 		setTypeSerializerFactory(factory, BROADCAST_INPUT_TYPE_SERIALIZER_FACTORY_PREFIX + inputNum,
 			BROADCAST_INPUT_TYPE_SERIALIZER_PARAMETERS_PREFIX + inputNum + SEPARATOR);
 	}
-	
-	public <T> TypeSerializerFactory<T> getInputSerializer(int inputNum, ClassLoader cl) {
-		return getTypeSerializerFactory(INPUT_TYPE_SERIALIZER_FACTORY_PREFIX + inputNum,
-			INPUT_TYPE_SERIALIZER_PARAMETERS_PREFIX + inputNum + SEPARATOR, cl);
-	}
-	
-	public <T> TypeSerializerFactory<T> getBroadcastInputSerializer(int inputNum, ClassLoader cl) {
-		return getTypeSerializerFactory(BROADCAST_INPUT_TYPE_SERIALIZER_FACTORY_PREFIX + inputNum,
-			BROADCAST_INPUT_TYPE_SERIALIZER_PARAMETERS_PREFIX + inputNum + SEPARATOR, cl);
-	}
-	
-	public void setInputComparator(TypeComparatorFactory<?> factory, int inputNum) {
-		setTypeComparatorFactory(factory, INPUT_STRATEGY_COMPARATOR_FACTORY_PREFIX + inputNum,
-			INPUT_STRATEGY_COMPARATOR_PARAMETERS_PREFIX + inputNum + SEPARATOR);
-	}
-	
-	public <T> TypeComparatorFactory<T> getInputComparator(int inputNum, ClassLoader cl) {
-		return getTypeComparatorFactory(INPUT_STRATEGY_COMPARATOR_FACTORY_PREFIX + inputNum,
-			INPUT_STRATEGY_COMPARATOR_PARAMETERS_PREFIX + inputNum + SEPARATOR, cl);
-	}
-	
+
 	public int getNumInputs() {
 		return this.config.getInteger(NUM_INPUTS, 0);
 	}
@@ -440,28 +404,7 @@ public class TaskConfig implements Serializable {
 		return this.config.getInteger(BROADCAST_INPUT_GROUP_SIZE_PREFIX + groupIndex, -1);
 	}
 	
-	public void addInputToGroup(int groupIndex) {
-		final String grp = INPUT_GROUP_SIZE_PREFIX + groupIndex;
-		this.config.setInteger(grp, this.config.getInteger(grp, 0) + 1);
-		this.config.setInteger(NUM_INPUTS, this.config.getInteger(NUM_INPUTS, 0) + 1);
-	}
-	
-	public void addBroadcastInputToGroup(int groupIndex) {
-		final String grp = BROADCAST_INPUT_GROUP_SIZE_PREFIX + groupIndex;
-		if (!this.config.containsKey(grp)) {
-			this.config.setInteger(NUM_BROADCAST_INPUTS, this.config.getInteger(NUM_BROADCAST_INPUTS, 0) + 1);
-		}
-		this.config.setInteger(grp, this.config.getInteger(grp, 0) + 1);
-	}
-	
-	public void setInputAsynchronouslyMaterialized(int inputNum, boolean temp) {
-		this.config.setBoolean(INPUT_DAM_PREFIX + inputNum, temp);
-	}
-	
-	public boolean isInputAsynchronouslyMaterialized(int inputNum) {
-		return this.config.getBoolean(INPUT_DAM_PREFIX + inputNum, false);
-	}
-	
+
 	public void setInputCached(int inputNum, boolean persistent) {
 		this.config.setBoolean(INPUT_REPLAYABLE_PREFIX + inputNum, persistent);
 	}
@@ -474,55 +417,18 @@ public class TaskConfig implements Serializable {
 		this.config.setDouble(INPUT_DAM_MEMORY_PREFIX + inputNum, relativeMemory);
 	}
 	
-	public double getRelativeInputMaterializationMemory(int inputNum) {
-		return this.config.getDouble(INPUT_DAM_MEMORY_PREFIX + inputNum, 0);
-	}
-	
-	public void setBroadcastInputName(String name, int groupIndex) {
-		this.config.setString(BROADCAST_INPUT_NAME_PREFIX + groupIndex, name);
-	}
-	
-	public String getBroadcastInputName(int groupIndex) {
-		return this.config.getString(BROADCAST_INPUT_NAME_PREFIX + groupIndex, String.format("broadcastVar%04d", groupIndex));
-	}
+
+
 	
 	// --------------------------------------------------------------------------------------------
 	//                                        Outputs
 	// --------------------------------------------------------------------------------------------
 	
-	public void addOutputShipStrategy(ShipStrategyType strategy) {
-		final int outputCnt = this.config.getInteger(OUTPUTS_NUM, 0);
-		this.config.setInteger(OUTPUT_SHIP_STRATEGY_PREFIX + outputCnt, strategy.ordinal());
-		this.config.setInteger(OUTPUTS_NUM, outputCnt + 1);
-	}
-	
+
 	public int getNumOutputs() {
 		return this.config.getInteger(OUTPUTS_NUM, 0);
 	}
 
-	public ShipStrategyType getOutputShipStrategy(int outputNum) {
-		// check how many outputs are encoded in the config
-		final int outputCnt = this.config.getInteger(OUTPUTS_NUM, -1);
-		if (outputCnt < 1) {
-			throw new CorruptConfigurationException("No output ship strategies are specified in the configuration.");
-		}
-		
-		// sanity range checks
-		if (outputNum < 0 || outputNum >= outputCnt) {
-			throw new IllegalArgumentException("Invalid index for output shipping strategy.");
-		}
-		
-		final int strategy = this.config.getInteger(OUTPUT_SHIP_STRATEGY_PREFIX + outputNum, -1);
-		if (strategy == -1) {
-			throw new CorruptConfigurationException("No output shipping strategy in configuration for output " + outputNum);
-		} else if (strategy < 0 || strategy >= ShipStrategyType.values().length) {
-			throw new CorruptConfigurationException("Illegal output shipping strategy in configuration for output "
-																			+ outputNum + ": " + strategy);
-		} else {
-			return ShipStrategyType.values()[strategy];
-		}
-	}
-	
 	public void setOutputSerializer(TypeSerializerFactory<?> factory) {
 		setTypeSerializerFactory(factory, OUTPUT_TYPE_SERIALIZER_FACTORY, OUTPUT_TYPE_SERIALIZER_PARAMETERS_PREFIX);
 	}
@@ -553,40 +459,6 @@ public class TaskConfig implements Serializable {
 		}
 		catch (IOException e) {
 			throw new RuntimeException("Error serializing the DataDistribution: " + e.getMessage(), e);
-		}
-	}
-	
-	public DataDistribution getOutputDataDistribution(int outputNum, final ClassLoader cl) throws ClassNotFoundException {
-		final String className = this.config.getString(OUTPUT_DATA_DISTRIBUTION_CLASS, null);
-		if (className == null) {
-			return null;
-		}
-		
-		final Class<? extends DataDistribution> clazz;
-		try {
-			clazz = Class.forName(className, true, cl).asSubclass(DataDistribution.class);
-		} catch (ClassCastException ccex) {
-			throw new CorruptConfigurationException("The class noted in the configuration as the data distribution " +
-					"is no subclass of DataDistribution.");
-		}
-		
-		final DataDistribution distribution = InstantiationUtil.instantiate(clazz, DataDistribution.class);
-		
-		final byte[] stateEncoded = this.config.getBytes(OUTPUT_DATA_DISTRIBUTION_PREFIX + outputNum, null);
-		if (stateEncoded == null) {
-			throw new CorruptConfigurationException(
-						"The configuration contained the data distribution type, but no serialized state.");
-		}
-		
-		final ByteArrayInputStream bais = new ByteArrayInputStream(stateEncoded);
-		final DataInputViewStreamWrapper in = new DataInputViewStreamWrapper(bais);
-		
-		try {
-			distribution.read(in);
-			return distribution;
-		} catch (Exception ex) {
-			throw new RuntimeException("The deserialization of the encoded data distribution state caused an error"
-				+ (ex.getMessage() == null ? "." : ": " + ex.getMessage()), ex);
 		}
 	}
 	
