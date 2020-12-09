@@ -36,37 +36,12 @@ import java.io.Serializable;
 @PublicEvolving
 public interface Source<T, SplitT extends SourceSplit, EnumChkT> extends Serializable {
 
-	/**
-	 * Get the boundedness of this source.
-	 *
-	 * @return the boundedness of this source.
-	 */
 	Boundedness getBoundedness();
 
-	/**
-	 * Creates a new reader to read data from the spits it gets assigned.
-	 * The reader starts fresh and does not have any state to resume.
-	 *
-	 * @param readerContext The {@link SourceReaderContext context} for the source reader.
-	 * @return A new SourceReader.
-	 */
 	SourceReader<T, SplitT> createReader(SourceReaderContext readerContext);
 
-	/**
-	 * Creates a new SplitEnumerator for this source, starting a new input.
-	 *
-	 * @param enumContext The {@link SplitEnumeratorContext context} for the split enumerator.
-	 * @return A new SplitEnumerator.
-	 */
 	SplitEnumerator<SplitT, EnumChkT> createEnumerator(SplitEnumeratorContext<SplitT> enumContext);
 
-	/**
-	 * Restores an enumerator from a checkpoint.
-	 *
-	 * @param enumContext The {@link SplitEnumeratorContext context} for the restored split enumerator.
-	 * @param checkpoint The checkpoint to restore the SplitEnumerator from.
-	 * @return A SplitEnumerator restored from the given checkpoint.
-	 */
 	SplitEnumerator<SplitT, EnumChkT> restoreEnumerator(
 			SplitEnumeratorContext<SplitT> enumContext,
 			EnumChkT checkpoint) throws IOException;

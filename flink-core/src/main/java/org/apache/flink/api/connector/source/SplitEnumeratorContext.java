@@ -29,10 +29,6 @@ public interface SplitEnumeratorContext<SplitT extends SourceSplit> {
 
 	void sendEventToSourceReader(int subtaskId, SourceEvent event);
 
-	int currentParallelism();
-
-	Map<Integer, ReaderInfo> registeredReaders();
-
 	void assignSplits(SplitsAssignment<SplitT> newSplitAssignments);
 
 	<T> void callAsync(Callable<T> callable, BiConsumer<T, Throwable> handler);
