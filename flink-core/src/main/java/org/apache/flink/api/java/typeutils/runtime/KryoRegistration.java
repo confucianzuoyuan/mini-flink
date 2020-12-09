@@ -133,14 +133,6 @@ public class KryoRegistration implements Serializable {
 		}
 	}
 
-	public boolean isDummy() {
-		return registeredClass.equals(KryoRegistrationSerializerConfigSnapshot.DummyRegisteredClass.class)
-				|| (serializerClass != null
-						&& serializerClass.equals(KryoRegistrationSerializerConfigSnapshot.DummyKryoSerializerClass.class))
-				|| (serializableSerializerInstance != null
-						&& serializableSerializerInstance.getSerializer() instanceof KryoRegistrationSerializerConfigSnapshot.DummyKryoSerializerClass);
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
