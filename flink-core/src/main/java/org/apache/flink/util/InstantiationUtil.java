@@ -21,7 +21,6 @@ package org.apache.flink.util;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.api.common.typeutils.TypeSerializerSerializationUtil;
-import org.apache.flink.api.common.typeutils.base.MapSerializer;
 import org.apache.flink.api.java.typeutils.runtime.KryoRegistrationSerializerConfigSnapshot;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.io.IOReadableWritable;
@@ -285,10 +284,7 @@ public final class InstantiationUtil {
 
 		GENERIC_DATA_ARRAY_SERIALIZER(
 				"org.apache.avro.generic.GenericData$Array",
-				ObjectStreamClass.lookup(KryoRegistrationSerializerConfigSnapshot.DummyRegisteredClass.class)),
-		HASH_MAP_SERIALIZER(
-				"org.apache.flink.runtime.state.HashMapSerializer",
-				ObjectStreamClass.lookup(MapSerializer.class)); // added in 1.5
+				ObjectStreamClass.lookup(KryoRegistrationSerializerConfigSnapshot.DummyRegisteredClass.class)); // added in 1.5
 
 		/** An internal unmodifiable map containing the mappings between deprecated and new serializers. */
 		private static final Map<String, ObjectStreamClass> EQUIVALENCE_MAP = Collections.unmodifiableMap(initMap());

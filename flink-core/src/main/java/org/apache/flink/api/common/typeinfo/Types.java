@@ -128,41 +128,6 @@ public class Types {
 	 */
 	public static final TypeInformation<BigInteger> BIG_INT = BasicTypeInfo.BIG_INT_TYPE_INFO;
 
-	/**
-	 * Returns type information for {@link java.sql.Date}. Supports a null value.
-	 */
-	public static final TypeInformation<Date> SQL_DATE = SqlTimeTypeInfo.DATE;
-
-	/**
-	 * Returns type information for {@link java.sql.Time}. Supports a null value.
-	 */
-	public static final TypeInformation<Time> SQL_TIME = SqlTimeTypeInfo.TIME;
-
-	/**
-	 * Returns type information for {@link java.sql.Timestamp}. Supports a null value.
-	 */
-	public static final TypeInformation<Timestamp> SQL_TIMESTAMP = SqlTimeTypeInfo.TIMESTAMP;
-
-	/**
-	 * Returns type information for {@link java.time.LocalDate}. Supports a null value.
-	 */
-	public static final TypeInformation<LocalDate> LOCAL_DATE = LocalTimeTypeInfo.LOCAL_DATE;
-
-	/**
-	 * Returns type information for {@link java.time.LocalTime}. Supports a null value.
-	 */
-	public static final TypeInformation<LocalTime> LOCAL_TIME = LocalTimeTypeInfo.LOCAL_TIME;
-
-	/**
-	 * Returns type information for {@link java.time.LocalDateTime}. Supports a null value.
-	 */
-	public static final TypeInformation<LocalDateTime> LOCAL_DATE_TIME = LocalTimeTypeInfo.LOCAL_DATE_TIME;
-
-	/**
-	 * Returns type infomation for {@link java.time.Instant}. Supports a null value.
-	 */
-	public static final TypeInformation<Instant> INSTANT = BasicTypeInfo.INSTANT_TYPE_INFO;
-
 	//CHECKSTYLE.OFF: MethodName
 
 	/**
@@ -405,35 +370,6 @@ public class Types {
 		return new ValueTypeInfo<>(valueType);
 	}
 
-	/**
-	 * Returns type information for a Java {@link java.util.Map}. A map must not be null. Null values
-	 * in keys are not supported. An entry's value can be null.
-	 *
-	 * <p>By default, maps are untyped and treated as a generic type in Flink; therefore, it is useful
-	 * to pass type information whenever a map is used.
-	 *
-	 * <p><strong>Note:</strong> Flink does not preserve the concrete {@link Map} type. It converts a map into {@link HashMap} when
-	 * copying or deserializing.
-	 *
-	 * @param keyType type information for the map's keys
-	 * @param valueType type information for the map's values
-	 */
-	public static <K, V> TypeInformation<Map<K, V>> MAP(TypeInformation<K> keyType, TypeInformation<V> valueType) {
-		return new MapTypeInfo<>(keyType, valueType);
-	}
-
-	/**
-	 * Returns type information for a Java {@link java.util.List}. A list must not be null. Null values
-	 * in elements are not supported.
-	 *
-	 * <p>By default, lists are untyped and treated as a generic type in Flink; therefore, it is useful
-	 * to pass type information whenever a list is used.
-	 *
-	 * <p><strong>Note:</strong> Flink does not preserve the concrete {@link List} type. It converts a list into {@link ArrayList} when
-	 * copying or deserializing.
-	 *
-	 * @param elementType type information for the list's elements
-	 */
 	public static <E> TypeInformation<List<E>> LIST(TypeInformation<E> elementType) {
 		return new ListTypeInfo<>(elementType);
 	}

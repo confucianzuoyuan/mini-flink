@@ -212,8 +212,6 @@ public class HeapKeyedStateBackend<K> extends AbstractKeyedStateBackend<K> {
 		StateSnapshotTransformFactory<SEV> snapshotTransformFactory) {
 		if (stateDesc instanceof ListStateDescriptor) {
 			return (StateSnapshotTransformFactory<SV>) new StateSnapshotTransformers.ListStateSnapshotTransformFactory<>(snapshotTransformFactory);
-		} else if (stateDesc instanceof MapStateDescriptor) {
-			return (StateSnapshotTransformFactory<SV>) new StateSnapshotTransformers.MapStateSnapshotTransformFactory<>(snapshotTransformFactory);
 		} else {
 			return (StateSnapshotTransformFactory<SV>) snapshotTransformFactory;
 		}
