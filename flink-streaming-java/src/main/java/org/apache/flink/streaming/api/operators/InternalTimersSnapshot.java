@@ -20,8 +20,6 @@ package org.apache.flink.streaming.api.operators;
 
 import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.api.common.typeutils.TypeSerializerSnapshot;
-import org.apache.flink.api.common.typeutils.TypeSerializerUtils;
-import org.apache.flink.util.Preconditions;
 
 import javax.annotation.Nullable;
 import java.util.Set;

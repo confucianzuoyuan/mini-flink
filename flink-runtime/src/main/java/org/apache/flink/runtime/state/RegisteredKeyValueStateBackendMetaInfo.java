@@ -28,10 +28,6 @@ import org.apache.flink.util.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Compound meta information for a registered state in a keyed state backend. This combines all serializers and the

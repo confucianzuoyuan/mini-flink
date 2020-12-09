@@ -21,7 +21,8 @@ package org.apache.flink.api.common.typeutils;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.util.Preconditions;
 
-import static org.apache.flink.util.Preconditions.*;
+import static org.apache.flink.util.Preconditions.checkNotNull;
+import static org.apache.flink.util.Preconditions.checkState;
 
 /**
  * Utilities for the {@link CompositeTypeSerializerSnapshot}.

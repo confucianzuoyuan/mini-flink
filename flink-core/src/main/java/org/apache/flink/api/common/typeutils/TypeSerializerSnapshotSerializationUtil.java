@@ -140,20 +140,6 @@ public class TypeSerializerSnapshotSerializationUtil {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void read(DataInputView in) throws IOException {
-			// read version
-			super.read(in);
-			final int version = getReadVersion();
-
-			switch (version) {
-				case 2:
-					serializerSnapshot = deserializeV2(in, userCodeClassLoader);
-					break;
-				case 1:
-					serializerSnapshot = deserializeV1(in, userCodeClassLoader, serializer);
-					break;
-				default:
-					throw new IOException("Unrecognized version for TypeSerializerSnapshot format: " + version);
-			}
 		}
 
 		@Override

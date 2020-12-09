@@ -20,7 +20,6 @@ package org.apache.flink.runtime.io.network.api.serialization;
 
 import org.apache.flink.core.io.IOReadableWritable;
 import org.apache.flink.runtime.io.network.buffer.Buffer;
-import org.apache.flink.util.CloseableIterator;
 
 import java.io.IOException;
 

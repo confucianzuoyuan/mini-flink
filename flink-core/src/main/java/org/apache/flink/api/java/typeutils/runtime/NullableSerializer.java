@@ -18,8 +18,7 @@
 
 package org.apache.flink.api.java.typeutils.runtime;
 
-import org.apache.flink.annotation.Internal;
-import org.apache.flink.api.common.typeutils.*;
+import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.core.memory.DataInputDeserializer;
 import org.apache.flink.core.memory.DataInputView;
 import org.apache.flink.core.memory.DataOutputSerializer;
@@ -29,7 +28,6 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 import static org.apache.flink.util.Preconditions.checkArgument;
-import static org.apache.flink.util.Preconditions.checkState;
 
 /**
  * Serializer wrapper to add support of {@code null} value serialization.

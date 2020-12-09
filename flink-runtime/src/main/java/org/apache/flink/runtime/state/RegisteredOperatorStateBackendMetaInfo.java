@@ -26,8 +26,6 @@ import org.apache.flink.util.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Compound meta information for a registered state in an operator state backend.

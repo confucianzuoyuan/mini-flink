@@ -18,12 +18,8 @@
 
 package org.apache.flink.runtime.taskexecutor.rpc;
 
-import org.apache.flink.api.common.JobID;
-import org.apache.flink.queryablestate.KvStateID;
-import org.apache.flink.runtime.jobgraph.JobVertexID;
 import org.apache.flink.runtime.jobmaster.KvStateRegistryGateway;
 import org.apache.flink.runtime.query.KvStateRegistryListener;
-import org.apache.flink.runtime.state.KeyGroupRange;
 import org.apache.flink.util.Preconditions;
 
 import java.net.InetSocketAddress;

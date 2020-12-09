@@ -18,7 +18,10 @@
 package org.apache.flink.runtime.io.network.api.serialization;
 
 import org.apache.flink.core.fs.RefCountedFile;
-import org.apache.flink.core.memory.*;
+import org.apache.flink.core.memory.DataInputDeserializer;
+import org.apache.flink.core.memory.DataInputView;
+import org.apache.flink.core.memory.DataInputViewStreamWrapper;
+import org.apache.flink.core.memory.MemorySegment;
 import org.apache.flink.runtime.io.network.buffer.Buffer;
 import org.apache.flink.runtime.io.network.buffer.FreeingBufferRecycler;
 import org.apache.flink.runtime.io.network.buffer.NetworkBuffer;
@@ -35,11 +38,7 @@ import java.util.Random;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static org.apache.flink.core.memory.MemorySegmentFactory.wrapCopy;
-import static org.apache.flink.core.memory.MemorySegmentFactory.wrapInt;
-import static org.apache.flink.runtime.io.network.api.serialization.NonSpanningWrapper.singleBufferIterator;
 import static org.apache.flink.runtime.io.network.api.serialization.SpillingAdaptiveSpanningRecordDeserializer.LENGTH_BYTES;
-import static org.apache.flink.util.CloseableIterator.empty;
 import static org.apache.flink.util.IOUtils.closeQuietly;
 
 final class SpanningWrapper {
