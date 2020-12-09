@@ -186,13 +186,7 @@ public class HeapKeyedStateBackend<K> extends AbstractKeyedStateBackend<K> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <N> Stream<K> getKeys(String state, N namespace) {
-		if (!registeredKVStates.containsKey(state)) {
-			return Stream.empty();
-		}
-
-		final StateSnapshotRestore stateSnapshotRestore = registeredKVStates.get(state);
-		StateTable<K, N, ?> table = (StateTable<K, N, ?>) stateSnapshotRestore;
-		return table.getKeys(namespace);
+		return Stream.empty();
 	}
 
 	@Override
@@ -263,9 +257,6 @@ public class HeapKeyedStateBackend<K> extends AbstractKeyedStateBackend<K> {
 	@Override
 	public int numKeyValueStateEntries() {
 		int sum = 0;
-		for (StateSnapshotRestore state : registeredKVStates.values()) {
-			sum += ((StateTable<?, ?, ?>) state).size();
-		}
 		return sum;
 	}
 

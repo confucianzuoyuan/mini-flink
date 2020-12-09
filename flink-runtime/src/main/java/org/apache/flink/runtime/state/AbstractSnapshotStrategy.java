@@ -23,12 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
-/**
- * Abstract base class for implementing {@link SnapshotStrategy}, that gives a consistent logging across state backends.
- *
- * @param <T> type of the snapshot result.
- */
-public abstract class AbstractSnapshotStrategy<T extends StateObject> implements SnapshotStrategy<SnapshotResult<T>> {
+public abstract class AbstractSnapshotStrategy<T extends StateObject> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractSnapshotStrategy.class);
 

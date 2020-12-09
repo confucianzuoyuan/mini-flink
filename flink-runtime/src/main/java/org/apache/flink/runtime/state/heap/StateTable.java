@@ -37,7 +37,7 @@ import java.util.stream.StreamSupport;
  * @param <S> type of state
  */
 public abstract class StateTable<K, N, S>
-	implements StateSnapshotRestore, Iterable<StateEntry<K, N, S>> {
+	implements Iterable<StateEntry<K, N, S>> {
 
 	/**
 	 * The key context view on the backend. This provides information, such as the currently active key.

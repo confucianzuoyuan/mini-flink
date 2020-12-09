@@ -36,7 +36,7 @@ public class WordCount {
 		DataStream<Tuple2<String, Integer>> counts =
 			// split up the lines in pairs (2-tuples) containing: (word,1)
 			text.flatMap(new Tokenizer()).setParallelism(1)
-				.filter(r -> r.f0.equals("hello")).setParallelism(1)
+//				.filter(r -> r.f0.equals("hello")).setParallelism(1)
 			// group by the tuple field "0" and sum up tuple field "1"
 			.keyBy(r -> r.f0).reduce(new ReduceFunction<Tuple2<String, Integer>>() {
 				@Override

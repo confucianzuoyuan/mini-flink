@@ -22,7 +22,6 @@ import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.runtime.state.KeyExtractorFunction;
 import org.apache.flink.runtime.state.KeyGroupRange;
 import org.apache.flink.runtime.state.RegisteredPriorityQueueStateBackendMetaInfo;
-import org.apache.flink.runtime.state.StateSnapshotRestore;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -32,8 +31,7 @@ import javax.annotation.Nonnull;
  *
  * @param <T> type of the queue elements.
  */
-public class HeapPriorityQueueSnapshotRestoreWrapper<T extends HeapPriorityQueueElement>
-	implements StateSnapshotRestore {
+public class HeapPriorityQueueSnapshotRestoreWrapper<T extends HeapPriorityQueueElement> {
 
 	@Nonnull
 	private final HeapPriorityQueueSet<T> priorityQueue;
