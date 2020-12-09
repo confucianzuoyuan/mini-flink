@@ -658,32 +658,6 @@ public class TypeExtractor {
 				}
 			}
 		}
-		// arrays with generics
-		else if (t instanceof GenericArrayType) {
-			GenericArrayType genericArray = (GenericArrayType) t;
-
-			Type componentType = genericArray.getGenericComponentType();
-
-			// due to a Java 6 bug, it is possible that the JVM classifies e.g. String[] or int[] as GenericArrayType instead of Class
-			if (componentType instanceof Class) {
-				Class<?> componentClass = (Class<?>) componentType;
-
-				Class<OUT> classArray = (Class<OUT>) (java.lang.reflect.Array.newInstance(componentClass, 0).getClass());
-
-				return getForClass(classArray);
-			} else {
-				TypeInformation<?> componentInfo = createTypeInfoWithTypeHierarchy(
-					typeHierarchy,
-					genericArray.getGenericComponentType(),
-					in1Type,
-					in2Type);
-
-				Class<?> componentClass = componentInfo.getTypeClass();
-				Class<OUT> classArray = (Class<OUT>) (java.lang.reflect.Array.newInstance(componentClass, 0).getClass());
-
-				return ObjectArrayTypeInfo.getInfoFor(classArray, componentInfo);
-			}
-		}
 		// objects with generics are treated as Class first
 		else if (t instanceof ParameterizedType) {
 			return (TypeInformation<OUT>) privateGetForClass(typeToClass(t), typeHierarchy, (ParameterizedType) t, in1Type, in2Type);
@@ -1126,30 +1100,6 @@ public class TypeExtractor {
 				for (int i = 0; i < subTypes.length; i++) {
 					validateInfo(new ArrayList<Type>(typeHierarchy), subTypes[i], tti.getTypeAt(i));
 				}
-			}
-			// check for object array
-			else if (typeInfo instanceof ObjectArrayTypeInfo<?, ?>) {
-				// check if array at all
-				if (!(type instanceof Class<?> && ((Class<?>) type).isArray()) && !(type instanceof GenericArrayType)) {
-					throw new InvalidTypesException("Object array type expected.");
-				}
-
-				// check component
-				Type component;
-				if (type instanceof Class<?>) {
-					component = ((Class<?>) type).getComponentType();
-				} else {
-					component = ((GenericArrayType) type).getGenericComponentType();
-				}
-
-				if (component instanceof TypeVariable<?>) {
-					component = materializeTypeVariable(typeHierarchy, (TypeVariable<?>) component);
-					if (component instanceof TypeVariable) {
-						return;
-					}
-				}
-
-				validateInfo(typeHierarchy, component, ((ObjectArrayTypeInfo<?, ?>) typeInfo).getComponentInfo());
 			}
 			// check for value
 			else if (typeInfo instanceof ValueTypeInfo<?>) {

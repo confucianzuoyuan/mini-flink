@@ -24,7 +24,6 @@ import org.apache.flink.api.common.InvalidProgramException;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.functions.KeySelector;
-import org.apache.flink.api.java.typeutils.ObjectArrayTypeInfo;
 import org.apache.flink.api.java.typeutils.PojoTypeInfo;
 import org.apache.flink.api.java.typeutils.TupleTypeInfoBase;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
@@ -148,17 +147,11 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
 
 	private boolean validateKeyTypeIsHashable(TypeInformation<?> type) {
 		try {
-			return (type instanceof PojoTypeInfo)
-					? !type.getTypeClass().getMethod("hashCode").getDeclaringClass().equals(Object.class)
-					: !(isArrayType(type));
+			return !type.getTypeClass().getMethod("hashCode").getDeclaringClass().equals(Object.class);
 		} catch (NoSuchMethodException ignored) {
 			// this should never happen as we are just searching for the hashCode() method.
 		}
 		return false;
-	}
-
-	private static boolean isArrayType(TypeInformation<?> type) {
-		return type instanceof ObjectArrayTypeInfo;
 	}
 
 	// ------------------------------------------------------------------------
