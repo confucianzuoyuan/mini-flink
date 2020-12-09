@@ -147,7 +147,7 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
 		try {
 			return (type instanceof PojoTypeInfo)
 					? !type.getTypeClass().getMethod("hashCode").getDeclaringClass().equals(Object.class)
-					: !(isArrayType(type) || isEnumType(type));
+					: !(isArrayType(type));
 		} catch (NoSuchMethodException ignored) {
 			// this should never happen as we are just searching for the hashCode() method.
 		}
@@ -156,10 +156,6 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
 
 	private static boolean isArrayType(TypeInformation<?> type) {
 		return type instanceof ObjectArrayTypeInfo;
-	}
-
-	private static boolean isEnumType(TypeInformation<?> type) {
-		return type instanceof EnumTypeInfo;
 	}
 
 	// ------------------------------------------------------------------------

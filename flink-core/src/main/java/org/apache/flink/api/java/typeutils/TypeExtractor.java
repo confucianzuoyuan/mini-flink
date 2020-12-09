@@ -1171,17 +1171,6 @@ public class TypeExtractor {
 							+ clazz.getCanonicalName() + "'.");
 				}
 			}
-			// check for Enum
-			else if (typeInfo instanceof EnumTypeInfo) {
-				if (!(type instanceof Class<?> && Enum.class.isAssignableFrom((Class<?>) type))) {
-					throw new InvalidTypesException("Enum type expected.");
-				}
-				// check enum type contents
-				if (!(typeInfo.getTypeClass() == type)) {
-					throw new InvalidTypesException("Enum type '" + typeInfo.getTypeClass().getCanonicalName() + "' expected but was '"
-							+ typeToClass(type).getCanonicalName() + "'.");
-				}
-			}
 			// check for Writable
 			else {
 				validateIfWritable(typeInfo, type);
