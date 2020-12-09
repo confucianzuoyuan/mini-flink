@@ -46,21 +46,7 @@ public class TypeSerializerSerializationUtil {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TypeSerializerSerializationUtil.class);
 
-	/**
-	 * Writes a {@link TypeSerializer} to the provided data output view.
-	 *
-	 * <p>It is written with a format that can be later read again using
-	 * {@link #tryReadSerializer(DataInputView, ClassLoader, boolean)}.
-	 *
-	 * @param out the data output view.
-	 * @param serializer the serializer to write.
-	 *
-	 * @param <T> Data type of the serializer.
-	 *
-	 * @throws IOException
-	 */
 	public static <T> void writeSerializer(DataOutputView out, TypeSerializer<T> serializer) throws IOException {
-		new TypeSerializerSerializationUtil.TypeSerializerSerializationProxy<>(serializer).write(out);
 	}
 
 	/**
