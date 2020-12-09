@@ -22,7 +22,6 @@ import org.apache.flink.annotation.Internal;
 import org.apache.flink.annotation.Public;
 import org.apache.flink.api.common.InvalidProgramException;
 import org.apache.flink.api.common.functions.ReduceFunction;
-import org.apache.flink.api.common.typeinfo.BasicArrayTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.typeutils.*;
@@ -156,7 +155,7 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
 	}
 
 	private static boolean isArrayType(TypeInformation<?> type) {
-		return type instanceof BasicArrayTypeInfo || type instanceof ObjectArrayTypeInfo;
+		return type instanceof ObjectArrayTypeInfo;
 	}
 
 	private static boolean isEnumType(TypeInformation<?> type) {

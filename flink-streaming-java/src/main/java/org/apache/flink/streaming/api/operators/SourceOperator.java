@@ -21,8 +21,6 @@ import org.apache.flink.annotation.Internal;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.state.ListState;
-import org.apache.flink.api.common.state.ListStateDescriptor;
-import org.apache.flink.api.common.typeutils.base.array.BytePrimitiveArraySerializer;
 import org.apache.flink.api.connector.source.*;
 import org.apache.flink.core.io.InputStatus;
 import org.apache.flink.core.io.SimpleVersionedSerializer;
@@ -55,10 +53,6 @@ public class SourceOperator<OUT, SplitT extends SourceSplit>
 		extends AbstractStreamOperator<OUT>
 		implements OperatorEventHandler, PushingAsyncDataInput<OUT> {
 	private static final long serialVersionUID = 1405537676017904695L;
-
-	// Package private for unit test.
-	static final ListStateDescriptor<byte[]> SPLITS_STATE_DESC =
-			new ListStateDescriptor<>("SourceReaderState", BytePrimitiveArraySerializer.INSTANCE);
 
 	/** The factory for the source reader. This is a workaround, because currently the SourceReader
 	 * must be lazily initialized, which is mainly because the metrics groups that the reader relies on is

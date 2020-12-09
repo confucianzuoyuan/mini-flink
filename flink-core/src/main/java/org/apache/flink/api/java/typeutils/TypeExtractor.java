@@ -1125,25 +1125,6 @@ public class TypeExtractor {
 					validateInfo(new ArrayList<Type>(typeHierarchy), subTypes[i], tti.getTypeAt(i));
 				}
 			}
-			// check for basic array
-			else if (typeInfo instanceof BasicArrayTypeInfo<?, ?>) {
-				Type component;
-				// check if array at all
-				if (!(type instanceof Class<?> && ((Class<?>) type).isArray() && (component = ((Class<?>) type).getComponentType()) != null)
-						&& !(type instanceof GenericArrayType && (component = ((GenericArrayType) type).getGenericComponentType()) != null)) {
-					throw new InvalidTypesException("Array type expected.");
-				}
-
-				if (component instanceof TypeVariable<?>) {
-					component = materializeTypeVariable(typeHierarchy, (TypeVariable<?>) component);
-					if (component instanceof TypeVariable) {
-						return;
-					}
-				}
-
-				validateInfo(typeHierarchy, component, ((BasicArrayTypeInfo<?, ?>) typeInfo).getComponentInfo());
-
-			}
 			// check for object array
 			else if (typeInfo instanceof ObjectArrayTypeInfo<?, ?>) {
 				// check if array at all

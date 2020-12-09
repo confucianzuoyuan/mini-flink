@@ -297,34 +297,8 @@ public class Types {
 		throw new IllegalArgumentException("Invalid element type for a primitive array.");
 	}
 
-	/**
-	 * Returns type information for Java arrays of object types (such as <code>String[]</code>,
-	 * <code>Integer[]</code>). The array itself must not be null. Null values for elements are supported.
-	 *
-	 * @param elementType element type of the array
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> TypeInformation<E[]> OBJECT_ARRAY(TypeInformation<E> elementType) {
-		if (elementType == Types.STRING) {
-			return (TypeInformation) BasicArrayTypeInfo.STRING_ARRAY_TYPE_INFO;
-		}
-		return ObjectArrayTypeInfo.getInfoFor(elementType);
-	}
-
 	public static <V extends Value> TypeInformation<V> VALUE(Class<V> valueType) {
 		return new ValueTypeInfo<>(valueType);
-	}
-
-	public static <E> TypeInformation<List<E>> LIST(TypeInformation<E> elementType) {
-		return new ListTypeInfo<>(elementType);
-	}
-
-	public static <E extends Enum<E>> TypeInformation<E> ENUM(Class<E> enumType) {
-		return new EnumTypeInfo<>(enumType);
-	}
-
-	public static <L, R> TypeInformation<Either<L, R>> EITHER(TypeInformation<L> leftType, TypeInformation<R> rightType) {
-		return new EitherTypeInfo<>(leftType, rightType);
 	}
 
 }
