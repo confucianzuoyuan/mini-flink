@@ -92,15 +92,6 @@ public class KvStateRegistry {
 		if (registeredKvStates.putIfAbsent(kvStateId, new KvStateEntry<>(kvState)) == null) {
 			final KvStateRegistryListener listener = getKvStateRegistryListener(jobId);
 
-			if (listener != null) {
-				listener.notifyKvStateRegistered(
-					jobId,
-					jobVertexId,
-					keyGroupRange,
-					registrationName,
-					kvStateId);
-			}
-
 			return kvStateId;
 		} else {
 			throw new IllegalStateException(
@@ -125,15 +116,6 @@ public class KvStateRegistry {
 		KvStateEntry<?, ?, ?> entry = registeredKvStates.remove(kvStateId);
 		if (entry != null) {
 			entry.clear();
-
-			final KvStateRegistryListener listener = getKvStateRegistryListener(jobId);
-			if (listener != null) {
-				listener.notifyKvStateUnregistered(
-						jobId,
-						jobVertexId,
-						keyGroupRange,
-						registrationName);
-			}
 		}
 	}
 

@@ -43,33 +43,4 @@ public class RpcKvStateRegistryListener implements KvStateRegistryListener {
 		this.kvStateServerAddress = Preconditions.checkNotNull(kvStateServerAddress);
 	}
 
-	@Override
-	public void notifyKvStateRegistered(
-			JobID jobId,
-			JobVertexID jobVertexId,
-			KeyGroupRange keyGroupRange,
-			String registrationName,
-			KvStateID kvStateId) {
-		kvStateRegistryGateway.notifyKvStateRegistered(
-			jobId,
-			jobVertexId,
-			keyGroupRange,
-			registrationName,
-			kvStateId,
-			kvStateServerAddress);
-	}
-
-	@Override
-	public void notifyKvStateUnregistered(
-		JobID jobId,
-		JobVertexID jobVertexId,
-		KeyGroupRange keyGroupRange,
-		String registrationName) {
-
-		kvStateRegistryGateway.notifyKvStateUnregistered(
-			jobId,
-			jobVertexId,
-			keyGroupRange,
-			registrationName);
-	}
 }

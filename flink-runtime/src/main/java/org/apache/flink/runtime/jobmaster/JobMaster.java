@@ -406,24 +406,6 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 	}
 
 	@Override
-	public CompletableFuture<Acknowledge> notifyKvStateRegistered(
-			final JobID jobId,
-			final JobVertexID jobVertexId,
-			final KeyGroupRange keyGroupRange,
-			final String registrationName,
-			final KvStateID kvStateId,
-			final InetSocketAddress kvStateServerAddress) {
-
-		try {
-			schedulerNG.notifyKvStateRegistered(jobId, jobVertexId, keyGroupRange, registrationName, kvStateId, kvStateServerAddress);
-			return CompletableFuture.completedFuture(Acknowledge.get());
-		} catch (FlinkJobNotFoundException e) {
-			log.info("Error while receiving notification about key-value state registration", e);
-			return FutureUtils.completedExceptionally(e);
-		}
-	}
-
-	@Override
 	public CompletableFuture<Acknowledge> notifyKvStateUnregistered(
 			JobID jobId,
 			JobVertexID jobVertexId,
