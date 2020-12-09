@@ -104,22 +104,6 @@ public class InternalTimerServiceSerializationProxy<K> extends PostVersionedIORe
 
 	@Override
 	protected void read(DataInputView in, boolean wasVersioned) throws IOException {
-		int noOfTimerServices = in.readInt();
-
-		for (int i = 0; i < noOfTimerServices; i++) {
-			String serviceName = in.readUTF();
-
-			int readerVersion = wasVersioned ? getReadVersion() : InternalTimersSnapshotReaderWriters.NO_VERSION;
-			InternalTimersSnapshot<?, ?> restoredTimersSnapshot = InternalTimersSnapshotReaderWriters
-				.getReaderForVersion(readerVersion, userCodeClassLoader)
-				.readTimersSnapshot(in);
-
-			InternalTimerServiceImpl<K, ?> timerService = registerOrGetTimerService(
-				serviceName,
-				restoredTimersSnapshot);
-
-			timerService.restoreTimersForKeyGroup(restoredTimersSnapshot, keyGroupIdx);
-		}
 	}
 
 	@SuppressWarnings("unchecked")
