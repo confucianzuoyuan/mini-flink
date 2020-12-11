@@ -240,26 +240,12 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 		return chainEntryPoint;
 	}
 
-	/**
-	 * This method should be called before finishing the record emission, to make sure any data
-	 * that is still buffered will be sent. It also ensures that all data sending related
-	 * exceptions are recognized.
-	 *
-	 * @throws IOException Thrown, if the buffered data cannot be pushed into the output streams.
-	 */
 	public void flushOutputs() throws IOException {
 		for (RecordWriterOutput<?> streamOutput : getStreamOutputs()) {
 			streamOutput.flush();
 		}
 	}
 
-	/**
-	 * This method releases all resources of the record writer output. It stops the output
-	 * flushing thread (if there is one) and releases all buffers currently held by the output
-	 * serializers.
-	 *
-	 * <p>This method should never fail.
-	 */
 	public void releaseOutputs() {
 		for (RecordWriterOutput<?> streamOutput : streamOutputs) {
 			streamOutput.close();
