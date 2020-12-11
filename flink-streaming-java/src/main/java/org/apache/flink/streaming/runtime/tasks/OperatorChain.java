@@ -180,25 +180,6 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 		}
 	}
 
-	@VisibleForTesting
-	OperatorChain(
-			List<StreamOperatorWrapper<?, ?>> allOperatorWrappers,
-			RecordWriterOutput<?>[] streamOutputs,
-			WatermarkGaugeExposingOutput<StreamRecord<OUT>> chainEntryPoint,
-			StreamOperatorWrapper<OUT, OP> headOperatorWrapper) {
-
-		this.streamOutputs = checkNotNull(streamOutputs);
-		this.chainEntryPoint = checkNotNull(chainEntryPoint);
-		this.operatorEventDispatcher = null;
-
-		checkState(allOperatorWrappers != null && allOperatorWrappers.size() > 0);
-		this.headOperatorWrapper = checkNotNull(headOperatorWrapper);
-		this.tailOperatorWrapper = allOperatorWrappers.get(0);
-		this.numOperators = allOperatorWrappers.size();
-
-		linkOperatorWrappers(allOperatorWrappers);
-	}
-
 	@Override
 	public StreamStatus getStreamStatus() {
 		return streamStatus;
@@ -220,26 +201,6 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 			// try and forward the stream status change to all outgoing connections
 			for (RecordWriterOutput<?> streamOutput : streamOutputs) {
 				streamOutput.emitStreamStatus(status);
-			}
-		}
-	}
-
-	public void broadcastEvent(AbstractEvent event) throws IOException {
-		broadcastEvent(event, false);
-	}
-
-	public void broadcastEvent(AbstractEvent event, boolean isPriorityEvent) throws IOException {
-		for (RecordWriterOutput<?> streamOutput : streamOutputs) {
-			streamOutput.broadcastEvent(event, isPriorityEvent);
-		}
-	}
-
-	public void prepareSnapshotPreBarrier(long checkpointId) throws Exception {
-		// go forward through the operator chain and tell each operator
-		// to prepare the checkpoint
-		for (StreamOperatorWrapper<?, ?> operatorWrapper : getAllOperators()) {
-			if (!operatorWrapper.isClosed()) {
-				operatorWrapper.getStreamOperator().prepareSnapshotPreBarrier(checkpointId);
 			}
 		}
 	}
@@ -512,11 +473,6 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 			operator,
 			processingTimeService,
 			containingTask.getMailboxExecutorFactory().createExecutor(operatorConfig.getChainIndex()));
-	}
-
-	@Nullable
-	StreamOperator<?> getTailOperator() {
-		return (tailOperatorWrapper == null) ? null : tailOperatorWrapper.getStreamOperator();
 	}
 
 	// ------------------------------------------------------------------------
