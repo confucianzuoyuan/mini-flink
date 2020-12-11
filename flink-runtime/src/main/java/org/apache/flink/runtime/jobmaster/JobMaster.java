@@ -677,6 +677,7 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 		schedulerAssignedFuture = CompletableFuture.completedFuture(null);
 		schedulerNG.setMainThreadExecutor(getMainThreadExecutor());
 
+		// 开始调度
 		schedulerAssignedFuture.thenRun(this::startScheduling);
 	}
 
@@ -685,6 +686,7 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 		jobStatusListener = new JobManagerJobStatusListener();
 		schedulerNG.registerJobStatusListener(jobStatusListener);
 
+		// 开始调度
 		schedulerNG.startScheduling();
 	}
 

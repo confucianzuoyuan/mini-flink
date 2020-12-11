@@ -1,20 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.flink.streaming.runtime.tasks;
 
 import org.apache.flink.annotation.Internal;
@@ -51,16 +34,8 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 
-import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
-/**
- * The {@code OperatorChain} contains all operators that are executed as one chain within a single
- * {@link StreamTask}.
- *
- * @param <OUT> The type of elements accepted by the chain, i.e., the input type of the chain's
- *              head operator.
- */
 @Internal
 public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements StreamStatusMaintainer {
 
@@ -597,25 +572,9 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 				StreamRecord<T> copy = castRecord.copy(serializer.copy(castRecord.getValue()));
 				operator.setKeyContextElement1(copy);
 				operator.processElement(copy);
-			} catch (ClassCastException e) {
-				if (outputTag != null) {
-					// Enrich error message
-					ClassCastException replace = new ClassCastException(
-						String.format(
-							"%s. Failed to push OutputTag with id '%s' to operator. " +
-								"This can occur when multiple OutputTags with different types " +
-								"but identical names are being used.",
-							e.getMessage(),
-							outputTag.getId()));
-
-					throw new ExceptionInChainedOperatorException(replace);
-				} else {
-					throw new ExceptionInChainedOperatorException(e);
-				}
 			} catch (Exception e) {
 				throw new ExceptionInChainedOperatorException(e);
 			}
-
 		}
 	}
 

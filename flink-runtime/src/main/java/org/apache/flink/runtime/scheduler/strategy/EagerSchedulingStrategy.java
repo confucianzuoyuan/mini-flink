@@ -49,6 +49,7 @@ public class EagerSchedulingStrategy implements SchedulingStrategy {
 
 	@Override
 	public void startScheduling() {
+		// 分配任务槽然后部署任务
 		allocateSlotsAndDeploy(SchedulingStrategyUtils.getAllVertexIdsFromTopology(schedulingTopology));
 	}
 

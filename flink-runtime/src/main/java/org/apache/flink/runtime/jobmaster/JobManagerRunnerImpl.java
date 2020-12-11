@@ -293,12 +293,13 @@ public class JobManagerRunnerImpl implements LeaderContender, OnCompletionAction
 
 	private CompletionStage<Void> startJobMaster(UUID leaderSessionId) {
 		try {
-			// 将jobid添加到一张哈系表
+			// 将jobid添加到一张哈希表
 			runningJobsRegistry.setJobRunning(jobGraph.getJobID());
 		} catch (IOException e) { }
 
 		final CompletableFuture<Acknowledge> startFuture;
 		try {
+			// 启动JobMaster服务
 			startFuture = jobMasterService.start(new JobMasterId(leaderSessionId));
 		} catch (Exception e) {
 			return FutureUtils.completedExceptionally(new FlinkException("Failed to start the JobMaster.", e));

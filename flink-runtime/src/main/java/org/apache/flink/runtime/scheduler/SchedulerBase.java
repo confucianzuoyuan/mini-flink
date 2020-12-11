@@ -276,6 +276,7 @@ public abstract class SchedulerBase implements SchedulerNG {
 
 	@Override
 	public final void startScheduling() {
+		// 开始调度
 		startSchedulingInternal();
 	}
 

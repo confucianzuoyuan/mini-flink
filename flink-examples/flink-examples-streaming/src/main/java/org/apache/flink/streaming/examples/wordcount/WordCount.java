@@ -23,12 +23,14 @@ public class WordCount {
 			.filter(r -> r.f0.equals("hello"))
 			.setParallelism(1)
 			.keyBy(r -> r.f0)
-			.reduce(new ReduceFunction<Tuple2<String, Integer>>() {
-				@Override
-				public Tuple2<String, Integer> reduce(Tuple2<String, Integer> value1, Tuple2<String, Integer> value2) throws Exception {
-					return Tuple2.of(value1.f0, value1.f1 + value2.f1);
+			.reduce(
+				new ReduceFunction<Tuple2<String, Integer>>() {
+					@Override
+					public Tuple2<String, Integer> reduce(Tuple2<String, Integer> value1, Tuple2<String, Integer> value2) throws Exception {
+						return Tuple2.of(value1.f0, value1.f1 + value2.f1);
+					}
 				}
-			})
+			)
 			.setParallelism(2);
 
 		counts.print();

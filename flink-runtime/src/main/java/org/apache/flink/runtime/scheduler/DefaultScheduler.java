@@ -141,15 +141,10 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 
 	@Override
 	protected void startSchedulingInternal() {
+		// 准备ExecutionGraph
 		prepareExecutionGraphForNgScheduling();
+		// 开始调度
 		schedulingStrategy.startScheduling();
-	}
-
-	private void notifyCoordinatorsAboutTaskFailure(final ExecutionVertexID executionVertexId, @Nullable final Throwable error) {
-		final ExecutionJobVertex jobVertex = getExecutionJobVertex(executionVertexId.getJobVertexId());
-		final int subtaskIndex = executionVertexId.getSubtaskIndex();
-
-		jobVertex.getOperatorCoordinators().forEach(c -> c.subtaskFailed(subtaskIndex, error));
 	}
 
 	@Override
@@ -186,6 +181,7 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 			deploymentOptionsByVertex,
 			slotExecutionVertexAssignments);
 
+		// 执行任务
 		waitForAllSlotsAndDeploy(deploymentHandles);
 	}
 
@@ -232,6 +228,7 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 	}
 
 	private void waitForAllSlotsAndDeploy(final List<DeploymentHandle> deploymentHandles) {
+		// deployAll执行程序
 		assignAllResources(deploymentHandles).handle(deployAll(deploymentHandles));
 	}
 
@@ -253,10 +250,8 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 			for (final DeploymentHandle deploymentHandle : deploymentHandles) {
 				final SlotExecutionVertexAssignment slotExecutionVertexAssignment = deploymentHandle.getSlotExecutionVertexAssignment();
 				final CompletableFuture<LogicalSlot> slotAssigned = slotExecutionVertexAssignment.getLogicalSlotFuture();
-				checkState(slotAssigned.isDone());
-
-				FutureUtils.assertNoException(
-					slotAssigned.handle(deployOrHandleError(deploymentHandle)));
+				// 调用deployOrHandleError方法执行作业
+				slotAssigned.handle(deployOrHandleError(deploymentHandle));
 			}
 			return null;
 		};
@@ -319,17 +314,8 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 		final ExecutionVertexID executionVertexId = requiredVertexVersion.getExecutionVertexId();
 
 		return (ignored, throwable) -> {
-			if (executionVertexVersioner.isModified(requiredVertexVersion)) {
-				log.debug("Refusing to deploy execution vertex {} because this deployment was " +
-					"superseded by another deployment", executionVertexId);
-				return null;
-			}
-
-			if (throwable == null) {
-				deployTaskSafe(executionVertexId);
-			} else {
-				handleTaskDeploymentFailure(executionVertexId, throwable);
-			}
+			// 执行作业
+			deployTaskSafe(executionVertexId);
 			return null;
 		};
 	}
@@ -337,6 +323,7 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 	private void deployTaskSafe(final ExecutionVertexID executionVertexId) {
 		try {
 			final ExecutionVertex executionVertex = getExecutionVertex(executionVertexId);
+			// 调用deploy
 			executionVertexOperations.deploy(executionVertex);
 		} catch (Throwable e) {
 			handleTaskDeploymentFailure(executionVertexId, e);

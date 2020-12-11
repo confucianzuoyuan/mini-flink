@@ -509,10 +509,10 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 				tdd.getSubtaskIndex(),
 				tdd.getAttemptNumber(),
 				tdd.getProducedPartitions(),
-				tdd.getInputGates(),
-				tdd.getTargetSlotNumber(),
+				tdd.getInputGates(), // 获取输入数据
+				tdd.getTargetSlotNumber(), // 处理完的数据发送到哪一个任务槽？
 				memoryManager,
-				taskExecutorServices.getShuffleEnvironment(),
+				taskExecutorServices.getShuffleEnvironment(), // 用来shuffle
 				taskExecutorServices.getKvStateService(),
 				taskExecutorServices.getTaskEventDispatcher(),
 				externalResourceInfoProvider,
@@ -537,6 +537,7 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 			}
 
 			if (taskAdded) {
+				// 启动执行Task的线程
 				task.startTaskThread();
 
 				setupResultPartitionBookkeeping(
