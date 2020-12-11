@@ -490,11 +490,6 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 
 		@Override
 		public void collect(StreamRecord<T> record) {
-			if (this.outputTag != null) {
-				// we are not responsible for emitting to the main output.
-				return;
-			}
-
 			pushToOperator(record);
 		}
 
@@ -596,8 +591,6 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 		@Override
 		protected <X> void pushToOperator(StreamRecord<X> record) {
 			try {
-				// we know that the given outputTag matches our OutputTag so the record
-				// must be of the type that our operator (and Serializer) expects.
 				@SuppressWarnings("unchecked")
 				StreamRecord<T> castRecord = (StreamRecord<T>) record;
 

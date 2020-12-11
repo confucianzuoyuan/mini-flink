@@ -150,17 +150,7 @@ public final class StreamTaskNetworkInput<T> implements StreamTaskInput<T> {
 	}
 
 	private void processElement(StreamElement recordOrMark, DataOutput<T> output) throws Exception {
-		if (recordOrMark.isRecord()){
-			output.emitRecord(recordOrMark.asRecord());
-		} else if (recordOrMark.isWatermark()) {
-			statusWatermarkValve.inputWatermark(recordOrMark.asWatermark(), lastChannel);
-		} else if (recordOrMark.isLatencyMarker()) {
-			output.emitLatencyMarker(recordOrMark.asLatencyMarker());
-		} else if (recordOrMark.isStreamStatus()) {
-			statusWatermarkValve.inputStreamStatus(recordOrMark.asStreamStatus(), lastChannel);
-		} else {
-			throw new UnsupportedOperationException("Unknown type of StreamElement");
-		}
+		output.emitRecord(recordOrMark.asRecord());
 	}
 
 	private void processBufferOrEvent(BufferOrEvent bufferOrEvent) throws IOException {

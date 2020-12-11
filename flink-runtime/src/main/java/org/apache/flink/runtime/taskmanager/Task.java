@@ -754,24 +754,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 		return String.format("%s (%s) [%s]", taskNameWithSubtask, executionId, executionState);
 	}
 
-	/**
-	 * Instantiates the given task invokable class, passing the given environment (and possibly
-	 * the initial task state) to the task's constructor.
-	 *
-	 * <p>The method will first try to instantiate the task via a constructor accepting both
-	 * the Environment and the TaskStateSnapshot. If no such constructor exists, and there is
-	 * no initial state, the method will fall back to the stateless convenience constructor that
-	 * accepts only the Environment.
-	 *
-	 * @param classLoader The classloader to load the class through.
-	 * @param className The name of the class to load.
-	 * @param environment The task environment.
-	 *
-	 * @return The instantiated invokable task object.
-	 *
-	 * @throws Throwable Forwards all exceptions that happen during initialization of the task.
-	 *                   Also throws an exception if the task class misses the necessary constructor.
-	 */
 	private static AbstractInvokable loadAndInstantiateInvokable(
 		ClassLoader classLoader,
 		String className,
