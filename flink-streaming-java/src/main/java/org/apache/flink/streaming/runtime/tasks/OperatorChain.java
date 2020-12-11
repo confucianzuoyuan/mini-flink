@@ -27,7 +27,6 @@ import org.apache.flink.runtime.jobgraph.OperatorID;
 import org.apache.flink.runtime.operators.coordination.OperatorEvent;
 import org.apache.flink.runtime.operators.coordination.OperatorEventDispatcher;
 import org.apache.flink.runtime.plugable.SerializationDelegate;
-import org.apache.flink.streaming.api.collector.selector.DirectedOutput;
 import org.apache.flink.streaming.api.collector.selector.OutputSelector;
 import org.apache.flink.streaming.api.graph.StreamConfig;
 import org.apache.flink.streaming.api.graph.StreamEdge;
@@ -341,8 +340,6 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 
 		List<OutputSelector<T>> selectors = operatorConfig.getOutputSelectors(userCodeClassloader);
 
-		if (selectors == null || selectors.isEmpty()) {
-			// simple path, no selector necessary
 			if (allOutputs.size() == 1) {
 				return allOutputs.get(0).f0;
 			}
@@ -364,10 +361,7 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 					return new BroadcastingOutputCollector<>(asArray, this);
 				}
 			}
-		}
-		else {
-			return new DirectedOutput<>(selectors, allOutputs);
-		}
+
 	}
 
 	private <IN, OUT> WatermarkGaugeExposingOutput<StreamRecord<IN>> createChainedOperator(

@@ -57,9 +57,6 @@ public class CheckpointCoordinatorConfiguration implements Serializable {
 
 	private final boolean isUnalignedCheckpointsEnabled;
 
-	/**
-	 * @deprecated use {@link #builder()}.
-	 */
 	@Deprecated
 	@VisibleForTesting
 	public CheckpointCoordinatorConfiguration(
@@ -200,81 +197,4 @@ public class CheckpointCoordinatorConfiguration implements Serializable {
 			'}';
 	}
 
-	public static CheckpointCoordinatorConfigurationBuilder builder() {
-		return new CheckpointCoordinatorConfigurationBuilder();
-	}
-
-	/**
-	 * {@link CheckpointCoordinatorConfiguration} builder.
-	 */
-	public static class CheckpointCoordinatorConfigurationBuilder {
-		private long checkpointInterval = MINIMAL_CHECKPOINT_TIME;
-		private long checkpointTimeout = MINIMAL_CHECKPOINT_TIME;
-		private long minPauseBetweenCheckpoints;
-		private int maxConcurrentCheckpoints = 1;
-		private CheckpointRetentionPolicy checkpointRetentionPolicy = CheckpointRetentionPolicy.NEVER_RETAIN_AFTER_TERMINATION;
-		private boolean isExactlyOnce = true;
-		private boolean isPreferCheckpointForRecovery = true;
-		private int tolerableCheckpointFailureNumber;
-		private boolean isUnalignedCheckpointsEnabled;
-
-		public CheckpointCoordinatorConfiguration build() {
-			return new CheckpointCoordinatorConfiguration(
-				checkpointInterval,
-				checkpointTimeout,
-				minPauseBetweenCheckpoints,
-				maxConcurrentCheckpoints,
-				checkpointRetentionPolicy,
-				isExactlyOnce,
-				isPreferCheckpointForRecovery,
-				tolerableCheckpointFailureNumber,
-				isUnalignedCheckpointsEnabled
-			);
-		}
-
-		public CheckpointCoordinatorConfigurationBuilder setCheckpointInterval(long checkpointInterval) {
-			this.checkpointInterval = checkpointInterval;
-			return this;
-		}
-
-		public CheckpointCoordinatorConfigurationBuilder setCheckpointTimeout(long checkpointTimeout) {
-			this.checkpointTimeout = checkpointTimeout;
-			return this;
-		}
-
-		public CheckpointCoordinatorConfigurationBuilder setMinPauseBetweenCheckpoints(long minPauseBetweenCheckpoints) {
-			this.minPauseBetweenCheckpoints = minPauseBetweenCheckpoints;
-			return this;
-		}
-
-		public CheckpointCoordinatorConfigurationBuilder setMaxConcurrentCheckpoints(int maxConcurrentCheckpoints) {
-			this.maxConcurrentCheckpoints = maxConcurrentCheckpoints;
-			return this;
-		}
-
-		public CheckpointCoordinatorConfigurationBuilder setCheckpointRetentionPolicy(CheckpointRetentionPolicy checkpointRetentionPolicy) {
-			this.checkpointRetentionPolicy = checkpointRetentionPolicy;
-			return this;
-		}
-
-		public CheckpointCoordinatorConfigurationBuilder setExactlyOnce(boolean exactlyOnce) {
-			isExactlyOnce = exactlyOnce;
-			return this;
-		}
-
-		public CheckpointCoordinatorConfigurationBuilder setPreferCheckpointForRecovery(boolean preferCheckpointForRecovery) {
-			isPreferCheckpointForRecovery = preferCheckpointForRecovery;
-			return this;
-		}
-
-		public CheckpointCoordinatorConfigurationBuilder setTolerableCheckpointFailureNumber(int tolerableCheckpointFailureNumber) {
-			this.tolerableCheckpointFailureNumber = tolerableCheckpointFailureNumber;
-			return this;
-		}
-
-		public CheckpointCoordinatorConfigurationBuilder setUnalignedCheckpointsEnabled(boolean unalignedCheckpointsEnabled) {
-			isUnalignedCheckpointsEnabled = unalignedCheckpointsEnabled;
-			return this;
-		}
-	}
 }

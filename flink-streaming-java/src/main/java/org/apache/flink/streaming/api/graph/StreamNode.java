@@ -232,10 +232,6 @@ public class StreamNode implements Serializable {
 		return outputSelectors;
 	}
 
-	public void addOutputSelector(OutputSelector<?> outputSelector) {
-		this.outputSelectors.add(outputSelector);
-	}
-
 	public void setSerializersIn(TypeSerializer<?> ...typeSerializersIn) {
 		checkArgument(typeSerializersIn.length > 0);
 		this.typeSerializersIn = typeSerializersIn;

@@ -380,29 +380,11 @@ public class StreamConfig implements Serializable {
 		}
 	}
 
-	public List<StreamEdge> getOutEdges(ClassLoader cl) {
-		try {
-			List<StreamEdge> outEdges = InstantiationUtil.readObjectFromConfig(this.config, OUT_STREAM_EDGES, cl);
-			return outEdges == null ? new ArrayList<StreamEdge>() : outEdges;
-		} catch (Exception e) {
-			throw new StreamTaskException("Could not instantiate outputs.", e);
-		}
-	}
-
 	public void setInPhysicalEdges(List<StreamEdge> inEdges) {
 		try {
 			InstantiationUtil.writeObjectToConfig(inEdges, this.config, IN_STREAM_EDGES);
 		} catch (IOException e) {
 			throw new StreamTaskException("Cannot serialize inward edges.", e);
-		}
-	}
-
-	public List<StreamEdge> getInPhysicalEdges(ClassLoader cl) {
-		try {
-			List<StreamEdge> inEdges = InstantiationUtil.readObjectFromConfig(this.config, IN_STREAM_EDGES, cl);
-			return inEdges == null ? new ArrayList<StreamEdge>() : inEdges;
-		} catch (Exception e) {
-			throw new StreamTaskException("Could not instantiate inputs.", e);
 		}
 	}
 
