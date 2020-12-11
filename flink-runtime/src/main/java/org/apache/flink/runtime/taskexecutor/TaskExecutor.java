@@ -430,21 +430,7 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 				return new TaskSubmissionException(message);
 			});
 
-			if (!Objects.equals(jobManagerConnection.getJobMasterId(), jobMasterId)) {
-				final String message = "Rejecting the task submission because the job manager leader id " +
-					jobMasterId + " does not match the expected job manager leader id " +
-					jobManagerConnection.getJobMasterId() + '.';
-
-				log.debug(message);
-				throw new TaskSubmissionException(message);
-			}
-
-			if (!taskSlotTable.tryMarkSlotActive(jobId, tdd.getAllocationId())) {
-				final String message = "No task slot allocated for job ID " + jobId +
-					" and allocation ID " + tdd.getAllocationId() + '.';
-				log.debug(message);
-				throw new TaskSubmissionException(message);
-			}
+			taskSlotTable.tryMarkSlotActive(jobId, tdd.getAllocationId());
 
 			// deserialize the pre-serialized information
 			final JobInformation jobInformation;
@@ -454,12 +440,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 				taskInformation = tdd.getSerializedTaskInformation().deserializeValue(getClass().getClassLoader());
 			} catch (IOException | ClassNotFoundException e) {
 				throw new TaskSubmissionException("Could not deserialize the job or task information.", e);
-			}
-
-			if (!jobId.equals(jobInformation.getJobId())) {
-				throw new TaskSubmissionException(
-					"Inconsistent job ID information inside TaskDeploymentDescriptor (" +
-						tdd.getJobId() + " vs. " + jobInformation.getJobId() + ")");
 			}
 
 			InputSplitProvider inputSplitProvider = new RpcInputSplitProvider(

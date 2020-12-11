@@ -626,11 +626,6 @@ public class Execution implements AccessExecution, Archiveable<ArchivedExecution
 				return;
 			}
 
-			if (LOG.isInfoEnabled()) {
-				LOG.info(String.format("Deploying %s (attempt #%d) to %s", vertex.getTaskNameWithSubtaskIndex(),
-						attemptNumber, getAssignedResourceLocation()));
-			}
-
 			final TaskDeploymentDescriptor deployment = TaskDeploymentDescriptorFactory
 				.fromExecutionVertex(vertex, attemptNumber)
 				.createDeploymentDescriptor(
@@ -640,6 +635,7 @@ public class Execution implements AccessExecution, Archiveable<ArchivedExecution
 					producedPartitions.values());
 
 			// null taskRestore to let it be GC'ed
+			// 手动GC
 			taskRestore = null;
 
 			final TaskManagerGateway taskManagerGateway = slot.getTaskManagerGateway();
