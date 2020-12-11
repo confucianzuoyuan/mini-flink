@@ -598,15 +598,6 @@ public class Execution implements AccessExecution, Archiveable<ArchivedExecution
 
 		final LogicalSlot slot  = assignedResource;
 
-		checkNotNull(slot, "In order to deploy the execution we first have to assign a resource via tryAssignResource.");
-
-		// Check if the TaskManager died in the meantime
-		// This only speeds up the response to TaskManagers failing concurrently to deployments.
-		// The more general check is the rpcTimeout of the deployment call
-		if (!slot.isAlive()) {
-			throw new JobException("Target slot (TaskManager) for deployment is no longer alive.");
-		}
-
 		// make sure exactly one deployment call happens from the correct state
 		// note: the transition from CREATED to DEPLOYING is for testing purposes only
 		ExecutionState previous = this.state;

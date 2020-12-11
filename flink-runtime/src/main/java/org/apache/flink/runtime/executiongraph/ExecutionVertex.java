@@ -565,104 +565,6 @@ public class ExecutionVertex implements AccessExecutionVertex, Archiveable<Archi
 	//   Actions
 	// --------------------------------------------------------------------------------------------
 
-	/**
-	 * Archives the current Execution and creates a new Execution for this vertex.
-	 *
-	 * <p>This method atomically checks if the ExecutionGraph is still of an expected
-	 * global mod. version and replaces the execution if that is the case. If the ExecutionGraph
-	 * has increased its global mod. version in the meantime, this operation fails.
-	 *
-	 * <p>This mechanism can be used to prevent conflicts between various concurrent recovery and
-	 * reconfiguration actions in a similar way as "optimistic concurrency control".
-	 *
-	 * @param timestamp
-	 *             The creation timestamp for the new Execution
-	 * @param originatingGlobalModVersion
-	 *
-	 * @return Returns the new created Execution.
-	 *
-	 * @throws GlobalModVersionMismatch Thrown, if the execution graph has a new global mod
-	 *                                  version than the one passed to this message.
-	 */
-	public Execution resetForNewExecution(final long timestamp, final long originatingGlobalModVersion)
-			throws GlobalModVersionMismatch {
-		LOG.debug("Resetting execution vertex {} for new execution.", getTaskNameWithSubtaskIndex());
-
-		synchronized (priorExecutions) {
-			// check if another global modification has been triggered since the
-			// action that originally caused this reset/restart happened
-			final long actualModVersion = getExecutionGraph().getGlobalModVersion();
-			if (actualModVersion > originatingGlobalModVersion) {
-				// global change happened since, reject this action
-				throw new GlobalModVersionMismatch(originatingGlobalModVersion, actualModVersion);
-			}
-
-			return resetForNewExecutionInternal(timestamp, originatingGlobalModVersion);
-		}
-	}
-
-	public void resetForNewExecution() {
-		resetForNewExecutionInternal(System.currentTimeMillis(), getExecutionGraph().getGlobalModVersion());
-	}
-
-	private Execution resetForNewExecutionInternal(final long timestamp, final long originatingGlobalModVersion) {
-		final Execution oldExecution = currentExecution;
-		final ExecutionState oldState = oldExecution.getState();
-
-		if (oldState.isTerminal()) {
-			if (oldState == FINISHED) {
-				// pipelined partitions are released in Execution#cancel(), covering both job failures and vertex resets
-				// do not release pipelined partitions here to save RPC calls
-				oldExecution.handlePartitionCleanup(false, true);
-				getExecutionGraph().getPartitionReleaseStrategy().vertexUnfinished(executionVertexId);
-			}
-
-			priorExecutions.add(oldExecution.archive());
-
-			final Execution newExecution = new Execution(
-				getExecutionGraph().getFutureExecutor(),
-				this,
-				oldExecution.getAttemptNumber() + 1,
-				originatingGlobalModVersion,
-				timestamp,
-				timeout);
-
-			currentExecution = newExecution;
-
-			synchronized (inputSplits) {
-				InputSplitAssigner assigner = jobVertex.getSplitAssigner();
-				if (assigner != null) {
-					assigner.returnInputSplit(inputSplits, getParallelSubtaskIndex());
-					inputSplits.clear();
-				}
-			}
-
-			CoLocationGroup grp = jobVertex.getCoLocationGroup();
-			if (grp != null) {
-				locationConstraint = grp.getLocationConstraint(subTaskIndex);
-			}
-
-			// register this execution at the execution graph, to receive call backs
-			getExecutionGraph().registerExecution(newExecution);
-
-			// if the execution was 'FINISHED' before, tell the ExecutionGraph that
-			// we take one step back on the road to reaching global FINISHED
-			if (oldState == FINISHED) {
-				getExecutionGraph().vertexUnFinished();
-			}
-
-			// reset the intermediate results
-			for (IntermediateResultPartition resultPartition : resultPartitions.values()) {
-				resultPartition.resetForNewExecution();
-			}
-
-			return newExecution;
-		}
-		else {
-			throw new IllegalStateException("Cannot reset a vertex that is in non-terminal state " + oldState);
-		}
-	}
-
 	public void tryAssignResource(LogicalSlot slot) {
 		if (!currentExecution.tryAssignResource(slot)) {
 			throw new IllegalStateException("Could not assign resource " + slot + " to current execution " +
@@ -672,16 +574,6 @@ public class ExecutionVertex implements AccessExecutionVertex, Archiveable<Archi
 
 	public void deploy() throws JobException {
 		currentExecution.deploy();
-	}
-
-	@VisibleForTesting
-	public void deployToSlot(LogicalSlot slot) throws JobException {
-		if (currentExecution.tryAssignResource(slot)) {
-			currentExecution.deploy();
-		} else {
-			throw new IllegalStateException("Could not assign resource " + slot + " to current execution " +
-				currentExecution + '.');
-		}
 	}
 
 	/**
@@ -773,27 +665,6 @@ public class ExecutionVertex implements AccessExecutionVertex, Archiveable<Archi
 		}
 	}
 
-	/**
-	 * Check whether the InputDependencyConstraint is satisfied for this vertex.
-	 *
-	 * @return whether the input constraint is satisfied
-	 */
-	boolean checkInputDependencyConstraints() {
-		if (inputEdges.length == 0) {
-			return true;
-		}
-
-		final InputDependencyConstraint inputDependencyConstraint = getInputDependencyConstraint();
-		switch (inputDependencyConstraint) {
-			case ANY:
-				return isAnyInputConsumable();
-			case ALL:
-				return areAllInputsConsumable();
-			default:
-				throw new IllegalStateException("Unknown InputDependencyConstraint " + inputDependencyConstraint);
-		}
-	}
-
 	private boolean isAnyInputConsumable() {
 		for (int inputNumber = 0; inputNumber < inputEdges.length; inputNumber++) {
 			if (isInputConsumable(inputNumber)) {
@@ -803,23 +674,6 @@ public class ExecutionVertex implements AccessExecutionVertex, Archiveable<Archi
 		return false;
 	}
 
-	private boolean areAllInputsConsumable() {
-		for (int inputNumber = 0; inputNumber < inputEdges.length; inputNumber++) {
-			if (!isInputConsumable(inputNumber)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Get whether an input of the vertex is consumable.
-	 * An input is consumable when when any partition in it is consumable.
-	 *
-	 * <p>Note that a BLOCKING result partition is only consumable when all partitions in the result are FINISHED.
-	 *
-	 * @return whether the input is consumable
-	 */
 	boolean isInputConsumable(int inputNumber) {
 		for (ExecutionEdge executionEdge : inputEdges[inputNumber]) {
 			if (executionEdge.getSource().isConsumable()) {

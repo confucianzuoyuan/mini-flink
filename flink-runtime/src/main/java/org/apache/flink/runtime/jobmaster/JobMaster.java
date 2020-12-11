@@ -72,17 +72,7 @@ import java.util.concurrent.TimeoutException;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-/**
- * JobMaster implementation. The job master is responsible for the execution of a single
- * {@link JobGraph}.
- *
- * <p>It offers the following methods as part of its rpc interface to interact with the JobMaster
- * remotely:
- * <ul>
- * <li>{@link #updateTaskExecutionState} updates the task execution state for
- * given task</li>
- * </ul>
- */
+
 public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMasterGateway, JobMasterService {
 
 	/** Default names for Flink's distributed components. */
@@ -580,7 +570,8 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 
 		setNewFencingToken(newJobMasterId);
 
-		// 开启心跳和资源管理器等服务
+		// 开启心跳
+		// 连接资源管理器
 		startJobMasterServices();
 
 		// 开启调度器
