@@ -38,6 +38,7 @@ public final class FlinkPipelineTranslationUtil {
 			Configuration optimizerConfiguration,
 			int defaultParallelism) {
 
+		// 获取StreamGraph到JobGraph的翻译器
 		FlinkPipelineTranslator pipelineTranslator = getPipelineTranslator(pipeline);
 
 		return pipelineTranslator.translateToJobGraph(pipeline,

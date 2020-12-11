@@ -192,6 +192,10 @@ public class StreamGraph implements Pipeline {
 			TypeInformation<OUT> outTypeInfo,
 			String operatorName) {
 		addOperator(vertexID, slotSharingGroup, coLocationGroup, operatorFactory, inTypeInfo, outTypeInfo, operatorName);
+		// graph
+		// vertex: 点
+		// edge: 边
+		System.out.println("vertexID: " + vertexID);
 		sources.add(vertexID);
 	}
 

@@ -266,9 +266,10 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 	 * @return Future acknowledge if the job could be started. Otherwise the future contains an exception
 	 */
 	public CompletableFuture<Acknowledge> start(final JobMasterId newJobMasterId) throws Exception {
-		// make sure we receive RPC and async calls
+		// 保证我们可以接收rpc和异步请求
 		start();
 
+		// 开始执行作业
 		return callAsyncWithoutFencing(() -> startJobExecution(newJobMasterId), RpcUtils.INF_TIMEOUT);
 	}
 
@@ -600,6 +601,7 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 		// 开启心跳和资源管理器等服务
 		startJobMasterServices();
 
+		// 开启调度器
 		resetAndStartScheduler();
 
 		return Acknowledge.get();

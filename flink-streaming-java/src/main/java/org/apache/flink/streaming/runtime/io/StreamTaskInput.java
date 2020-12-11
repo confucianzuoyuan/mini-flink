@@ -21,16 +21,9 @@ import org.apache.flink.annotation.Internal;
 
 import java.io.Closeable;
 
-/**
- * Basic interface for inputs of stream operators.
- */
 @Internal
 public interface StreamTaskInput<T> extends PushingAsyncDataInput<T>, Closeable {
 	int UNSPECIFIED = -1;
 
-	/**
-	 * Returns the input index of this input.
-	 */
 	int getInputIndex();
-
 }

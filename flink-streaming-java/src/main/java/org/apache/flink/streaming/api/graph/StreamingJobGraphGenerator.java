@@ -104,6 +104,7 @@ public class StreamingJobGraphGenerator {
 		jobGraph = new JobGraph(jobID, streamGraph.getJobName());
 	}
 
+	// 获取JobGraph
 	private JobGraph createJobGraph() {
 
 		// make sure that all vertices start immediately
@@ -119,6 +120,7 @@ public class StreamingJobGraphGenerator {
 			legacyHashes.add(hasher.traverseStreamGraphAndGenerateHashes(streamGraph));
 		}
 
+		// 将并行度一样且one-to-one的算子优化成任务链
 		setChaining(hashes, legacyHashes);
 
 		setPhysicalEdges();
@@ -133,9 +135,6 @@ public class StreamingJobGraphGenerator {
 			throw new IllegalConfigurationException("Could not serialize the ExecutionConfig." +
 					"This indicates that non-serializable types (like custom serializers) were registered");
 		}
-
-		String generatePlan = JsonPlanGenerator.generatePlan(jobGraph);
-		System.out.println(generatePlan);
 
 		return jobGraph;
 	}

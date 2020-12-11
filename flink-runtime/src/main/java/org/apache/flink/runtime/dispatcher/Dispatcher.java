@@ -204,6 +204,7 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
 	}
 
 	private CompletableFuture<Acknowledge> internalSubmitJob(JobGraph jobGraph) {
+		// 调用persistAndRunJob方法
 		final CompletableFuture<Acknowledge> persistAndRunFuture = waitForTerminatingJobManager(jobGraph.getJobID(), jobGraph, this::persistAndRunJob)
 			.thenApply(ignored -> Acknowledge.get());
 
@@ -213,6 +214,7 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
 	private CompletableFuture<Void> persistAndRunJob(JobGraph jobGraph) throws Exception {
 		jobGraphWriter.putJobGraph(jobGraph);
 
+		// 调用runJob
 		final CompletableFuture<Void> runJobFuture = runJob(jobGraph);
 
 		return runJobFuture.whenComplete(BiConsumerWithException.unchecked((Object ignored, Throwable throwable) -> {
@@ -228,6 +230,7 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
 		jobManagerRunnerFutures.put(jobGraph.getJobID(), jobManagerRunnerFuture);
 
 		return jobManagerRunnerFuture
+			// 启动作业管理器
 			.thenApply(FunctionUtils.uncheckedFunction(this::startJobManagerRunner))
 			.thenApply(FunctionUtils.nullFn())
 			.whenCompleteAsync(
@@ -263,10 +266,10 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
 	private JobManagerRunner startJobManagerRunner(JobManagerRunner jobManagerRunner) throws Exception {
 		jobManagerRunner.getResultFuture().handleAsync(
 			(ArchivedExecutionGraph archivedExecutionGraph, Throwable throwable) -> {
-				System.out.println("++++++++++++");
 				return null;
 			}, getMainThreadExecutor());
 
+		// 启动作业管理器
 		jobManagerRunner.start();
 
 		return jobManagerRunner;

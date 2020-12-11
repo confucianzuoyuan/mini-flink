@@ -217,6 +217,7 @@ public class MiniCluster implements JobExecutorService, AutoCloseableAsync {
 					configuration, haServices.createBlobStore(), new InetSocketAddress(InetAddress.getLocalHost(), blobServer.getPort())
 				);
 
+				// 启动任务管理器
 				startTaskManagers();
 
 				setupDispatcherResourceManagerComponents(configuration, dispatcherResourceManagreComponentRpcServiceFactory);
@@ -237,7 +238,9 @@ public class MiniCluster implements JobExecutorService, AutoCloseableAsync {
 					20,
 					Time.milliseconds(20L));
 
+				// 启动资源管理器
 				resourceManagerLeaderRetriever.start(resourceManagerGatewayRetriever);
+				// 启动分发器
 				dispatcherLeaderRetriever.start(dispatcherGatewayRetriever);
 			}
 			catch (Exception e) {
@@ -433,6 +436,7 @@ public class MiniCluster implements JobExecutorService, AutoCloseableAsync {
 	// ------------------------------------------------------------------------
 
 	public CompletableFuture<JobSubmissionResult> submitJob(JobGraph jobGraph) {
+		// 获取分发器的网关
 		final CompletableFuture<DispatcherGateway> dispatcherGatewayFuture = getDispatcherGatewayFuture();
 		final CompletableFuture<InetSocketAddress> blobServerAddressFuture = createBlobServerAddress(dispatcherGatewayFuture);
 		final CompletableFuture<Acknowledge> acknowledgeCompletableFuture = blobServerAddressFuture

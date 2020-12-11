@@ -73,6 +73,7 @@ public final class PerJobMiniClusterFactory {
 	public CompletableFuture<JobClient> submitJob(JobGraph jobGraph) throws Exception {
 		MiniClusterConfiguration miniClusterConfig = getMiniClusterConfig(jobGraph.getMaximumParallelism());
 		MiniCluster miniCluster = miniClusterFactory.apply(miniClusterConfig);
+		// 启动迷你集群
 		miniCluster.start();
 
 		return miniCluster

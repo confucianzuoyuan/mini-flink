@@ -243,6 +243,8 @@ public class StreamExecutionEnvironment {
 	}
 
 	public JobExecutionResult execute(String jobName) throws Exception {
+		// getStreamGraph：获取StreamGraph
+		// execute：执行
 		return execute(getStreamGraph(jobName));
 	}
 
@@ -254,7 +256,6 @@ public class StreamExecutionEnvironment {
 			final JobExecutionResult jobExecutionResult;
 
 			jobExecutionResult = jobClient.getJobExecutionResult(userClassloader).get();
-			System.out.println(jobExecutionResult.toString());
 
 			jobListeners.forEach(jobListener -> jobListener.onJobExecuted(jobExecutionResult, null));
 
@@ -310,7 +311,9 @@ public class StreamExecutionEnvironment {
 			executorServiceLoader.getExecutorFactory(configuration);
 
 		CompletableFuture<JobClient> jobClientFuture = executorFactory
+			// 获取执行器：LocalExecutor
 			.getExecutor(configuration)
+			// 执行
 			.execute(streamGraph, configuration);
 
 		JobClient jobClient = jobClientFuture.get();
@@ -329,35 +332,18 @@ public class StreamExecutionEnvironment {
 		return getStreamGraph(DEFAULT_JOB_NAME);
 	}
 
-	/**
-	 * Getter of the {@link org.apache.flink.streaming.api.graph.StreamGraph} of the streaming job. This call
-	 * clears previously registered {@link Transformation transformations}.
-	 *
-	 * @param jobName Desired name of the job
-	 * @return The streamgraph representing the transformations
-	 */
 	@Internal
 	public StreamGraph getStreamGraph(String jobName) {
 		return getStreamGraph(jobName, true);
 	}
 
-	/**
-	 * Getter of the {@link org.apache.flink.streaming.api.graph.StreamGraph StreamGraph} of the streaming job
-	 * with the option to clear previously registered {@link Transformation transformations}. Clearing the
-	 * transformations allows, for example, to not re-execute the same operations when calling
-	 * {@link #execute()} multiple times.
-	 *
-	 * @param jobName Desired name of the job
-	 * @param clearTransformations Whether or not to clear previously registered transformations
-	 * @return The streamgraph representing the transformations
-	 */
 	@Internal
 	public StreamGraph getStreamGraph(String jobName, boolean clearTransformations) {
+		// generate：生成StreamGraph
 		StreamGraph streamGraph = getStreamGraphGenerator().setJobName(jobName).generate();
 		if (clearTransformations) {
 			this.transformations.clear();
 		}
-		System.out.println(streamGraph.getStreamingPlanAsJSON());
 		return streamGraph;
 	}
 

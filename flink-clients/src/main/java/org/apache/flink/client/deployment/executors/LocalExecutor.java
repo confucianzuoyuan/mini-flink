@@ -58,12 +58,13 @@ public class LocalExecutor implements PipelineExecutor {
 		effectiveConfig.addAll(this.configuration);
 		effectiveConfig.addAll(configuration);
 
-		final JobGraph jobGraph = getJobGraph(pipeline, effectiveConfig);
+		// 获取JobGraph
+		// StreamGraph -> JobGraph
+		final JobGraph jobGraph = PipelineExecutorUtils.getJobGraph(pipeline, effectiveConfig);
 
+		// 提交JobGraph
+		// 本地执行时，每一个作业启动一个MiniCluster
 		return PerJobMiniClusterFactory.createWithFactory(effectiveConfig, miniClusterFactory).submitJob(jobGraph);
 	}
 
-	private JobGraph getJobGraph(Pipeline pipeline, Configuration configuration) throws MalformedURLException {
-		return PipelineExecutorUtils.getJobGraph(pipeline, configuration);
-	}
 }

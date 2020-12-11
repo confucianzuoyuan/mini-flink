@@ -259,13 +259,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>>
 		}
 	}
 
-	/**
-	 * This method implements the default action of the task (e.g. processing one event from the input). Implementations
-	 * should (in general) be non-blocking.
-	 *
-	 * @param controller controller object for collaborative interaction between the action and the stream task.
-	 * @throws Exception on any problems in the action.
-	 */
 	protected void processInput(MailboxDefaultAction.Controller controller) throws Exception {
 		InputStatus status = inputProcessor.processInput();
 		if (status == InputStatus.MORE_AVAILABLE && recordWriter.isAvailable()) {
@@ -280,12 +273,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>>
 		jointFuture.thenRun(suspendedDefaultAction::resume);
 	}
 
-	/**
-	 * Considers three scenarios to combine input and output futures:
-	 * 1. Both input and output are unavailable.
-	 * 2. Only input is unavailable.
-	 * 3. Only output is unavailable.
-	 */
 	@VisibleForTesting
 	CompletableFuture<?> getInputOutputJointFuture(InputStatus status) {
 		if (status == InputStatus.NOTHING_AVAILABLE && !recordWriter.isAvailable()) {

@@ -35,19 +35,11 @@ import org.apache.flink.streaming.runtime.streamstatus.StreamStatusMaintainer;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-/**
- * A {@link StreamTask} for executing a {@link OneInputStreamOperator}.
- */
 @Internal
 public class OneInputStreamTask<IN, OUT> extends StreamTask<OUT, OneInputStreamOperator<IN, OUT>> {
 
 	private final WatermarkGauge inputWatermarkGauge = new WatermarkGauge();
 
-	/**
-	 * Constructor for initialization, possibly with initial state (recovery / savepoint / etc).
-	 *
-	 * @param env The task environment for this task.
-	 */
 	public OneInputStreamTask(Environment env) throws Exception {
 		super(env);
 	}

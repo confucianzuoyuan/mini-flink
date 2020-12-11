@@ -160,7 +160,7 @@ public class JobManagerRunnerImpl implements LeaderContender, OnCompletionAction
 	@Override
 	public void start() throws Exception {
 		try {
-			System.out.println("------------");
+			// 启动作业管理器
 			leaderElectionService.start(this);
 		} catch (Exception e) {
 			throw new Exception("Could not start the leader election service.", e);
@@ -272,6 +272,7 @@ public class JobManagerRunnerImpl implements LeaderContender, OnCompletionAction
 			leadershipOperation = leadershipOperation.thenCompose(
 				(ignored) -> {
 					synchronized (lock) {
+						// 启动作业管理器
 						return verifyJobSchedulingStatusAndStartJobManager(leaderSessionID);
 					}
 				});
@@ -288,6 +289,7 @@ public class JobManagerRunnerImpl implements LeaderContender, OnCompletionAction
 				if (jobSchedulingStatus == JobSchedulingStatus.DONE) {
 					return jobAlreadyDone();
 				} else {
+					// 启动作业管理器
 					return startJobMaster(leaderSessionId);
 				}
 			});

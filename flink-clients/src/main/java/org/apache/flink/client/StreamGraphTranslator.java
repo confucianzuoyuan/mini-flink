@@ -44,9 +44,6 @@ public class StreamGraphTranslator implements FlinkPipelineTranslator {
 			Pipeline pipeline,
 			Configuration optimizerConfiguration,
 			int defaultParallelism) {
-		checkArgument(pipeline instanceof StreamGraph,
-				"Given pipeline is not a DataStream StreamGraph.");
-
 		StreamGraph streamGraph = (StreamGraph) pipeline;
 		return streamGraph.getJobGraph(null);
 	}

@@ -287,6 +287,7 @@ public class EmbeddedLeaderService {
 				currentLeaderProposed = leaderService;
 				currentLeaderProposed.isLeader = true;
 
+				// execute将执行GrantLeadershipCall的run()方法
 				return execute(new GrantLeadershipCall(leaderService.contender, leaderSessionId, LOG));
 			}
 		} else {
@@ -344,53 +345,8 @@ public class EmbeddedLeaderService {
 		}
 	}
 
-	@VisibleForTesting
-	CompletableFuture<Void> grantLeadership() {
-		synchronized (lock) {
-			if (shutdown) {
-				return getShutDownFuture();
-			}
-
-			return updateLeader();
-		}
-	}
-
 	private CompletableFuture<Void> getShutDownFuture() {
 		return FutureUtils.completedExceptionally(new FlinkException("EmbeddedLeaderService has been shut down."));
-	}
-
-	@VisibleForTesting
-	CompletableFuture<Void> revokeLeadership() {
-		synchronized (lock) {
-			if (shutdown) {
-				return getShutDownFuture();
-			}
-
-			if (currentLeaderProposed != null || currentLeaderConfirmed != null) {
-				final EmbeddedLeaderElectionService leaderService;
-
-				if (currentLeaderConfirmed != null) {
-					leaderService = currentLeaderConfirmed;
-				} else {
-					leaderService = currentLeaderProposed;
-				}
-
-				LOG.info("Revoking leadership of {}.", leaderService.contender);
-				leaderService.isLeader = false;
-				CompletableFuture<Void> revokeLeadershipCallFuture = execute(new RevokeLeadershipCall(leaderService.contender));
-
-				CompletableFuture<Void> notifyAllListenersFuture = notifyAllListeners(null, null);
-
-				currentLeaderProposed = null;
-				currentLeaderConfirmed = null;
-				currentLeaderAddress = null;
-				currentLeaderSessionId = null;
-
-				return CompletableFuture.allOf(revokeLeadershipCallFuture, notifyAllListenersFuture);
-			} else {
-				return CompletableFuture.completedFuture(null);
-			}
-		}
 	}
 
 	private CompletableFuture<Void> execute(Runnable runnable) {
@@ -411,6 +367,7 @@ public class EmbeddedLeaderService {
 
 		@Override
 		public void start(LeaderContender contender) throws Exception {
+			// 添加leader的竞争者
 			addContender(this, contender);
 		}
 
