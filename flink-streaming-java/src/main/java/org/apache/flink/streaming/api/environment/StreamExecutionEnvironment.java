@@ -282,17 +282,7 @@ public class StreamExecutionEnvironment {
 	}
 
 	@Internal
-	public StreamGraph getStreamGraph() {
-		return getStreamGraph(DEFAULT_JOB_NAME);
-	}
-
-	@Internal
 	public StreamGraph getStreamGraph(String jobName) {
-		return getStreamGraph(jobName, true);
-	}
-
-	@Internal
-	public StreamGraph getStreamGraph(String jobName, boolean clearTransformations) {
 		// generate：生成StreamGraph
 		return getStreamGraphGenerator().setJobName(jobName).generate();
 	}
