@@ -164,6 +164,7 @@ public class MailboxProcessor implements Closeable {
 		final MailboxController defaultActionContext = new MailboxController(this);
 
 		while (runMailboxStep(localMailbox, defaultActionContext)) {
+			System.out.println("真正执行的地方");
 		}
 	}
 
