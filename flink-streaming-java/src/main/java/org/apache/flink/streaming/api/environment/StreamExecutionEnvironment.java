@@ -265,46 +265,6 @@ public class StreamExecutionEnvironment {
 		}
 	}
 
-	/**
-	 * Clear all registered {@link JobListener}s.
-	 */
-	@PublicEvolving
-	public void clearJobListeners() {
-		this.jobListeners.clear();
-	}
-
-	/**
-	 * Triggers the program asynchronously. The environment will execute all parts of
-	 * the program that have resulted in a "sink" operation. Sink operations are
-	 * for example printing results or forwarding them to a message queue.
-	 *
-	 * <p>The program execution will be logged and displayed with a generated
-	 * default name.
-	 *
-	 * @return A {@link JobClient} that can be used to communicate with the submitted job, completed on submission succeeded.
-	 * @throws Exception which occurs during job execution.
-	 */
-	@PublicEvolving
-	public final JobClient executeAsync() throws Exception {
-		return executeAsync(DEFAULT_JOB_NAME);
-	}
-
-	/**
-	 * Triggers the program execution asynchronously. The environment will execute all parts of
-	 * the program that have resulted in a "sink" operation. Sink operations are
-	 * for example printing results or forwarding them to a message queue.
-	 *
-	 * <p>The program execution will be logged and displayed with the provided name
-	 *
-	 * @param jobName desired name of the job
-	 * @return A {@link JobClient} that can be used to communicate with the submitted job, completed on submission succeeded.
-	 * @throws Exception which occurs during job execution.
-	 */
-	@PublicEvolving
-	public JobClient executeAsync(String jobName) throws Exception {
-		return executeAsync(getStreamGraph(checkNotNull(jobName)));
-	}
-
 	@Internal
 	public JobClient executeAsync(StreamGraph streamGraph) throws Exception {
 		final PipelineExecutorFactory executorFactory =
@@ -321,12 +281,6 @@ public class StreamExecutionEnvironment {
 		return jobClient;
 	}
 
-	/**
-	 * Getter of the {@link org.apache.flink.streaming.api.graph.StreamGraph} of the streaming job. This call
-	 * clears previously registered {@link Transformation transformations}.
-	 *
-	 * @return The streamgraph representing the transformations
-	 */
 	@Internal
 	public StreamGraph getStreamGraph() {
 		return getStreamGraph(DEFAULT_JOB_NAME);
@@ -340,11 +294,7 @@ public class StreamExecutionEnvironment {
 	@Internal
 	public StreamGraph getStreamGraph(String jobName, boolean clearTransformations) {
 		// generate：生成StreamGraph
-		StreamGraph streamGraph = getStreamGraphGenerator().setJobName(jobName).generate();
-		if (clearTransformations) {
-			this.transformations.clear();
-		}
-		return streamGraph;
+		return getStreamGraphGenerator().setJobName(jobName).generate();
 	}
 
 	private StreamGraphGenerator getStreamGraphGenerator() {
@@ -356,22 +306,6 @@ public class StreamExecutionEnvironment {
 			.setDefaultBufferTimeout(bufferTimeout);
 	}
 
-	/**
-	 * Creates the plan with which the system will execute the program, and
-	 * returns it as a String using a JSON representation of the execution data
-	 * flow graph. Note that this needs to be called, before the plan is
-	 * executed.
-	 *
-	 * @return The execution plan of the program, as a JSON String.
-	 */
-	public String getExecutionPlan() {
-		return getStreamGraph(DEFAULT_JOB_NAME, false).getStreamingPlanAsJSON();
-	}
-
-	/**
-	 * Returns a "closure-cleaned" version of the given function. Cleans only if closure cleaning
-	 * is not disabled in the {@link org.apache.flink.api.common.ExecutionConfig}
-	 */
 	@Internal
 	public <F> F clean(F f) {
 		if (getConfig().isClosureCleanerEnabled()) {
@@ -381,80 +315,26 @@ public class StreamExecutionEnvironment {
 		return f;
 	}
 
-	/**
-	 * Adds an operator to the list of operators that should be executed when calling
-	 * {@link #execute}.
-	 *
-	 * <p>When calling {@link #execute()} only the operators that where previously added to the list
-	 * are executed.
-	 *
-	 * <p>This is not meant to be used by users. The API methods that create operators must call
-	 * this method.
-	 */
 	@Internal
 	public void addOperator(Transformation<?> transformation) {
 		Preconditions.checkNotNull(transformation, "transformation must not be null.");
 		this.transformations.add(transformation);
 	}
 
-	// --------------------------------------------------------------------------------------------
-	//  Factory methods for ExecutionEnvironments
-	// --------------------------------------------------------------------------------------------
-
-	/**
-	 * Creates an execution environment that represents the context in which the
-	 * program is currently executed. If the program is invoked standalone, this
-	 * method returns a local execution environment, as returned by
-	 * {@link #createLocalEnvironment()}.
-	 *
-	 * @return The execution environment of the context in which the program is
-	 * executed.
-	 */
 	public static StreamExecutionEnvironment getExecutionEnvironment() {
 		return Utils.resolveFactory(threadLocalContextEnvironmentFactory, contextEnvironmentFactory)
 			.map(StreamExecutionEnvironmentFactory::createExecutionEnvironment)
 			.orElseGet(StreamExecutionEnvironment::createLocalEnvironment);
 	}
 
-	/**
-	 * Creates a {@link LocalStreamEnvironment}. The local execution environment
-	 * will run the program in a multi-threaded fashion in the same JVM as the
-	 * environment was created in. The default parallelism of the local
-	 * environment is the number of hardware contexts (CPU cores / threads),
-	 * unless it was specified differently by {@link #setParallelism(int)}.
-	 *
-	 * @return A local execution environment.
-	 */
 	public static LocalStreamEnvironment createLocalEnvironment() {
 		return createLocalEnvironment(defaultLocalParallelism);
 	}
 
-	/**
-	 * Creates a {@link LocalStreamEnvironment}. The local execution environment
-	 * will run the program in a multi-threaded fashion in the same JVM as the
-	 * environment was created in. It will use the parallelism specified in the
-	 * parameter.
-	 *
-	 * @param parallelism
-	 * 		The parallelism for the local environment.
-	 * @return A local execution environment with the specified parallelism.
-	 */
 	public static LocalStreamEnvironment createLocalEnvironment(int parallelism) {
 		return createLocalEnvironment(parallelism, new Configuration());
 	}
 
-	/**
-	 * Creates a {@link LocalStreamEnvironment}. The local execution environment
-	 * will run the program in a multi-threaded fashion in the same JVM as the
-	 * environment was created in. It will use the parallelism specified in the
-	 * parameter.
-	 *
-	 * @param parallelism
-	 * 		The parallelism for the local environment.
-	 * 	@param configuration
-	 * 		Pass a custom configuration into the cluster
-	 * @return A local execution environment with the specified parallelism.
-	 */
 	public static LocalStreamEnvironment createLocalEnvironment(int parallelism, Configuration configuration) {
 		final LocalStreamEnvironment currentEnvironment;
 
@@ -462,37 +342,6 @@ public class StreamExecutionEnvironment {
 		currentEnvironment.setParallelism(parallelism);
 
 		return currentEnvironment;
-	}
-
-	/**
-	 * Gets the default parallelism that will be used for the local execution environment created by
-	 * {@link #createLocalEnvironment()}.
-	 *
-	 * @return The default local parallelism
-	 */
-	@PublicEvolving
-	public static int getDefaultLocalParallelism() {
-		return defaultLocalParallelism;
-	}
-
-	/**
-	 * Sets the default parallelism that will be used for the local execution
-	 * environment created by {@link #createLocalEnvironment()}.
-	 *
-	 * @param parallelism The parallelism to use as the default local parallelism.
-	 */
-	@PublicEvolving
-	public static void setDefaultLocalParallelism(int parallelism) {
-		defaultLocalParallelism = parallelism;
-	}
-
-	// --------------------------------------------------------------------------------------------
-	//  Methods to control the context and local environments for execution from packaged programs
-	// --------------------------------------------------------------------------------------------
-
-	protected static void initializeContextEnvironment(StreamExecutionEnvironmentFactory ctx) {
-		contextEnvironmentFactory = ctx;
-		threadLocalContextEnvironmentFactory.set(contextEnvironmentFactory);
 	}
 
 	protected static void resetContextEnvironment() {
