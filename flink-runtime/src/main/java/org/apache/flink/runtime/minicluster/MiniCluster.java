@@ -370,9 +370,6 @@ public class MiniCluster implements JobExecutorService, AutoCloseableAsync {
 	@GuardedBy("lock")
 	private void startTaskManagers() throws Exception {
 		final int numTaskManagers = miniClusterConfiguration.getNumTaskManagers();
-
-		LOG.info("Starting {} TaskManger(s)", numTaskManagers);
-
 		for (int i = 0; i < numTaskManagers; i++) {
 			startTaskExecutor();
 		}

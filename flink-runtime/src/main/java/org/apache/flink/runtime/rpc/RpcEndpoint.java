@@ -152,58 +152,22 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
 		return isRunning;
 	}
 
-	// ------------------------------------------------------------------------
-	//  Start & shutdown & lifecycle callbacks
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Triggers start of the rpc endpoint. This tells the underlying rpc server that the rpc endpoint is ready
-	 * to process remote procedure calls.
-	 */
 	public final void start() {
 		rpcServer.start();
 	}
 
-	/**
-	 * Internal method which is called by the RpcService implementation to start the RpcEndpoint.
-	 *
-	 * @throws Exception indicating that the rpc endpoint could not be started. If an exception occurs,
-	 * then the rpc endpoint will automatically terminate.
-	 */
 	public final void internalCallOnStart() throws Exception {
 		validateRunsInMainThread();
 		isRunning = true;
 		onStart();
 	}
 
-	/**
-	 * User overridable callback which is called from {@link #internalCallOnStart()}.
-	 *
-	 * <p>This method is called when the RpcEndpoint is being started. The method is guaranteed
-	 * to be executed in the main thread context and can be used to start the rpc endpoint in the
-	 * context of the rpc endpoint's main thread.
-	 *
-	 * <p>IMPORTANT: This method should never be called directly by the user.
-	 *
-	 * @throws Exception indicating that the rpc endpoint could not be started. If an exception occurs,
-	 * then the rpc endpoint will automatically terminate.
-	 */
 	protected void onStart() throws Exception {}
 
-	/**
-	 * Triggers stop of the rpc endpoint. This tells the underlying rpc server that the rpc endpoint is
-	 * no longer ready to process remote procedure calls.
-	 */
 	protected final void stop() {
 		rpcServer.stop();
 	}
 
-	/**
-	 * Internal method which is called by the RpcService implementation to stop the RpcEndpoint.
-	 *
-	 * @return Future which is completed once all post stop actions are completed. If an error
-	 * occurs this future is completed exceptionally
-	 */
 	public final CompletableFuture<Void> internalCallOnStop() {
 		validateRunsInMainThread();
 		CompletableFuture<Void> stopFuture = onStop();
@@ -211,48 +175,16 @@ public abstract class RpcEndpoint implements RpcGateway, AutoCloseableAsync {
 		return stopFuture;
 	}
 
-	/**
-	 * User overridable callback which is called from {@link #internalCallOnStop()}.
-	 *
-	 * <p>This method is called when the RpcEndpoint is being shut down. The method is guaranteed
-	 * to be executed in the main thread context and can be used to clean up internal state.
-	 *
-	 * <p>IMPORTANT: This method should never be called directly by the user.
-	 *
-	 * @return Future which is completed once all post stop actions are completed. If an error
-	 * occurs this future is completed exceptionally
-	 */
 	protected CompletableFuture<Void> onStop() {
 		return CompletableFuture.completedFuture(null);
 	}
 
-	/**
-	 * Triggers the shut down of the rpc endpoint. The shut down is executed asynchronously.
-	 *
-	 * <p>In order to wait on the completion of the shut down, obtain the termination future
-	 * via {@link #getTerminationFuture()}} and wait on its completion.
-	 */
 	@Override
 	public final CompletableFuture<Void> closeAsync() {
 		rpcService.stopServer(rpcServer);
 		return getTerminationFuture();
 	}
 
-	// ------------------------------------------------------------------------
-	//  Basic RPC endpoint properties
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns a self gateway of the specified type which can be used to issue asynchronous
-	 * calls against the RpcEndpoint.
-	 *
-	 * <p>IMPORTANT: The self gateway type must be implemented by the RpcEndpoint. Otherwise
-	 * the method will fail.
-	 *
-	 * @param selfGatewayType class of the self gateway type
-	 * @param <C> type of the self gateway to create
-	 * @return Self gateway of the specified type which can be used to issue asynchronous rpcs
-	 */
 	public <C extends RpcGateway> C getSelfGateway(Class<C> selfGatewayType) {
 		if (selfGatewayType.isInstance(rpcServer)) {
 			@SuppressWarnings("unchecked")
