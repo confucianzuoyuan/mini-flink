@@ -135,26 +135,6 @@ public class LocalInputChannel extends InputChannel implements BufferAvailabilit
 
 	}
 
-	/**
-	 * Retriggers a subpartition request.
-	 */
-	void retriggerSubpartitionRequest(Timer timer, final int subpartitionIndex) {
-		synchronized (requestLock) {
-			checkState(subpartitionView == null, "already requested partition");
-
-			timer.schedule(new TimerTask() {
-				@Override
-				public void run() {
-					try {
-						requestSubpartition(subpartitionIndex);
-					} catch (Throwable t) {
-						setError(t);
-					}
-				}
-			}, getCurrentBackoff());
-		}
-	}
-
 	@Override
 	Optional<BufferAndAvailability> getNextBuffer() throws IOException, InterruptedException {
 		checkError();
