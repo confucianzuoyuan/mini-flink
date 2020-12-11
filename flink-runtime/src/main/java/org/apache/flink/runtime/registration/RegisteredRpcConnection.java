@@ -86,9 +86,6 @@ public abstract class RegisteredRpcConnection<F extends Serializable, G extends 
 	// ------------------------------------------------------------------------
 
 	public void start() {
-		checkState(!closed, "The RPC connection is already closed");
-		checkState(!isConnected() && pendingRegistration == null, "The RPC connection is already started");
-
 		final RetryingRegistration<F, G, S> newRegistration = createNewRegistration();
 
 		if (REGISTRATION_UPDATER.compareAndSet(this, null, newRegistration)) {

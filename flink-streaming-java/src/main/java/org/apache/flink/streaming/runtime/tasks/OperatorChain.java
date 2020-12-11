@@ -301,27 +301,27 @@ public class OperatorChain<OUT, OP extends StreamOperator<OUT>> implements Strea
 
 		List<OutputSelector<T>> selectors = operatorConfig.getOutputSelectors(userCodeClassloader);
 
-			if (allOutputs.size() == 1) {
-				return allOutputs.get(0).f0;
+		if (allOutputs.size() == 1) {
+			return allOutputs.get(0).f0;
+		}
+		else {
+			// send to N outputs. Note that this includes the special case
+			// of sending to zero outputs
+			@SuppressWarnings({"unchecked", "rawtypes"})
+			Output<StreamRecord<T>>[] asArray = new Output[allOutputs.size()];
+			for (int i = 0; i < allOutputs.size(); i++) {
+				asArray[i] = allOutputs.get(i).f0;
 			}
-			else {
-				// send to N outputs. Note that this includes the special case
-				// of sending to zero outputs
-				@SuppressWarnings({"unchecked", "rawtypes"})
-				Output<StreamRecord<T>>[] asArray = new Output[allOutputs.size()];
-				for (int i = 0; i < allOutputs.size(); i++) {
-					asArray[i] = allOutputs.get(i).f0;
-				}
 
-				// This is the inverse of creating the normal ChainingOutput.
-				// If the chaining output does not copy we need to copy in the broadcast output,
-				// otherwise multi-chaining would not work correctly.
-				if (containingTask.getExecutionConfig().isObjectReuseEnabled()) {
-					return new CopyingBroadcastingOutputCollector<>(asArray, this);
-				} else  {
-					return new BroadcastingOutputCollector<>(asArray, this);
-				}
+			// This is the inverse of creating the normal ChainingOutput.
+			// If the chaining output does not copy we need to copy in the broadcast output,
+			// otherwise multi-chaining would not work correctly.
+			if (containingTask.getExecutionConfig().isObjectReuseEnabled()) {
+				return new CopyingBroadcastingOutputCollector<>(asArray, this);
+			} else  {
+				return new BroadcastingOutputCollector<>(asArray, this);
 			}
+		}
 
 	}
 

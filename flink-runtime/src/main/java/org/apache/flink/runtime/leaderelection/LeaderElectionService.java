@@ -22,8 +22,13 @@ import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public interface LeaderElectionService {
+
 	void start(LeaderContender contender) throws Exception;
+
 	void stop() throws Exception;
+
 	void confirmLeadership(UUID leaderSessionID, String leaderAddress);
+
 	boolean hasLeadership(@Nonnull UUID leaderSessionId);
+
 }

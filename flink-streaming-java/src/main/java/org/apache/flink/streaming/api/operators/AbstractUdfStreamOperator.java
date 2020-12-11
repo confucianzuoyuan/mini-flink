@@ -31,16 +31,6 @@ import org.apache.flink.streaming.util.functions.StreamingFunctionUtils;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * This is used as the base class for operators that have a user-defined
- * function. This class handles the opening and closing of the user-defined functions,
- * as part of the operator life cycle.
- *
- * @param <OUT>
- *            The output type of the operator
- * @param <F>
- *            The type of the user function
- */
 @PublicEvolving
 public abstract class AbstractUdfStreamOperator<OUT, F extends Function>
 		extends AbstractStreamOperator<OUT>
@@ -100,17 +90,9 @@ public abstract class AbstractUdfStreamOperator<OUT, F extends Function>
 		}
 	}
 
-	// ------------------------------------------------------------------------
-	//  Output type configuration
-	// ------------------------------------------------------------------------
-
 	@Override
 	public void setOutputType(TypeInformation<OUT> outTypeInfo, ExecutionConfig executionConfig) {
 		StreamingFunctionUtils.setOutputType(userFunction, outTypeInfo, executionConfig);
 	}
 
-
-	public Configuration getUserFunctionParameters() {
-		return new Configuration();
-	}
 }
