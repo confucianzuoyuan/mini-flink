@@ -3,21 +3,10 @@ package org.apache.flink.runtime.clusterframework;
 import akka.actor.ActorSystem;
 import com.typesafe.config.Config;
 import org.apache.flink.configuration.AkkaOptions;
-import org.apache.flink.configuration.ConfigOption;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.CoreOptions;
 import org.apache.flink.runtime.akka.AkkaUtils;
-import org.apache.flink.shaded.guava18.com.google.common.escape.Escaper;
-import org.apache.flink.shaded.guava18.com.google.common.escape.Escapers;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.apache.flink.configuration.ConfigOptions.key;
-
-/**
- * Tools for starting JobManager and TaskManager processes, including the
- * Actor Systems used to run the JobManager and TaskManager actors.
- */
 public class BootstrapTools {
 	public static ActorSystem startLocalActorSystem(
 		Configuration configuration,

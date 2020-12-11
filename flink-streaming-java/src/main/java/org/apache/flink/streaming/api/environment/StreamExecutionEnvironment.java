@@ -89,12 +89,6 @@ public class StreamExecutionEnvironment {
 		this(configuration, null);
 	}
 
-	/**
-	 * Creates a new {@link StreamExecutionEnvironment} that will use the given {@link
-	 * Configuration} to configure the {@link PipelineExecutor}.
-	 *
-	 * <p>In addition, this constructor allows specifying the user code {@link ClassLoader}.
-	 */
 	@PublicEvolving
 	public StreamExecutionEnvironment(
 			final Configuration configuration,
@@ -102,13 +96,6 @@ public class StreamExecutionEnvironment {
 		this(new DefaultExecutorServiceLoader(), configuration, userClassloader);
 	}
 
-	/**
-	 * Creates a new {@link StreamExecutionEnvironment} that will use the given {@link
-	 * Configuration} to configure the {@link PipelineExecutor}.
-	 *
-	 * <p>In addition, this constructor allows specifying the {@link PipelineExecutorServiceLoader} and
-	 * user code {@link ClassLoader}.
-	 */
 	@PublicEvolving
 	public StreamExecutionEnvironment(
 			final PipelineExecutorServiceLoader executorServiceLoader,
@@ -280,7 +267,6 @@ public class StreamExecutionEnvironment {
 
 	@Internal
 	public void addOperator(Transformation<?> transformation) {
-		Preconditions.checkNotNull(transformation, "transformation must not be null.");
 		this.transformations.add(transformation);
 	}
 

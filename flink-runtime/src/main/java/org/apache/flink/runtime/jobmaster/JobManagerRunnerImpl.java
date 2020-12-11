@@ -159,12 +159,8 @@ public class JobManagerRunnerImpl implements LeaderContender, OnCompletionAction
 
 	@Override
 	public void start() throws Exception {
-		try {
-			// 启动作业管理器
-			leaderElectionService.start(this);
-		} catch (Exception e) {
-			throw new Exception("Could not start the leader election service.", e);
-		}
+		// 启动作业管理器
+		leaderElectionService.start(this);
 	}
 
 	@Override
