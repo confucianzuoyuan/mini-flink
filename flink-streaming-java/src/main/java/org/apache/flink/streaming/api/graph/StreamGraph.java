@@ -37,14 +37,12 @@ import org.apache.flink.runtime.jobgraph.tasks.AbstractInvokable;
 import org.apache.flink.runtime.state.StateBackend;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.collector.selector.OutputSelector;
-import org.apache.flink.streaming.api.operators.SourceOperatorFactory;
 import org.apache.flink.streaming.api.operators.StreamOperatorFactory;
 import org.apache.flink.streaming.api.transformations.ShuffleMode;
 import org.apache.flink.streaming.runtime.partitioner.ForwardPartitioner;
 import org.apache.flink.streaming.runtime.partitioner.RebalancePartitioner;
 import org.apache.flink.streaming.runtime.partitioner.StreamPartitioner;
 import org.apache.flink.streaming.runtime.tasks.OneInputStreamTask;
-import org.apache.flink.streaming.runtime.tasks.SourceOperatorStreamTask;
 import org.apache.flink.streaming.runtime.tasks.SourceStreamTask;
 import org.apache.flink.util.OutputTag;
 import org.slf4j.Logger;
@@ -183,26 +181,6 @@ public class StreamGraph implements Pipeline {
 
 	public boolean isIterative() {
 		return !vertexIDtoLoopTimeout.isEmpty();
-	}
-
-	public <IN, OUT> void addSource(
-			Integer vertexID,
-			@Nullable String slotSharingGroup,
-			@Nullable String coLocationGroup,
-			SourceOperatorFactory<OUT> operatorFactory,
-			TypeInformation<IN> inTypeInfo,
-			TypeInformation<OUT> outTypeInfo,
-			String operatorName) {
-		addOperator(
-				vertexID,
-				slotSharingGroup,
-				coLocationGroup,
-				operatorFactory,
-				inTypeInfo,
-				outTypeInfo,
-				operatorName,
-				SourceOperatorStreamTask.class);
-		sources.add(vertexID);
 	}
 
 	public <IN, OUT> void addLegacySource(
