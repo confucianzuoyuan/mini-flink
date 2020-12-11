@@ -78,12 +78,7 @@ public final class PerJobMiniClusterFactory {
 		return miniCluster
 			.submitJob(jobGraph)
 			.thenApply(result -> new PerJobMiniClusterJobClient(result.getJobID(), miniCluster))
-			.whenComplete((ignored, throwable) -> {
-				if (throwable != null) {
-					// We failed to create the JobClient and must shutdown to ensure cleanup.
-					shutDownCluster(miniCluster);
-				}
-			})
+			.whenComplete((ignored, throwable) -> {})
 			.thenApply(Function.identity());
 	}
 

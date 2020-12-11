@@ -259,12 +259,6 @@ public class StreamExecutionEnvironment {
 
 			return jobExecutionResult;
 		} catch (Throwable t) {
-			jobListeners.forEach(jobListener -> {
-				jobListener.onJobExecuted(null, ExceptionUtils.stripExecutionException(t));
-			});
-			ExceptionUtils.rethrowException(t);
-
-			// never reached, only make javac happy
 			return null;
 		}
 	}
@@ -309,15 +303,6 @@ public class StreamExecutionEnvironment {
 		return executeAsync(getStreamGraph(checkNotNull(jobName)));
 	}
 
-	/**
-	 * Triggers the program execution asynchronously. The environment will execute all parts of
-	 * the program that have resulted in a "sink" operation. Sink operations are
-	 * for example printing results or forwarding them to a message queue.
-	 *
-	 * @param streamGraph the stream graph representing the transformations
-	 * @return A {@link JobClient} that can be used to communicate with the submitted job, completed on submission succeeded.
-	 * @throws Exception which occurs during job execution.
-	 */
 	@Internal
 	public JobClient executeAsync(StreamGraph streamGraph) throws Exception {
 		final PipelineExecutorFactory executorFactory =
@@ -327,18 +312,9 @@ public class StreamExecutionEnvironment {
 			.getExecutor(configuration)
 			.execute(streamGraph, configuration);
 
-		try {
-			JobClient jobClient = jobClientFuture.get();
-			jobListeners.forEach(jobListener -> jobListener.onJobSubmitted(jobClient, null));
-			return jobClient;
-		} catch (ExecutionException executionException) {
-			final Throwable strippedException = ExceptionUtils.stripExecutionException(executionException);
-			jobListeners.forEach(jobListener -> jobListener.onJobSubmitted(null, strippedException));
-
-			throw new FlinkException(
-				String.format("Failed to execute job '%s'.", streamGraph.getJobName()),
-				strippedException);
-		}
+		JobClient jobClient = jobClientFuture.get();
+		jobListeners.forEach(jobListener -> jobListener.onJobSubmitted(jobClient, null));
+		return jobClient;
 	}
 
 	/**
