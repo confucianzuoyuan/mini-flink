@@ -77,11 +77,6 @@ public class SourceStreamTask<OUT, SRC extends SourceFunction<OUT>, OP extends S
 	}
 
 	@Override
-	protected void advanceToEndOfEventTime() throws Exception {
-		headOperator.advanceToEndOfEventTime();
-	}
-
-	@Override
 	protected void cleanup() {
 		// does not hold any resources, so no cleanup needed
 	}
@@ -116,12 +111,6 @@ public class SourceStreamTask<OUT, SRC extends SourceFunction<OUT>, OP extends S
 		finally {
 			sourceThread.interrupt();
 		}
-	}
-
-	@Override
-	protected void finishTask() throws Exception {
-		isFinished = true;
-		cancelTask();
 	}
 
 	// ------------------------------------------------------------------------

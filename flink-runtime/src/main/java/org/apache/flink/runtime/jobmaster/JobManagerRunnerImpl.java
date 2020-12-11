@@ -160,6 +160,7 @@ public class JobManagerRunnerImpl implements LeaderContender, OnCompletionAction
 	@Override
 	public void start() throws Exception {
 		try {
+			System.out.println("------------");
 			leaderElectionService.start(this);
 		} catch (Exception e) {
 			throw new Exception("Could not start the leader election service.", e);
@@ -296,12 +297,7 @@ public class JobManagerRunnerImpl implements LeaderContender, OnCompletionAction
 		try {
 			// 将jobid添加到一张哈系表
 			runningJobsRegistry.setJobRunning(jobGraph.getJobID());
-		} catch (IOException e) {
-			return FutureUtils.completedExceptionally(
-				new FlinkException(
-					String.format("Failed to set the job %s to running in the running jobs registry.", jobGraph.getJobID()),
-					e));
-		}
+		} catch (IOException e) { }
 
 		final CompletableFuture<Acknowledge> startFuture;
 		try {

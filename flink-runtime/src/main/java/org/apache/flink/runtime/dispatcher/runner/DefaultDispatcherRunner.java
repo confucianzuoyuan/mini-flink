@@ -111,8 +111,7 @@ public final class DefaultDispatcherRunner implements DispatcherRunner, LeaderCo
 		dispatcherLeaderProcess = createNewDispatcherLeaderProcess(leaderSessionID);
 
 		final DispatcherLeaderProcess newDispatcherLeaderProcess = dispatcherLeaderProcess;
-		FutureUtils.assertNoException(
-			previousDispatcherLeaderProcessTerminationFuture.thenRun(newDispatcherLeaderProcess::start));
+		previousDispatcherLeaderProcessTerminationFuture.thenRun(newDispatcherLeaderProcess::start);
 	}
 
 	private void stopDispatcherLeaderProcess() {

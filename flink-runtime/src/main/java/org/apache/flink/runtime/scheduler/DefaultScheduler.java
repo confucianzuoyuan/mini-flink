@@ -177,6 +177,7 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 
 		transitionToScheduled(verticesToDeploy);
 
+		// 分配任务槽
 		final List<SlotExecutionVertexAssignment> slotExecutionVertexAssignments =
 			allocateSlots(executionVertexDeploymentOptions);
 
@@ -231,8 +232,7 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 	}
 
 	private void waitForAllSlotsAndDeploy(final List<DeploymentHandle> deploymentHandles) {
-		FutureUtils.assertNoException(
-			assignAllResources(deploymentHandles).handle(deployAll(deploymentHandles)));
+		assignAllResources(deploymentHandles).handle(deployAll(deploymentHandles));
 	}
 
 	private CompletableFuture<Void> assignAllResources(final List<DeploymentHandle> deploymentHandles) {

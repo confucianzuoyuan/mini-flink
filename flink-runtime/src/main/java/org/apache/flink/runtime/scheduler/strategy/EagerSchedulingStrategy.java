@@ -59,7 +59,6 @@ public class EagerSchedulingStrategy implements SchedulingStrategy {
 
 	@Override
 	public void onExecutionStateChange(ExecutionVertexID executionVertexId, ExecutionState executionState) {
-		// Will not react to these notifications.
 	}
 
 	@Override

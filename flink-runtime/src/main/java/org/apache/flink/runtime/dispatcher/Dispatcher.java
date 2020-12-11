@@ -33,7 +33,6 @@ import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.runtime.jobmanager.JobGraphWriter;
 import org.apache.flink.runtime.jobmaster.JobManagerRunner;
 import org.apache.flink.runtime.jobmaster.JobManagerSharedServices;
-import org.apache.flink.runtime.jobmaster.JobMasterGateway;
 import org.apache.flink.runtime.jobmaster.JobResult;
 import org.apache.flink.runtime.messages.Acknowledge;
 import org.apache.flink.runtime.messages.FlinkJobNotFoundException;
@@ -262,12 +261,11 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
 	}
 
 	private JobManagerRunner startJobManagerRunner(JobManagerRunner jobManagerRunner) throws Exception {
-		FutureUtils.assertNoException(
-			jobManagerRunner.getResultFuture().handleAsync(
-				(ArchivedExecutionGraph archivedExecutionGraph, Throwable throwable) -> {
-					jobReachedGloballyTerminalState(archivedExecutionGraph);
-					return null;
-				}, getMainThreadExecutor()));
+		jobManagerRunner.getResultFuture().handleAsync(
+			(ArchivedExecutionGraph archivedExecutionGraph, Throwable throwable) -> {
+				System.out.println("++++++++++++");
+				return null;
+			}, getMainThreadExecutor());
 
 		jobManagerRunner.start();
 
@@ -314,41 +312,6 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
 
 	protected void onFatalError(Throwable throwable) {
 		fatalErrorHandler.onFatalError(throwable);
-	}
-
-	protected void jobReachedGloballyTerminalState(ArchivedExecutionGraph archivedExecutionGraph) {
-		Preconditions.checkArgument(
-			archivedExecutionGraph.getState().isGloballyTerminalState(),
-			"Job %s is in state %s which is not globally terminal.",
-			archivedExecutionGraph.getJobID(),
-			archivedExecutionGraph.getState());
-
-		archiveExecutionGraph(archivedExecutionGraph);
-	}
-
-	private void archiveExecutionGraph(ArchivedExecutionGraph archivedExecutionGraph) {
-		try {
-			archivedExecutionGraphStore.put(archivedExecutionGraph);
-		} catch (IOException e) {
-			log.info(
-				"Could not store completed job {}({}).",
-				archivedExecutionGraph.getJobName(),
-				archivedExecutionGraph.getJobID(),
-				e);
-		}
-
-		final CompletableFuture<Acknowledge> executionGraphFuture = historyServerArchivist.archiveExecutionGraph(archivedExecutionGraph);
-
-		executionGraphFuture.whenComplete(
-			(Acknowledge ignored, Throwable throwable) -> {
-				if (throwable != null) {
-					log.info(
-						"Could not archive completed job {}({}) to the history server.",
-						archivedExecutionGraph.getJobName(),
-						archivedExecutionGraph.getJobID(),
-						throwable);
-				}
-			});
 	}
 
 	protected void jobNotFinished(JobID jobId) {

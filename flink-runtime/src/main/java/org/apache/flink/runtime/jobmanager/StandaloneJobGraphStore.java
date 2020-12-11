@@ -34,7 +34,6 @@ public class StandaloneJobGraphStore implements JobGraphStore {
 
 	@Override
 	public void start(JobGraphListener jobGraphListener) throws Exception {
-		// Nothing to do
 	}
 
 	@Override

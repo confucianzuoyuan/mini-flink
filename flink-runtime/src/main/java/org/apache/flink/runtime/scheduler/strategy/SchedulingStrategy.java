@@ -44,12 +44,6 @@ public interface SchedulingStrategy {
 	 */
 	void restartTasks(Set<ExecutionVertexID> verticesToRestart);
 
-	/**
-	 * Called whenever an {@link Execution} changes its state.
-	 *
-	 * @param executionVertexId The id of the task
-	 * @param executionState The new state of the execution
-	 */
 	void onExecutionStateChange(ExecutionVertexID executionVertexId, ExecutionState executionState);
 
 	/**

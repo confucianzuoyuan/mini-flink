@@ -297,61 +297,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>>
 		}
 	}
 
-	private void resetSynchronousSavepointId() {
-		syncSavepointId = null;
-	}
-
-	private void setSynchronousSavepointId(long checkpointId) {
-		Preconditions.checkState(
-			syncSavepointId == null, "at most one stop-with-savepoint checkpoint at a time is allowed");
-		syncSavepointId = checkpointId;
-	}
-
-	@VisibleForTesting
-	OptionalLong getSynchronousSavepointId() {
-		return syncSavepointId != null ? OptionalLong.of(syncSavepointId) : OptionalLong.empty();
-	}
-
-	private boolean isSynchronousSavepointId(long checkpointId) {
-		return syncSavepointId != null && syncSavepointId == checkpointId;
-	}
-
-	private void runSynchronousSavepointMailboxLoop() throws Exception {
-		assert syncSavepointId != null;
-
-		MailboxExecutor mailboxExecutor = mailboxProcessor.getMailboxExecutor(TaskMailbox.MAX_PRIORITY);
-
-		while (!canceled && syncSavepointId != null) {
-			mailboxExecutor.yield();
-		}
-	}
-
-	/**
-	 * Emits the {@link org.apache.flink.streaming.api.watermark.Watermark#MAX_WATERMARK MAX_WATERMARK}
-	 * so that all registered timers are fired.
-	 *
-	 * <p>This is used by the source task when the job is {@code TERMINATED}. In the case,
-	 * we want all the timers registered throughout the pipeline to fire and the related
-	 * state (e.g. windows) to be flushed.
-	 *
-	 * <p>For tasks other than the source task, this method does nothing.
-	 */
-	protected void advanceToEndOfEventTime() throws Exception {
-
-	}
-
-	/**
-	 * Instructs the task to go through its normal termination routine, i.e. exit the run-loop
-	 * and call {@link StreamOperator#close()} and {@link StreamOperator#dispose()} on its operators.
-	 *
-	 * <p>This is used by the source task to get out of the run-loop when the job is stopped with a savepoint.
-	 *
-	 * <p>For tasks other than the source task, this method does nothing.
-	 */
-	protected void finishTask() throws Exception {
-
-	}
-
 	// ------------------------------------------------------------------------
 	//  Core work methods of the Stream Task
 	// ------------------------------------------------------------------------

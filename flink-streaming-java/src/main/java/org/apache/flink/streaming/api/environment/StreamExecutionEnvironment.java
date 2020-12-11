@@ -254,6 +254,7 @@ public class StreamExecutionEnvironment {
 			final JobExecutionResult jobExecutionResult;
 
 			jobExecutionResult = jobClient.getJobExecutionResult(userClassloader).get();
+			System.out.println(jobExecutionResult.toString());
 
 			jobListeners.forEach(jobListener -> jobListener.onJobExecuted(jobExecutionResult, null));
 

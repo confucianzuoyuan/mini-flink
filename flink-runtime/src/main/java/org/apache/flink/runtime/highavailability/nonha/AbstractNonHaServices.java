@@ -56,8 +56,6 @@ public abstract class AbstractNonHaServices implements HighAvailabilityServices 
 	@Override
 	public JobGraphStore getJobGraphStore() throws Exception {
 		synchronized (lock) {
-			checkNotShutdown();
-
 			return new StandaloneJobGraphStore();
 		}
 	}

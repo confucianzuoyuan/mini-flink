@@ -159,10 +159,6 @@ public class MailboxProcessor implements Closeable {
 
 		final TaskMailbox localMailbox = mailbox;
 
-		Preconditions.checkState(
-			localMailbox.isMailboxThread(),
-			"Method must be executed by declared mailbox thread!");
-
 		assert localMailbox.getState() == TaskMailbox.State.OPEN : "Mailbox must be opened!";
 
 		final MailboxController defaultActionContext = new MailboxController(this);

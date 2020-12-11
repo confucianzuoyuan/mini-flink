@@ -169,11 +169,7 @@ public class EmbeddedLeaderService {
 				service.contender = contender;
 				service.running = true;
 
-				updateLeader().whenComplete((aVoid, throwable) -> {
-					if (throwable != null) {
-						fatalError(throwable);
-					}
-				});
+				updateLeader().whenComplete((aVoid, throwable) -> {});
 			}
 			catch (Throwable t) {
 				fatalError(t);
