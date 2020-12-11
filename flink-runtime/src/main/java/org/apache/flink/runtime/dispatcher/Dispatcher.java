@@ -307,55 +307,6 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
 		return CompletableFuture.completedFuture(Acknowledge.get());
 	}
 
-	/**
-	 * Cleans up the job related data from the dispatcher. If cleanupHA is true, then
-	 * the data will also be removed from HA.
-	 *
-	 * @param jobId JobID identifying the job to clean up
-	 * @param cleanupHA True iff HA data shall also be cleaned up
-	 */
-	private void removeJobAndRegisterTerminationFuture(JobID jobId, boolean cleanupHA) {
-		final CompletableFuture<Void> cleanupFuture = removeJob(jobId, cleanupHA);
-
-		registerJobManagerRunnerTerminationFuture(jobId, cleanupFuture);
-	}
-
-	private void registerJobManagerRunnerTerminationFuture(JobID jobId, CompletableFuture<Void> jobManagerRunnerTerminationFuture) {
-		Preconditions.checkState(!jobManagerTerminationFutures.containsKey(jobId));
-
-		jobManagerTerminationFutures.put(jobId, jobManagerRunnerTerminationFuture);
-
-		// clean up the pending termination future
-		jobManagerRunnerTerminationFuture.thenRunAsync(
-			() -> {
-				final CompletableFuture<Void> terminationFuture = jobManagerTerminationFutures.remove(jobId);
-
-				//noinspection ObjectEquality
-				if (terminationFuture != null && terminationFuture != jobManagerRunnerTerminationFuture) {
-					jobManagerTerminationFutures.put(jobId, terminationFuture);
-				}
-			},
-			getMainThreadExecutor());
-	}
-
-	private CompletableFuture<Void> removeJob(JobID jobId, boolean cleanupHA) {
-		CompletableFuture<JobManagerRunner> jobManagerRunnerFuture = jobManagerRunnerFutures.remove(jobId);
-
-		final CompletableFuture<Void> jobManagerRunnerTerminationFuture;
-		if (jobManagerRunnerFuture != null) {
-			jobManagerRunnerTerminationFuture = jobManagerRunnerFuture.thenCompose(JobManagerRunner::closeAsync);
-		} else {
-			jobManagerRunnerTerminationFuture = CompletableFuture.completedFuture(null);
-		}
-
-		return jobManagerRunnerTerminationFuture.thenRunAsync(
-			() -> cleanUpJobData(jobId, cleanupHA),
-			getRpcService().getExecutor());
-	}
-
-	private void cleanUpJobData(JobID jobId, boolean cleanupHA) {
-	}
-
 	private CompletableFuture<Void> terminateJobManagerRunnersAndGetTerminationFuture() {
 		final Collection<CompletableFuture<Void>> values = jobManagerTerminationFutures.values();
 		return FutureUtils.completeAll(values);
@@ -401,26 +352,6 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
 	}
 
 	protected void jobNotFinished(JobID jobId) {
-	}
-
-	private CompletableFuture<JobMasterGateway> getJobMasterGatewayFuture(JobID jobId) {
-		final CompletableFuture<JobManagerRunner> jobManagerRunnerFuture = jobManagerRunnerFutures.get(jobId);
-
-		if (jobManagerRunnerFuture == null) {
-			return FutureUtils.completedExceptionally(new FlinkJobNotFoundException(jobId));
-		} else {
-			final CompletableFuture<JobMasterGateway> leaderGatewayFuture = jobManagerRunnerFuture.thenCompose(JobManagerRunner::getJobMasterGateway);
-			return leaderGatewayFuture.thenApplyAsync(
-				(JobMasterGateway jobMasterGateway) -> {
-					// check whether the retrieved JobMasterGateway belongs still to a running JobMaster
-					if (jobManagerRunnerFutures.containsKey(jobId)) {
-						return jobMasterGateway;
-					} else {
-						throw new CompletionException(new FlinkJobNotFoundException(jobId));
-					}
-				},
-				getMainThreadExecutor());
-		}
 	}
 
 	private CompletableFuture<Void> waitForTerminatingJobManager(JobID jobId, JobGraph jobGraph, FunctionWithException<JobGraph, CompletableFuture<Void>, ?> action) {
