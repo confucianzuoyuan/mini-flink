@@ -40,12 +40,6 @@ public interface Source<T, SplitT extends SourceSplit, EnumChkT> extends Seriali
 
 	SourceReader<T, SplitT> createReader(SourceReaderContext readerContext);
 
-	SplitEnumerator<SplitT, EnumChkT> createEnumerator(SplitEnumeratorContext<SplitT> enumContext);
-
-	SplitEnumerator<SplitT, EnumChkT> restoreEnumerator(
-			SplitEnumeratorContext<SplitT> enumContext,
-			EnumChkT checkpoint) throws IOException;
-
 	// ------------------------------------------------------------------------
 	//  serializers for the metadata
 	// ------------------------------------------------------------------------

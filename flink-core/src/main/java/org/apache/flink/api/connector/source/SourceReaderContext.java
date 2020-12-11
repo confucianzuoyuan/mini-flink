@@ -25,11 +25,5 @@ import org.apache.flink.annotation.PublicEvolving;
  */
 @PublicEvolving
 public interface SourceReaderContext {
-
-	/**
-	 * Send a source event to the source coordinator.
-	 *
-	 * @param sourceEvent the source event to coordinator.
-	 */
 	void sendSourceEventToCoordinator(SourceEvent sourceEvent);
 }

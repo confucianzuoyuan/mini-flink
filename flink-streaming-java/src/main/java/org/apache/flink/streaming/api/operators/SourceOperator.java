@@ -95,25 +95,6 @@ public class SourceOperator<OUT, SplitT extends SourceSplit>
 
 	@Override
 	public void open() throws Exception {
-		final SourceReaderContext context = new SourceReaderContext() {
-			@Override
-			public void sendSourceEventToCoordinator(SourceEvent event) {
-			}
-		};
-
-		sourceReader = readerFactory.apply(context);
-
-		// restore the state if necessary.
-		final List<SplitT> splits = CollectionUtil.iterableToList(readerState.get());
-		if (!splits.isEmpty()) {
-			sourceReader.addSplits(splits);
-		}
-
-		// Start the reader.
-		sourceReader.start();
-		// Register the reader to the coordinator.
-		registerReader();
-
 	}
 
 	@Override
