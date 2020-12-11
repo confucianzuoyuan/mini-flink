@@ -298,9 +298,6 @@ public class StreamExecutionEnvironment {
 	}
 
 	private StreamGraphGenerator getStreamGraphGenerator() {
-		if (transformations.size() <= 0) {
-			throw new IllegalStateException("No operators defined in streaming topology. Cannot execute.");
-		}
 		return new StreamGraphGenerator(transformations, config)
 			.setChaining(isChainingEnabled)
 			.setDefaultBufferTimeout(bufferTimeout);
