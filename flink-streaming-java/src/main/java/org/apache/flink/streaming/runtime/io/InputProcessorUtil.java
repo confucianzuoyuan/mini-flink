@@ -60,36 +60,14 @@ public class InputProcessorUtil {
 			.flatMap(Collection::stream)
 			.sorted(Comparator.comparing(IndexedInputGate::getGateIndex))
 			.toArray(IndexedInputGate[]::new);
-		CheckpointBarrierHandler barrierHandler = createCheckpointBarrierHandler(
-			config,
-			sortedInputGates,
-			taskName,
-			toNotifyOnCheckpoint);
 
 		InputGate[] unionedInputGates = Arrays.stream(inputGates)
 			.map(InputGateUtil::createInputGate)
 			.toArray(InputGate[]::new);
-		barrierHandler.getBufferReceivedListener().ifPresent(listener -> {
-			for (final InputGate inputGate : unionedInputGates) {
-				inputGate.registerBufferReceivedListener(listener);
-			}
-		});
 
 		return Arrays.stream(unionedInputGates)
 			.map(unionedInputGate -> new CheckpointedInputGate(unionedInputGate))
 			.toArray(CheckpointedInputGate[]::new);
 	}
 
-	private static CheckpointBarrierHandler createCheckpointBarrierHandler(
-			StreamConfig config,
-			InputGate[] inputGates,
-			String taskName,
-			AbstractInvokable toNotifyOnCheckpoint) {
-		switch (config.getCheckpointMode()) {
-			case EXACTLY_ONCE:
-				return new CheckpointBarrierAligner(taskName, toNotifyOnCheckpoint, inputGates);
-			default:
-				throw new UnsupportedOperationException("Unrecognized Checkpointing Mode: " + config.getCheckpointMode());
-		}
-	}
 }
