@@ -241,15 +241,6 @@ public class MailboxProcessor implements Closeable {
 	 * that all flag changes must make sure that the mailbox signals mailbox#hasMail.
 	 */
 	private boolean processMail(TaskMailbox mailbox) throws Exception {
-
-		// Doing this check is an optimization to only have a volatile read in the expected hot path, locks are only
-		// acquired after this point.
-		if (!mailbox.createBatch()) {
-			// We can also directly return true because all changes to #isMailboxLoopRunning must be connected to
-			// mailbox.hasMail() == true.
-			return true;
-		}
-
 		// Take mails in a non-blockingly and execute them.
 		Optional<Mail> maybeMail;
 		while (isMailboxLoopRunning() && (maybeMail = mailbox.tryTakeFromBatch()).isPresent()) {

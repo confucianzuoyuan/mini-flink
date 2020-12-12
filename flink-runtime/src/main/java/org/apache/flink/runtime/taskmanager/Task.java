@@ -488,16 +488,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 			userCodeClassLoader = createUserCodeClassloader();
 			final ExecutionConfig executionConfig = serializedExecutionConfig.deserializeValue(userCodeClassLoader);
 
-			if (executionConfig.getTaskCancellationInterval() >= 0) {
-				// override task cancellation interval from Flink config if set in ExecutionConfig
-				taskCancellationInterval = executionConfig.getTaskCancellationInterval();
-			}
-
-			if (executionConfig.getTaskCancellationTimeout() >= 0) {
-				// override task cancellation timeout from Flink config if set in ExecutionConfig
-				taskCancellationTimeout = executionConfig.getTaskCancellationTimeout();
-			}
-
 			if (isCanceledOrFailed()) {
 				throw new CancelTaskException();
 			}
