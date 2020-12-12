@@ -605,20 +605,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>>
 
 	@Override
 	public void dispatchOperatorEvent(OperatorID operator, SerializedValue<OperatorEvent> event) throws FlinkException {
-		try {
-			mainMailboxExecutor.execute(
-				() -> {
-					try {
-						operatorChain.dispatchOperatorEvent(operator, event);
-					} catch (Throwable t) {
-						mailboxProcessor.reportThrowable(t);
-					}
-				},
-				"dispatch operator event");
-		}
-		catch (RejectedExecutionException e) {
-			// this happens during shutdown, we can swallow this
-		}
 	}
 
 	// ------------------------------------------------------------------------
