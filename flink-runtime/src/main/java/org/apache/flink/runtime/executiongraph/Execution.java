@@ -809,18 +809,6 @@ public class Execution implements AccessExecution, Archiveable<ArchivedExecution
 	public void fail(Throwable t) {
 	}
 
-	public CompletableFuture<Acknowledge> sendOperatorEvent(OperatorID operatorId, SerializedValue<OperatorEvent> event) {
-		final LogicalSlot slot = assignedResource;
-
-		if (slot != null && getState() == RUNNING) {
-			final TaskExecutorOperatorEventGateway eventGateway = slot.getTaskManagerGateway();
-			return eventGateway.sendOperatorEventToTask(getAttemptId(), operatorId, event);
-		} else {
-			return FutureUtils.completedExceptionally(new TaskNotRunningException(
-				'"' + vertex.getTaskNameWithSubtaskIndex() + "\" is currently not running or ready."));
-		}
-	}
-
 	// --------------------------------------------------------------------------------------------
 	//   Callbacks
 	// --------------------------------------------------------------------------------------------
