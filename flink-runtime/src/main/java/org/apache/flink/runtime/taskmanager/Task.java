@@ -722,24 +722,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 	}
 
 	public void deliverOperatorEvent(OperatorID operator, SerializedValue<OperatorEvent> evt) throws FlinkException {
-		final AbstractInvokable invokable = this.invokable;
-
-		if (invokable == null || executionState != ExecutionState.RUNNING) {
-			throw new TaskNotRunningException("Task is not yet running.");
-		}
-
-		try {
-			invokable.dispatchOperatorEvent(operator, evt);
-		}
-		catch (Throwable t) {
-			ExceptionUtils.rethrowIfFatalErrorOrOOM(t);
-
-			if (getExecutionState() == ExecutionState.RUNNING) {
-				FlinkException e = new FlinkException("Error while handling operator event", t);
-				failExternally(e);
-				throw e;
-			}
-		}
 	}
 
 	@Override

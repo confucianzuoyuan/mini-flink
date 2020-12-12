@@ -791,23 +791,7 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 			ExecutionAttemptID executionAttemptID,
 			OperatorID operatorId,
 			SerializedValue<OperatorEvent> evt) {
-
-		log.debug("Operator event for {} - {}", executionAttemptID, operatorId);
-
-		final Task task = taskSlotTable.getTask(executionAttemptID);
-		if (task == null) {
-			return FutureUtils.completedExceptionally(new TaskNotRunningException(
-				"Task " + executionAttemptID.toHexString() + " not running on TaskManager"));
-		}
-
-		try {
-			task.deliverOperatorEvent(operatorId, evt);
-			return CompletableFuture.completedFuture(Acknowledge.get());
-		}
-		catch (Throwable t) {
-			ExceptionUtils.rethrowIfFatalError(t);
-			return FutureUtils.completedExceptionally(t);
-		}
+		return CompletableFuture.completedFuture(Acknowledge.get());
 	}
 
 	// ------------------------------------------------------------------------

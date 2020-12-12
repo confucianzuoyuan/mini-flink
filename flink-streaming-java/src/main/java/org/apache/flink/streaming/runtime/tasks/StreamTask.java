@@ -330,28 +330,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>>
 		ChannelStateReader reader = getEnvironment().getTaskStateManager().getChannelStateReader();
 		if (!reader.hasChannelStates()) {
 			requestPartitions();
-			return;
-		}
-
-		ResultPartitionWriter[] writers = getEnvironment().getAllWriters();
-		if (writers != null) {
-			for (ResultPartitionWriter writer : writers) {
-				writer.readRecoveredState(reader);
-			}
-		}
-
-		// It would get possible benefits to recovery input side after output side, which guarantees the
-		// output can request more floating buffers from global firstly.
-		InputGate[] inputGates = getEnvironment().getAllInputGates();
-		if (inputGates != null && inputGates.length > 0) {
-			CompletableFuture[] futures = new CompletableFuture[inputGates.length];
-			for (int i = 0; i < inputGates.length; i++) {
-				futures[i] = inputGates[i].readRecoveredState(channelIOExecutor, reader);
-			}
-
-			// Note that we must request partition after all the single gates finished recovery.
-			CompletableFuture.allOf(futures).thenRun(() -> mainMailboxExecutor.execute(
-				this::requestPartitions, "Input gates request partitions"));
 		}
 	}
 
