@@ -31,7 +31,6 @@ import org.apache.flink.runtime.execution.Environment;
 import org.apache.flink.runtime.externalresource.ExternalResourceInfoProvider;
 import org.apache.flink.runtime.jobgraph.OperatorID;
 import org.apache.flink.runtime.jobgraph.tasks.InputSplitProvider;
-import org.apache.flink.runtime.taskexecutor.GlobalAggregateManager;
 import org.apache.flink.runtime.taskmanager.TaskManagerRuntimeInfo;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.graph.StreamConfig;
@@ -108,35 +107,6 @@ public class StreamingRuntimeContext extends AbstractRuntimeUDFContext {
 
 	public ProcessingTimeService getProcessingTimeService() {
 		return processingTimeService;
-	}
-
-	/**
-	 * Returns the global aggregate manager for the current job.
-	 * @return The global aggregate manager.
-	 */
-	public GlobalAggregateManager getGlobalAggregateManager() {
-		return taskEnvironment.getGlobalAggregateManager();
-	}
-
-	/**
-	 * Returned value is guaranteed to be unique between operators within the same job and to be
-	 * stable and the same across job submissions.
-	 *
-	 * <p>This operation is currently only supported in Streaming (DataStream) contexts.
-	 *
-	 * @return String representation of the operator's unique id.
-	 */
-	public String getOperatorUniqueID() {
-		return operatorUniqueID;
-	}
-
-	/**
-	 * Returns the task manager runtime info of the task manager running this stream task.
-	 *
-	 * @return The task manager runtime info.
-	 */
-	public TaskManagerRuntimeInfo getTaskManagerRuntimeInfo() {
-		return taskEnvironment.getTaskManagerInfo();
 	}
 
 	@Override

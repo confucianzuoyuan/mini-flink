@@ -35,7 +35,6 @@ import org.apache.flink.runtime.memory.MemoryManager;
 import org.apache.flink.runtime.query.TaskKvStateRegistry;
 import org.apache.flink.runtime.state.TaskStateManager;
 import org.apache.flink.runtime.state.internal.InternalKvState;
-import org.apache.flink.runtime.taskexecutor.GlobalAggregateManager;
 import org.apache.flink.runtime.taskmanager.TaskManagerRuntimeInfo;
 
 /**
@@ -128,8 +127,6 @@ public interface Environment {
 	ClassLoader getUserClassLoader();
 
 	TaskStateManager getTaskStateManager();
-
-	GlobalAggregateManager getGlobalAggregateManager();
 
 	/**
 	 * Get the {@link ExternalResourceInfoProvider} which contains infos of available external resources.

@@ -454,7 +454,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 				(t) -> runAsync(() -> failTask(executionAttemptID, t)));
 
 			TaskManagerActions taskManagerActions = jobManagerConnection.getTaskManagerActions();
-			GlobalAggregateManager aggregateManager = jobManagerConnection.getGlobalAggregateManager();
 
 			LibraryCacheManager.ClassLoaderHandle classLoaderHandle = jobManagerConnection.getClassLoaderHandle();
 			ResultPartitionConsumableNotifier resultPartitionConsumableNotifier = jobManagerConnection.getResultPartitionConsumableNotifier();
@@ -500,7 +499,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 				taskManagerActions,
 				inputSplitProvider,
 				taskOperatorEventGateway,
-				aggregateManager,
 				classLoaderHandle,
 				fileCache,
 				taskManagerConfiguration,
@@ -1167,7 +1165,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 
 		TaskManagerActions taskManagerActions = new TaskManagerActionsImpl(jobMasterGateway);
 
-		GlobalAggregateManager aggregateManager = new RpcGlobalAggregateManager(jobMasterGateway);
 
 		ResultPartitionConsumableNotifier resultPartitionConsumableNotifier = new RpcResultPartitionConsumableNotifier(
 			jobMasterGateway,
@@ -1182,7 +1179,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 			resourceID,
 			jobMasterGateway,
 			taskManagerActions,
-			aggregateManager,
 			resultPartitionConsumableNotifier,
 			partitionStateChecker);
 	}

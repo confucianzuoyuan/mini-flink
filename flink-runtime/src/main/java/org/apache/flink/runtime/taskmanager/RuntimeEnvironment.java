@@ -36,7 +36,6 @@ import org.apache.flink.runtime.jobgraph.tasks.TaskOperatorEventGateway;
 import org.apache.flink.runtime.memory.MemoryManager;
 import org.apache.flink.runtime.query.TaskKvStateRegistry;
 import org.apache.flink.runtime.state.TaskStateManager;
-import org.apache.flink.runtime.taskexecutor.GlobalAggregateManager;
 
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -62,7 +61,6 @@ public class RuntimeEnvironment implements Environment {
 
 	private final MemoryManager memManager;
 	private final TaskStateManager taskStateManager;
-	private final GlobalAggregateManager aggregateManager;
 	private final InputSplitProvider splitProvider;
 	private final ExternalResourceInfoProvider externalResourceInfoProvider;
 
@@ -96,7 +94,6 @@ public class RuntimeEnvironment implements Environment {
 			ClassLoader userCodeClassLoader,
 			MemoryManager memManager,
 			TaskStateManager taskStateManager,
-			GlobalAggregateManager aggregateManager,
 			AccumulatorRegistry accumulatorRegistry,
 			TaskKvStateRegistry kvStateRegistry,
 			InputSplitProvider splitProvider,
@@ -119,7 +116,6 @@ public class RuntimeEnvironment implements Environment {
 		this.userCodeClassLoader = checkNotNull(userCodeClassLoader);
 		this.memManager = checkNotNull(memManager);
 		this.taskStateManager = checkNotNull(taskStateManager);
-		this.aggregateManager = checkNotNull(aggregateManager);
 		this.accumulatorRegistry = checkNotNull(accumulatorRegistry);
 		this.kvStateRegistry = checkNotNull(kvStateRegistry);
 		this.splitProvider = checkNotNull(splitProvider);
@@ -188,11 +184,6 @@ public class RuntimeEnvironment implements Environment {
 	@Override
 	public TaskStateManager getTaskStateManager() {
 		return taskStateManager;
-	}
-
-	@Override
-	public GlobalAggregateManager getGlobalAggregateManager() {
-		return aggregateManager;
 	}
 
 	@Override

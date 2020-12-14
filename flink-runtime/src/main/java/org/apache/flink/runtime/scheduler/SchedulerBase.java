@@ -34,7 +34,6 @@ import org.apache.flink.runtime.concurrent.ComponentMainThreadExecutor;
 import org.apache.flink.runtime.execution.ExecutionState;
 import org.apache.flink.runtime.executiongraph.*;
 import org.apache.flink.runtime.executiongraph.failover.FailoverStrategy;
-import org.apache.flink.runtime.executiongraph.failover.FailoverStrategyLoader;
 import org.apache.flink.runtime.executiongraph.failover.NoOpFailoverStrategy;
 import org.apache.flink.runtime.executiongraph.failover.flip1.ResultPartitionAvailabilityChecker;
 import org.apache.flink.runtime.io.network.partition.JobMasterPartitionTracker;
@@ -170,9 +169,7 @@ public abstract class SchedulerBase implements SchedulerNG {
 		ShuffleMaster<?> shuffleMaster,
 		final JobMasterPartitionTracker partitionTracker) throws JobExecutionException, JobException {
 
-		final FailoverStrategy.Factory failoverStrategy = legacyScheduling ?
-			FailoverStrategyLoader.loadFailoverStrategy(jobMasterConfiguration, log) :
-			new NoOpFailoverStrategy.Factory();
+		final FailoverStrategy.Factory failoverStrategy = new NoOpFailoverStrategy.Factory();
 
 		return ExecutionGraphBuilder.buildGraph(
 			null,
@@ -197,19 +194,8 @@ public abstract class SchedulerBase implements SchedulerNG {
 			.transitionState(ExecutionState.SCHEDULED));
 	}
 
-	protected void setGlobalFailureCause(@Nullable final Throwable cause) {
-		if (cause != null) {
-			executionGraph.initFailureCause(cause);
-		}
-	}
-
 	protected ComponentMainThreadExecutor getMainThreadExecutor() {
 		return mainThreadExecutor;
-	}
-
-	protected void failJob(Throwable cause) {
-		incrementVersionsOfAllVertices();
-		executionGraph.failJob(cause);
 	}
 
 	protected final SchedulingTopology getSchedulingTopology() {
@@ -229,21 +215,8 @@ public abstract class SchedulerBase implements SchedulerNG {
 		executionGraph.transitionToRunning();
 	}
 
-	protected Optional<ExecutionVertexID> getExecutionVertexId(final ExecutionAttemptID executionAttemptId) {
-		return Optional.ofNullable(executionGraph.getRegisteredExecutions().get(executionAttemptId))
-			.map(this::getExecutionVertexId);
-	}
-
-	private ExecutionVertexID getExecutionVertexId(final Execution execution) {
-		return execution.getVertex().getID();
-	}
-
 	public ExecutionVertex getExecutionVertex(final ExecutionVertexID executionVertexId) {
 		return executionGraph.getAllVertices().get(executionVertexId.getJobVertexId()).getTaskVertices()[executionVertexId.getSubtaskIndex()];
-	}
-
-	public ExecutionJobVertex getExecutionJobVertex(final JobVertexID jobVertexId) {
-		return executionGraph.getAllVertices().get(jobVertexId);
 	}
 
 	protected JobGraph getJobGraph() {

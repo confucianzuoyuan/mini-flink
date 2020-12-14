@@ -52,13 +52,11 @@ import org.apache.flink.runtime.jobgraph.tasks.InputSplitProvider;
 import org.apache.flink.runtime.jobgraph.tasks.TaskOperatorEventGateway;
 import org.apache.flink.runtime.memory.MemoryManager;
 import org.apache.flink.runtime.operators.coordination.OperatorEvent;
-import org.apache.flink.runtime.operators.coordination.TaskNotRunningException;
 import org.apache.flink.runtime.query.TaskKvStateRegistry;
 import org.apache.flink.runtime.shuffle.ShuffleEnvironment;
 import org.apache.flink.runtime.shuffle.ShuffleIOOwnerContext;
 import org.apache.flink.runtime.state.TaskStateManager;
 import org.apache.flink.runtime.taskexecutor.BackPressureSampleableTask;
-import org.apache.flink.runtime.taskexecutor.GlobalAggregateManager;
 import org.apache.flink.runtime.taskexecutor.KvStateService;
 import org.apache.flink.runtime.taskexecutor.PartitionProducerStateChecker;
 import org.apache.flink.runtime.taskexecutor.slot.TaskSlotPayload;
@@ -166,9 +164,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 	/** The gateway for operators to send messages to the operator coordinators on the Job Manager. */
 	private final TaskOperatorEventGateway operatorCoordinatorEventGateway;
 
-	/** GlobalAggregateManager used to update aggregates on the JobMaster. */
-	private final GlobalAggregateManager aggregateManager;
-
 	/** The library cache, from which the task can request its class loader. */
 	private final LibraryCacheManager.ClassLoaderHandle classLoaderHandle;
 
@@ -245,7 +240,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 		TaskManagerActions taskManagerActions,
 		InputSplitProvider inputSplitProvider,
 		TaskOperatorEventGateway operatorCoordinatorEventGateway,
-		GlobalAggregateManager aggregateManager,
 		LibraryCacheManager.ClassLoaderHandle classLoaderHandle,
 		FileCache fileCache,
 		TaskManagerRuntimeInfo taskManagerConfig,
@@ -284,7 +278,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 
 		this.inputSplitProvider = Preconditions.checkNotNull(inputSplitProvider);
 		this.operatorCoordinatorEventGateway = Preconditions.checkNotNull(operatorCoordinatorEventGateway);
-		this.aggregateManager = Preconditions.checkNotNull(aggregateManager);
 		this.taskManagerActions = checkNotNull(taskManagerActions);
 		this.externalResourceInfoProvider = checkNotNull(externalResourceInfoProvider);
 
@@ -528,7 +521,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 				userCodeClassLoader,
 				memoryManager,
 				taskStateManager,
-				aggregateManager,
 				accumulatorRegistry,
 				kvStateRegistry,
 				inputSplitProvider,

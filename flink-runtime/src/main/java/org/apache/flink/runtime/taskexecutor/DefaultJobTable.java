@@ -146,11 +146,6 @@ public final class DefaultJobTable implements JobTable {
 		}
 
 		@Override
-		public GlobalAggregateManager getGlobalAggregateManager() {
-			return verifyContainsEstablishedConnection().getGlobalAggregateManager();
-		}
-
-		@Override
 		public LibraryCacheManager.ClassLoaderHandle getClassLoaderHandle() {
 			verifyJobIsNotClosed();
 			return jobServices.getClassLoaderHandle();
@@ -191,7 +186,6 @@ public final class DefaultJobTable implements JobTable {
 				ResourceID resourceId,
 				JobMasterGateway jobMasterGateway,
 				TaskManagerActions taskManagerActions,
-				GlobalAggregateManager aggregateManager,
 				ResultPartitionConsumableNotifier resultPartitionConsumableNotifier,
 				PartitionProducerStateChecker partitionStateChecker) {
 			verifyJobIsNotClosed();
@@ -201,7 +195,6 @@ public final class DefaultJobTable implements JobTable {
 				resourceId,
 				jobMasterGateway,
 				taskManagerActions,
-				aggregateManager,
 				resultPartitionConsumableNotifier,
 				partitionStateChecker);
 			resourceIdJobIdIndex.put(resourceId, jobId);
@@ -245,9 +238,6 @@ public final class DefaultJobTable implements JobTable {
 		// Task manager actions with respect to the connected job manager
 		private final TaskManagerActions taskManagerActions;
 
-		// GlobalAggregateManager interface to job manager
-		private final GlobalAggregateManager globalAggregateManager;
-
 		// Result partition consumable notifier for the specific job manager
 		private final ResultPartitionConsumableNotifier resultPartitionConsumableNotifier;
 
@@ -258,13 +248,11 @@ public final class DefaultJobTable implements JobTable {
 			ResourceID resourceID,
 			JobMasterGateway jobMasterGateway,
 			TaskManagerActions taskManagerActions,
-			GlobalAggregateManager globalAggregateManager,
 			ResultPartitionConsumableNotifier resultPartitionConsumableNotifier,
 			PartitionProducerStateChecker partitionStateChecker) {
 			this.resourceID = Preconditions.checkNotNull(resourceID);
 			this.jobMasterGateway = Preconditions.checkNotNull(jobMasterGateway);
 			this.taskManagerActions = Preconditions.checkNotNull(taskManagerActions);
-			this.globalAggregateManager = Preconditions.checkNotNull(globalAggregateManager);
 			this.resultPartitionConsumableNotifier = Preconditions.checkNotNull(resultPartitionConsumableNotifier);
 			this.partitionStateChecker = Preconditions.checkNotNull(partitionStateChecker);
 		}
@@ -283,10 +271,6 @@ public final class DefaultJobTable implements JobTable {
 
 		public TaskManagerActions getTaskManagerActions() {
 			return taskManagerActions;
-		}
-
-		public GlobalAggregateManager getGlobalAggregateManager() {
-			return globalAggregateManager;
 		}
 
 		public ResultPartitionConsumableNotifier getResultPartitionConsumableNotifier() {

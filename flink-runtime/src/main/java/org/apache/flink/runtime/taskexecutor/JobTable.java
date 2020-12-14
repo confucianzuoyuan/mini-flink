@@ -155,7 +155,6 @@ public interface JobTable extends AutoCloseable {
 			ResourceID resourceId,
 			JobMasterGateway jobMasterGateway,
 			TaskManagerActions taskManagerActions,
-			GlobalAggregateManager aggregateManager,
 			ResultPartitionConsumableNotifier resultPartitionConsumableNotifier,
 			PartitionProducerStateChecker partitionStateChecker);
 
@@ -188,8 +187,6 @@ public interface JobTable extends AutoCloseable {
 		JobMasterGateway getJobManagerGateway();
 
 		TaskManagerActions getTaskManagerActions();
-
-		GlobalAggregateManager getGlobalAggregateManager();
 
 		LibraryCacheManager.ClassLoaderHandle getClassLoaderHandle();
 

@@ -163,8 +163,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>>
 	 */
 	private final ExecutorService channelIOExecutor;
 
-	private Long syncSavepointId = null;
-
 	// ------------------------------------------------------------------------
 
 	/**
