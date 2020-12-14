@@ -168,9 +168,6 @@ public class SingleInputGate extends IndexedInputGate {
 	@Nullable
 	private volatile BufferReceivedListener bufferReceivedListener;
 
-	@Nullable
-	private final BufferDecompressor bufferDecompressor;
-
 	private final MemorySegmentProvider memorySegmentProvider;
 
 	public SingleInputGate(
@@ -182,7 +179,6 @@ public class SingleInputGate extends IndexedInputGate {
 		int numberOfInputChannels,
 		PartitionProducerStateProvider partitionProducerStateProvider,
 		SupplierWithException<BufferPool, IOException> bufferPoolFactory,
-		@Nullable BufferDecompressor bufferDecompressor,
 		MemorySegmentProvider memorySegmentProvider) {
 
 		this.owningTaskName = checkNotNull(owningTaskName);
@@ -206,7 +202,6 @@ public class SingleInputGate extends IndexedInputGate {
 
 		this.partitionProducerStateProvider = checkNotNull(partitionProducerStateProvider);
 
-		this.bufferDecompressor = bufferDecompressor;
 		this.memorySegmentProvider = checkNotNull(memorySegmentProvider);
 
 		this.closeFuture = new CompletableFuture<>();
@@ -635,14 +630,6 @@ public class SingleInputGate extends IndexedInputGate {
 	}
 
 	private Buffer decompressBufferIfNeeded(Buffer buffer) {
-		if (buffer.isCompressed()) {
-			try {
-				checkNotNull(bufferDecompressor, "Buffer decompressor not set.");
-				return bufferDecompressor.decompressToIntermediateBuffer(buffer);
-			} finally {
-				buffer.recycleBuffer();
-			}
-		}
 		return buffer;
 	}
 

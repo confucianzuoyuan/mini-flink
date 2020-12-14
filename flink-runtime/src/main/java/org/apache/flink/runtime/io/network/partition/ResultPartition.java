@@ -37,30 +37,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.apache.flink.util.Preconditions.*;
 
-/**
- * A result partition for data produced by a single task.
- *
- * <p>This class is the runtime part of a logical {@link IntermediateResultPartition}. Essentially,
- * a result partition is a collection of {@link Buffer} instances. The buffers are organized in one
- * or more {@link ResultSubpartition} instances, which further partition the data depending on the
- * number of consuming tasks and the data {@link DistributionPattern}.
- *
- * <p>Tasks, which consume a result partition have to request one of its subpartitions. The request
- * happens either remotely (see {@link RemoteInputChannel}) or locally (see {@link LocalInputChannel})
- *
- * <h2>Life-cycle</h2>
- *
- * <p>The life-cycle of each result partition has three (possibly overlapping) phases:
- * <ol>
- * <li><strong>Produce</strong>: </li>
- * <li><strong>Consume</strong>: </li>
- * <li><strong>Release</strong>: </li>
- * </ol>
- *
- * <h2>Buffer management</h2>
- *
- * <h2>State management</h2>
- */
 public class ResultPartition implements ResultPartitionWriter, BufferPoolOwner {
 
 	protected static final Logger LOG = LoggerFactory.getLogger(ResultPartition.class);
@@ -93,10 +69,6 @@ public class ResultPartition implements ResultPartitionWriter, BufferPoolOwner {
 
 	private final FunctionWithException<BufferPoolOwner, BufferPool, IOException> bufferPoolFactory;
 
-	/** Used to compress buffer to reduce IO. */
-	@Nullable
-	protected final BufferCompressor bufferCompressor;
-
 	public ResultPartition(
 		String owningTaskName,
 		int partitionIndex,
@@ -105,7 +77,6 @@ public class ResultPartition implements ResultPartitionWriter, BufferPoolOwner {
 		ResultSubpartition[] subpartitions,
 		int numTargetKeyGroups,
 		ResultPartitionManager partitionManager,
-		@Nullable BufferCompressor bufferCompressor,
 		FunctionWithException<BufferPoolOwner, BufferPool, IOException> bufferPoolFactory) {
 
 		this.owningTaskName = checkNotNull(owningTaskName);
@@ -116,7 +87,6 @@ public class ResultPartition implements ResultPartitionWriter, BufferPoolOwner {
 		this.subpartitions = checkNotNull(subpartitions);
 		this.numTargetKeyGroups = numTargetKeyGroups;
 		this.partitionManager = checkNotNull(partitionManager);
-		this.bufferCompressor = bufferCompressor;
 		this.bufferPoolFactory = bufferPoolFactory;
 	}
 

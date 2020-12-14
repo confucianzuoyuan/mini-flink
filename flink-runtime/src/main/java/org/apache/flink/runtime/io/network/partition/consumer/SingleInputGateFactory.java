@@ -24,7 +24,6 @@ import org.apache.flink.runtime.deployment.InputGateDeploymentDescriptor;
 import org.apache.flink.runtime.io.network.ConnectionManager;
 import org.apache.flink.runtime.io.network.NettyShuffleEnvironment;
 import org.apache.flink.runtime.io.network.TaskEventPublisher;
-import org.apache.flink.runtime.io.network.buffer.BufferDecompressor;
 import org.apache.flink.runtime.io.network.buffer.BufferPool;
 import org.apache.flink.runtime.io.network.buffer.BufferPoolFactory;
 import org.apache.flink.runtime.io.network.buffer.NetworkBufferPool;
@@ -115,11 +114,6 @@ public class SingleInputGateFactory {
 			igdd.getShuffleDescriptors().length,
 			igdd.getConsumedPartitionType());
 
-		BufferDecompressor bufferDecompressor = null;
-		if (igdd.getConsumedPartitionType().isBlocking() && blockingShuffleCompressionEnabled) {
-			bufferDecompressor = new BufferDecompressor(networkBufferSize, compressionCodec);
-		}
-
 		SingleInputGate inputGate = new SingleInputGate(
 			owningTaskName,
 			gateIndex,
@@ -129,7 +123,6 @@ public class SingleInputGateFactory {
 			igdd.getShuffleDescriptors().length,
 			partitionProducerStateProvider,
 			bufferPoolFactory,
-			bufferDecompressor,
 			networkBufferPool);
 
 		createInputChannels(owningTaskName, igdd, inputGate);
