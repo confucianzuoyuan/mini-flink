@@ -25,11 +25,9 @@ import org.apache.flink.streaming.api.graph.StreamGraphGenerator;
 import org.apache.flink.streaming.api.operators.StreamSource;
 import org.apache.flink.util.Preconditions;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
@@ -270,8 +268,15 @@ public class StreamExecutionEnvironment {
 		this.transformations.add(transformation);
 	}
 
+	public static <T> Optional<T> resolveFactory(ThreadLocal<T> threadLocalFactory, @Nullable T staticFactory) {
+		final T localFactory = threadLocalFactory.get();
+		final T factory = localFactory == null ? staticFactory : localFactory;
+
+		return Optional.ofNullable(factory);
+	}
+
 	public static StreamExecutionEnvironment getExecutionEnvironment() {
-		return Utils.resolveFactory(threadLocalContextEnvironmentFactory, contextEnvironmentFactory)
+		return resolveFactory(threadLocalContextEnvironmentFactory, contextEnvironmentFactory)
 			.map(StreamExecutionEnvironmentFactory::createExecutionEnvironment)
 			.orElseGet(StreamExecutionEnvironment::createLocalEnvironment);
 	}
