@@ -131,33 +131,4 @@ public class StreamingRuntimeContext extends AbstractRuntimeUDFContext {
 		return keyedStateStore;
 	}
 
-	// ------------------ expose (read only) relevant information from the stream config -------- //
-
-	/**
-	 * Returns true if checkpointing is enabled for the running job.
-	 *
-	 * @return true if checkpointing is enabled.
-	 */
-	public boolean isCheckpointingEnabled() {
-		return streamConfig.isCheckpointingEnabled();
-	}
-
-	/**
-	 * Returns the checkpointing mode.
-	 *
-	 * @return checkpointing mode
-	 */
-	public CheckpointingMode getCheckpointMode() {
-		return streamConfig.getCheckpointMode();
-	}
-
-	/**
-	 * Returns the buffer timeout of the job.
-	 *
-	 * @return buffer timeout (in milliseconds)
-	 */
-	public long getBufferTimeout() {
-		return streamConfig.getBufferTimeout();
-	}
-
 }
