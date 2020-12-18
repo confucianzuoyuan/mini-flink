@@ -48,23 +48,6 @@ public class MultipleRecordWriters<T extends IOReadableWritable> implements Reco
 	}
 
 	@Override
-	public void broadcastEvent(AbstractEvent event) throws IOException {
-		IOException exception = null;
-		for (RecordWriter recordWriter : recordWriters) {
-			try {
-				recordWriter.broadcastEvent(event);
-			} catch (IOException e) {
-				exception = ExceptionUtils.firstOrSuppressed(
-					new IOException("Could not send event to downstream tasks.", e), exception);
-			}
-		}
-
-		if (exception != null) {
-			throw exception;
-		}
-	}
-
-	@Override
 	public RecordWriter<T> getRecordWriter(int outputIndex) {
 		return recordWriters.get(outputIndex);
 	}

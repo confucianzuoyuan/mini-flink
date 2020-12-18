@@ -144,25 +144,6 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
 		return pruneTriggered;
 	}
 
-	public void broadcastEvent(AbstractEvent event) throws IOException {
-		broadcastEvent(event, false);
-	}
-
-	public void broadcastEvent(AbstractEvent event, boolean isPriorityEvent) throws IOException {
-		try (BufferConsumer eventBufferConsumer = EventSerializer.toBufferConsumer(event)) {
-			for (int targetChannel = 0; targetChannel < numberOfChannels; targetChannel++) {
-				tryFinishCurrentBufferBuilder(targetChannel);
-
-				// Retain the buffer so that it can be recycled by each channel of targetPartition
-				targetPartition.addBufferConsumer(eventBufferConsumer.copy(), targetChannel, isPriorityEvent);
-			}
-
-			if (flushAlways) {
-				flushAll();
-			}
-		}
-	}
-
 	public void flushAll() {
 		targetPartition.flushAll();
 	}
@@ -199,11 +180,6 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
 	 * request a new one for this target channel.
 	 */
 	abstract BufferBuilder getBufferBuilder(int targetChannel) throws IOException, InterruptedException;
-
-	/**
-	 * Marks the current {@link BufferBuilder} as finished if present and clears the state for next one.
-	 */
-	abstract void tryFinishCurrentBufferBuilder(int targetChannel);
 
 	/**
 	 * Marks the current {@link BufferBuilder} as empty for the target channel.

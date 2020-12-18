@@ -33,10 +33,6 @@ public class NonRecordWriter<T extends IOReadableWritable> implements RecordWrit
 	}
 
 	@Override
-	public void broadcastEvent(AbstractEvent event) throws IOException {
-	}
-
-	@Override
 	public RecordWriter<T> getRecordWriter(int outputIndex) {
 		throw new UnsupportedOperationException("No record writer instance.");
 	}

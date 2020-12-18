@@ -39,11 +39,6 @@ public class SingleRecordWriter<T extends IOReadableWritable> implements RecordW
 	}
 
 	@Override
-	public void broadcastEvent(AbstractEvent event) throws IOException {
-		recordWriter.broadcastEvent(event);
-	}
-
-	@Override
 	public RecordWriter<T> getRecordWriter(int outputIndex) {
 		checkArgument(outputIndex == 0, "The index should always be 0 for the single record writer delegate.");
 

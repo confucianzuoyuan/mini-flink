@@ -107,17 +107,6 @@ public final class ChannelSelectorRecordWriter<T extends IOReadableWritable> ext
 	}
 
 	@Override
-	public void tryFinishCurrentBufferBuilder(int targetChannel) {
-		if (bufferBuilders[targetChannel] == null) {
-			return;
-		}
-		BufferBuilder bufferBuilder = bufferBuilders[targetChannel];
-		bufferBuilders[targetChannel] = null;
-
-		finishBufferBuilder(bufferBuilder);
-	}
-
-	@Override
 	public void emptyCurrentBufferBuilder(int targetChannel) {
 		bufferBuilders[targetChannel] = null;
 	}
