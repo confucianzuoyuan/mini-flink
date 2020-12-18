@@ -55,21 +55,6 @@ public class FutureUtils {
 		return COMPLETED_VOID_FUTURE;
 	}
 
-	/**
-	 * Fakes asynchronous execution by immediately executing the operation and returns a (exceptionally) completed
-	 * future.
-	 *
-	 * @param operation to executed
-	 * @param <T> type of the result
-	 */
-	public static <T> CompletableFuture<T> runSync(Callable<T> operation) {
-		try {
-			return CompletableFuture.completedFuture(operation.call());
-		} catch (Exception e) {
-			return completedExceptionally(e);
-		}
-	}
-
 	// ------------------------------------------------------------------------
 	//  retrying operations
 	// ------------------------------------------------------------------------
@@ -195,61 +180,6 @@ public class FutureUtils {
 			scheduledExecutor);
 	}
 
-	/**
-	 * Schedule the operation with the given delay.
-	 *
-	 * @param operation to schedule
-	 * @param delay delay to schedule
-	 * @param scheduledExecutor executor to be used for the operation
-	 * @return Future which schedules the given operation with given delay.
-	 */
-	public static CompletableFuture<Void> scheduleWithDelay(
-			final Runnable operation,
-			final Time delay,
-			final ScheduledExecutor scheduledExecutor) {
-		Supplier<Void> operationSupplier = () -> {
-			operation.run();
-			return null;
-		};
-		return scheduleWithDelay(operationSupplier, delay, scheduledExecutor);
-	}
-
-	/**
-	 * Schedule the operation with the given delay.
-	 *
-	 * @param operation to schedule
-	 * @param delay delay to schedule
-	 * @param scheduledExecutor executor to be used for the operation
-	 * @param <T> type of the result
-	 * @return Future which schedules the given operation with given delay.
-	 */
-	public static <T> CompletableFuture<T> scheduleWithDelay(
-			final Supplier<T> operation,
-			final Time delay,
-			final ScheduledExecutor scheduledExecutor) {
-		final CompletableFuture<T> resultFuture = new CompletableFuture<>();
-
-		ScheduledFuture<?> scheduledFuture = scheduledExecutor.schedule(
-			() -> {
-				try {
-					resultFuture.complete(operation.get());
-				} catch (Throwable t) {
-					resultFuture.completeExceptionally(t);
-				}
-			},
-			delay.getSize(),
-			delay.getUnit()
-		);
-
-		resultFuture.whenComplete(
-			(t, throwable) -> {
-				if (!scheduledFuture.isDone()) {
-					scheduledFuture.cancel(false);
-				}
-			});
-		return resultFuture;
-	}
-
 	private static <T> void retryOperationWithDelay(
 			final CompletableFuture<T> resultFuture,
 			final Supplier<CompletableFuture<T>> operation,
@@ -295,85 +225,6 @@ public class FutureUtils {
 		}
 	}
 
-	/**
-	 * Retry the given operation with the given delay in between successful completions where the
-	 * result does not match a given predicate.
-	 *
-	 * @param operation to retry
-	 * @param retryDelay delay between retries
-	 * @param deadline A deadline that specifies at what point we should stop retrying
-	 * @param acceptancePredicate Predicate to test whether the result is acceptable
-	 * @param scheduledExecutor executor to be used for the retry operation
-	 * @param <T> type of the result
-	 * @return Future which retries the given operation a given amount of times and delays the retry
-	 *   in case the predicate isn't matched
-	 */
-	public static <T> CompletableFuture<T> retrySuccessfulWithDelay(
-		final Supplier<CompletableFuture<T>> operation,
-		final Time retryDelay,
-		final Deadline deadline,
-		final Predicate<T> acceptancePredicate,
-		final ScheduledExecutor scheduledExecutor) {
-
-		final CompletableFuture<T> resultFuture = new CompletableFuture<>();
-
-		retrySuccessfulOperationWithDelay(
-			resultFuture,
-			operation,
-			retryDelay,
-			deadline,
-			acceptancePredicate,
-			scheduledExecutor);
-
-		return resultFuture;
-	}
-
-	private static <T> void retrySuccessfulOperationWithDelay(
-		final CompletableFuture<T> resultFuture,
-		final Supplier<CompletableFuture<T>> operation,
-		final Time retryDelay,
-		final Deadline deadline,
-		final Predicate<T> acceptancePredicate,
-		final ScheduledExecutor scheduledExecutor) {
-
-		if (!resultFuture.isDone()) {
-			final CompletableFuture<T> operationResultFuture = operation.get();
-
-			operationResultFuture.whenComplete(
-				(t, throwable) -> {
-					if (throwable != null) {
-						if (throwable instanceof CancellationException) {
-							resultFuture.completeExceptionally(new RetryException("Operation future was cancelled.", throwable));
-						} else {
-							resultFuture.completeExceptionally(throwable);
-						}
-					} else {
-						if (acceptancePredicate.test(t)) {
-							resultFuture.complete(t);
-						} else if (deadline.hasTimeLeft()) {
-							final ScheduledFuture<?> scheduledFuture = scheduledExecutor.schedule(
-								(Runnable) () -> retrySuccessfulOperationWithDelay(resultFuture, operation, retryDelay, deadline, acceptancePredicate, scheduledExecutor),
-								retryDelay.toMilliseconds(),
-								TimeUnit.MILLISECONDS);
-
-							resultFuture.whenComplete(
-								(innerT, innerThrowable) -> scheduledFuture.cancel(false));
-						} else {
-							resultFuture.completeExceptionally(
-								new RetryException("Could not satisfy the predicate within the allowed time."));
-						}
-					}
-				});
-
-			resultFuture.whenComplete(
-				(t, throwable) -> operationResultFuture.cancel(false));
-		}
-	}
-
-	/**
-	 * Exception with which the returned future is completed if the {@link #retry(Supplier, int, Executor)}
-	 * operation fails.
-	 */
 	public static class RetryException extends Exception {
 
 		private static final long serialVersionUID = 3613470781274141862L;
