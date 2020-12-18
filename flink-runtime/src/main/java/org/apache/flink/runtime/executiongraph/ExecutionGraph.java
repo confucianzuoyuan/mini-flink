@@ -701,19 +701,6 @@ public class ExecutionGraph implements AccessExecutionGraph {
 		return terminationFuture;
 	}
 
-	@VisibleForTesting
-	public JobStatus waitUntilTerminal() throws InterruptedException {
-		try {
-			return terminationFuture.get();
-		}
-		catch (ExecutionException e) {
-			// this should never happen
-			// it would be a bug, so we  don't expect this to be handled and throw
-			// an unchecked exception here
-			throw new RuntimeException(e);
-		}
-	}
-
 	/**
 	 * Gets the failover strategy used by the execution graph to recover from failures of tasks.
 	 */
@@ -812,11 +799,6 @@ public class ExecutionGraph implements AccessExecutionGraph {
 				}
 			}
 		}
-	}
-
-	void vertexUnFinished() {
-		assertRunningInJobMasterMainThread();
-		verticesFinished--;
 	}
 
 	/**
