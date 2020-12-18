@@ -18,8 +18,8 @@
 
 package org.apache.flink.runtime.state.heap;
 
-import org.apache.flink.api.common.typeutils.TypeSerializer;
-import org.apache.flink.runtime.state.*;
+import org.apache.flink.runtime.state.KeyGroupRange;
+import org.apache.flink.runtime.state.PriorityQueueSetFactory;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;

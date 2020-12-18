@@ -26,8 +26,6 @@ import org.apache.flink.streaming.api.graph.StreamGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.flink.util.Preconditions.checkArgument;
-
 /**
  * {@link FlinkPipelineTranslator} for DataStream API {@link StreamGraph StreamGraphs}.
  *

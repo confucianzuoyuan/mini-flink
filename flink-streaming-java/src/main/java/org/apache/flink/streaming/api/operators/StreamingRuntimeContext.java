@@ -27,7 +27,6 @@ import org.apache.flink.api.common.state.StateDescriptor;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.runtime.execution.Environment;
-import org.apache.flink.runtime.externalresource.ExternalResourceInfoProvider;
 import org.apache.flink.runtime.jobgraph.OperatorID;
 import org.apache.flink.runtime.jobgraph.tasks.InputSplitProvider;
 import org.apache.flink.streaming.api.graph.StreamConfig;
@@ -35,7 +34,6 @@ import org.apache.flink.streaming.runtime.tasks.ProcessingTimeService;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.Set;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 

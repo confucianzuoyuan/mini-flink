@@ -18,7 +18,6 @@
 package org.apache.flink.streaming.api.collector.selector;
 
 import org.apache.flink.annotation.PublicEvolving;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
 import java.io.Serializable;
 

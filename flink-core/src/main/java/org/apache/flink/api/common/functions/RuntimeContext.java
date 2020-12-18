@@ -30,7 +30,6 @@ import org.apache.flink.api.common.state.ValueStateDescriptor;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A RuntimeContext contains information about the context in which functions are executed. Each parallel instance
