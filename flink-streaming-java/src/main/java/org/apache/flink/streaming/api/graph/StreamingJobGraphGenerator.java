@@ -316,21 +316,11 @@ public class StreamingJobGraphGenerator {
 			}
 		}
 
-		if (chainedInputOutputFormats.containsKey(streamNodeId)) {
-			jobVertex = new InputOutputFormatVertex(
-					chainedNames.get(streamNodeId),
-					jobVertexId,
-					operatorIDPairs);
 
-			chainedInputOutputFormats
-				.get(streamNodeId)
-				.write(new TaskConfig(jobVertex.getConfiguration()));
-		} else {
-			jobVertex = new JobVertex(
+		jobVertex = new JobVertex(
 					chainedNames.get(streamNodeId),
 					jobVertexId,
 					operatorIDPairs);
-		}
 
 		for (OperatorCoordinator.Provider coordinatorProvider : chainInfo.getCoordinatorProviders()) {
 			try {

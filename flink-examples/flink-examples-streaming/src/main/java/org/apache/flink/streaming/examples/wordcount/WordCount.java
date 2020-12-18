@@ -21,7 +21,7 @@ public class WordCount {
 			.flatMap(new Tokenizer())
 			.setParallelism(1)
 			.filter(r -> r.f0.equals("hello"))
-			.setParallelism(2)
+			.setParallelism(1)
 			.keyBy(r -> r.f0)
 			.reduce(
 				new ReduceFunction<Tuple2<String, Integer>>() {

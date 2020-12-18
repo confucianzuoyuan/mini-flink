@@ -150,11 +150,6 @@ public class InputOutputFormatContainer {
 		return this;
 	}
 
-	public void write(TaskConfig config) {
-		config.setStubWrapper(new UserCodeObjectWrapper<>(formats));
-		config.setStubParameters(parameters);
-	}
-
 	private String getParamKeyPrefix(OperatorID operatorId) {
 		return operatorId + ".";
 	}

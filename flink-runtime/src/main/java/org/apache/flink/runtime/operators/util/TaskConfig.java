@@ -46,24 +46,6 @@ public class TaskConfig implements Serializable {
 	//                                       User Code
 	// --------------------------------------------------------------------------------------------
 	
-	public void setTaskName(String name) {
-		if (name != null) {
-			this.config.setString(TASK_NAME, name);
-		}
-	}
-	
-	public String getTaskName() {
-		return this.config.getString(TASK_NAME, null);
-	}
-
-	public void setStubWrapper(UserCodeWrapper<?> wrapper) {
-		try {
-			InstantiationUtil.writeObjectToConfig(wrapper, this.config, STUB_OBJECT);
-		} catch (IOException e) {
-			throw new CorruptConfigurationException("Could not write the user code wrapper " + wrapper.getClass() + " : " + e.toString(), e);
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	public <T> UserCodeWrapper<T> getStubWrapper(ClassLoader cl) {
 		try {
