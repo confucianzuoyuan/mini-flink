@@ -90,7 +90,6 @@ public class TaskManagerRunner implements FatalErrorHandler, AutoCloseableAsync 
 			HeartbeatServices heartbeatServices,
 			BlobCacheService blobCacheService,
 			boolean localCommunicationOnly,
-			ExternalResourceInfoProvider externalResourceInfoProvider,
 			FatalErrorHandler fatalErrorHandler) throws Exception {
 
 		String externalAddress = rpcService.getAddress();
@@ -123,7 +122,6 @@ public class TaskManagerRunner implements FatalErrorHandler, AutoCloseableAsync 
 			taskManagerConfiguration,
 			highAvailabilityServices,
 			taskManagerServices,
-			externalResourceInfoProvider,
 			heartbeatServices,
 			blobCacheService,
 			fatalErrorHandler,

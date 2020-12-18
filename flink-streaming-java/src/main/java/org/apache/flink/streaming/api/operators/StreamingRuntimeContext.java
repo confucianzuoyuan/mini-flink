@@ -21,7 +21,6 @@ package org.apache.flink.streaming.api.operators;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.accumulators.Accumulator;
-import org.apache.flink.api.common.externalresource.ExternalResourceInfo;
 import org.apache.flink.api.common.functions.util.AbstractRuntimeUDFContext;
 import org.apache.flink.api.common.state.KeyedStateStore;
 import org.apache.flink.api.common.state.StateDescriptor;
@@ -53,7 +52,6 @@ public class StreamingRuntimeContext extends AbstractRuntimeUDFContext {
 	private final String operatorUniqueID;
 	private final ProcessingTimeService processingTimeService;
 	private @Nullable KeyedStateStore keyedStateStore;
-	private final ExternalResourceInfoProvider externalResourceInfoProvider;
 
 	@VisibleForTesting
 	public StreamingRuntimeContext(
@@ -65,8 +63,7 @@ public class StreamingRuntimeContext extends AbstractRuntimeUDFContext {
 			accumulators,
 			operator.getOperatorID(),
 			operator.getProcessingTimeService(),
-			operator.getKeyedStateStore(),
-			env.getExternalResourceInfoProvider());
+			operator.getKeyedStateStore());
 	}
 
 	public StreamingRuntimeContext(
@@ -74,8 +71,7 @@ public class StreamingRuntimeContext extends AbstractRuntimeUDFContext {
 			Map<String, Accumulator<?, ?>> accumulators,
 			OperatorID operatorID,
 			ProcessingTimeService processingTimeService,
-			@Nullable KeyedStateStore keyedStateStore,
-			ExternalResourceInfoProvider externalResourceInfoProvider) {
+			@Nullable KeyedStateStore keyedStateStore) {
 		super(checkNotNull(env).getTaskInfo(),
 				env.getUserClassLoader(),
 				env.getExecutionConfig(),
@@ -85,7 +81,6 @@ public class StreamingRuntimeContext extends AbstractRuntimeUDFContext {
 		this.operatorUniqueID = checkNotNull(operatorID).toString();
 		this.processingTimeService = processingTimeService;
 		this.keyedStateStore = keyedStateStore;
-		this.externalResourceInfoProvider = externalResourceInfoProvider;
 	}
 
 	public void setKeyedStateStore(@Nullable KeyedStateStore keyedStateStore) {
@@ -105,11 +100,6 @@ public class StreamingRuntimeContext extends AbstractRuntimeUDFContext {
 
 	public ProcessingTimeService getProcessingTimeService() {
 		return processingTimeService;
-	}
-
-	@Override
-	public Set<ExternalResourceInfo> getExternalResourceInfos(String resourceName) {
-		return externalResourceInfoProvider.getExternalResourceInfos(resourceName);
 	}
 
 	// ------------------------------------------------------------------------

@@ -139,9 +139,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 	/** The state manager for this task, providing state managers per slot. */
 	private final TaskExecutorLocalStateStoresManager localStateStoresManager;
 
-	/** Information provider for external resources. */
-	private final ExternalResourceInfoProvider externalResourceInfoProvider;
-
 	/** The network component in the task manager. */
 	private final ShuffleEnvironment<?, ?> shuffleEnvironment;
 
@@ -197,7 +194,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 			TaskManagerConfiguration taskManagerConfiguration,
 			HighAvailabilityServices haServices,
 			TaskManagerServices taskExecutorServices,
-			ExternalResourceInfoProvider externalResourceInfoProvider,
 			HeartbeatServices heartbeatServices,
 			BlobCacheService blobCacheService,
 			FatalErrorHandler fatalErrorHandler,
@@ -215,7 +211,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 		this.partitionTracker = partitionTracker;
 		this.blobCacheService = checkNotNull(blobCacheService);
 		this.backPressureSampleService = checkNotNull(backPressureSampleService);
-		this.externalResourceInfoProvider = checkNotNull(externalResourceInfoProvider);
 
 		this.libraryCacheManager = taskExecutorServices.getLibraryCacheManager();
 		this.taskSlotTable = taskExecutorServices.getTaskSlotTable();
@@ -494,7 +489,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 				taskExecutorServices.getShuffleEnvironment(), // 用来shuffle
 				taskExecutorServices.getKvStateService(),
 				taskExecutorServices.getTaskEventDispatcher(),
-				externalResourceInfoProvider,
 				taskStateManager,
 				taskManagerActions,
 				inputSplitProvider,

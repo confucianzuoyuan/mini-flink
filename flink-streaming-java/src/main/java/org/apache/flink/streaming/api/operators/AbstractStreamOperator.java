@@ -132,8 +132,7 @@ public abstract class AbstractStreamOperator<OUT>
 			environment.getAccumulatorRegistry().getUserMap(),
 			getOperatorID(),
 			getProcessingTimeService(),
-			null,
-			environment.getExternalResourceInfoProvider());
+			null);
 
 		stateKeySelector1 = config.getStatePartitioner(0, getUserCodeClassloader());
 		stateKeySelector2 = config.getStatePartitioner(1, getUserCodeClassloader());

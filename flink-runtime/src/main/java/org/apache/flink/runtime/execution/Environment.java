@@ -129,13 +129,6 @@ public interface Environment {
 	TaskStateManager getTaskStateManager();
 
 	/**
-	 * Get the {@link ExternalResourceInfoProvider} which contains infos of available external resources.
-	 *
-	 * @return {@link ExternalResourceInfoProvider} which contains infos of available external resources
-	 */
-	ExternalResourceInfoProvider getExternalResourceInfoProvider();
-
-	/**
 	 * Return the registry for accumulators which are periodically sent to the job manager.
 	 * @return the registry
 	 */

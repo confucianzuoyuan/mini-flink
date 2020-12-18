@@ -25,7 +25,6 @@ import org.apache.flink.api.common.accumulators.Accumulator;
 import org.apache.flink.api.common.accumulators.DoubleCounter;
 import org.apache.flink.api.common.accumulators.IntCounter;
 import org.apache.flink.api.common.accumulators.LongCounter;
-import org.apache.flink.api.common.externalresource.ExternalResourceInfo;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 
@@ -149,15 +148,6 @@ public interface RuntimeContext {
 	 */
 	@PublicEvolving
 	DoubleCounter getDoubleCounter(String name);
-
-	/**
-	 * Get the specific external resource information by the resourceName.
-	 *
-	 * @param resourceName of the required external resource
-	 * @return information set of the external resource identified by the resourceName
-	 */
-	@PublicEvolving
-	Set<ExternalResourceInfo> getExternalResourceInfos(String resourceName);
 
 	// --------------------------------------------------------------------------------------------
 

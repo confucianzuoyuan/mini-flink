@@ -62,7 +62,6 @@ public class RuntimeEnvironment implements Environment {
 	private final MemoryManager memManager;
 	private final TaskStateManager taskStateManager;
 	private final InputSplitProvider splitProvider;
-	private final ExternalResourceInfoProvider externalResourceInfoProvider;
 
 	private final Map<String, Future<Path>> distCacheEntries;
 
@@ -103,8 +102,7 @@ public class RuntimeEnvironment implements Environment {
 			TaskEventDispatcher taskEventDispatcher,
 			TaskOperatorEventGateway operatorEventGateway,
 			TaskManagerRuntimeInfo taskManagerInfo,
-			Task containingTask,
-			ExternalResourceInfoProvider externalResourceInfoProvider) {
+			Task containingTask) {
 
 		this.jobId = checkNotNull(jobId);
 		this.jobVertexId = checkNotNull(jobVertexId);
@@ -126,7 +124,6 @@ public class RuntimeEnvironment implements Environment {
 		this.operatorEventGateway = checkNotNull(operatorEventGateway);
 		this.taskManagerInfo = checkNotNull(taskManagerInfo);
 		this.containingTask = containingTask;
-		this.externalResourceInfoProvider = checkNotNull(externalResourceInfoProvider);
 	}
 
 	// ------------------------------------------------------------------------
@@ -224,11 +221,6 @@ public class RuntimeEnvironment implements Environment {
 	@Override
 	public TaskEventDispatcher getTaskEventDispatcher() {
 		return taskEventDispatcher;
-	}
-
-	@Override
-	public ExternalResourceInfoProvider getExternalResourceInfoProvider() {
-		return externalResourceInfoProvider;
 	}
 
 	@Override

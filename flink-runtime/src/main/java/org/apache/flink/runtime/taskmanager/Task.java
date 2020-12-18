@@ -142,9 +142,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 
 	private final TaskEventDispatcher taskEventDispatcher;
 
-	/** Information provider for external resources. */
-	private final ExternalResourceInfoProvider externalResourceInfoProvider;
-
 	/** The manager for state of operators running in this task/slot. */
 	private final TaskStateManager taskStateManager;
 
@@ -235,7 +232,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 		ShuffleEnvironment<?, ?> shuffleEnvironment,
 		KvStateService kvStateService,
 		TaskEventDispatcher taskEventDispatcher,
-		ExternalResourceInfoProvider externalResourceInfoProvider,
 		TaskStateManager taskStateManager,
 		TaskManagerActions taskManagerActions,
 		InputSplitProvider inputSplitProvider,
@@ -279,7 +275,6 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 		this.inputSplitProvider = Preconditions.checkNotNull(inputSplitProvider);
 		this.operatorCoordinatorEventGateway = Preconditions.checkNotNull(operatorCoordinatorEventGateway);
 		this.taskManagerActions = checkNotNull(taskManagerActions);
-		this.externalResourceInfoProvider = checkNotNull(externalResourceInfoProvider);
 
 		this.classLoaderHandle = Preconditions.checkNotNull(classLoaderHandle);
 		this.fileCache = Preconditions.checkNotNull(fileCache);
@@ -530,8 +525,7 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 				taskEventDispatcher,
 				operatorCoordinatorEventGateway,
 				taskManagerConfig,
-				this,
-				externalResourceInfoProvider);
+				this);
 
 			// Make sure the user code classloader is accessible thread-locally.
 			// We are setting the correct context class loader before instantiating the invokable

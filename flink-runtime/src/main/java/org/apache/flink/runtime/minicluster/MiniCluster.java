@@ -388,7 +388,6 @@ public class MiniCluster implements JobExecutorService, AutoCloseableAsync {
 				heartbeatServices,
 				blobCacheService,
 				useLocalCommunication(),
-				ExternalResourceInfoProvider.NO_EXTERNAL_RESOURCES,
 				taskManagerTerminatingFatalErrorHandlerFactory.create(taskManagers.size()));
 
 			taskExecutor.start();

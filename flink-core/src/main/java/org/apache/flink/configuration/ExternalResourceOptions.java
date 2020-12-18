@@ -75,12 +75,6 @@ public class ExternalResourceOptions {
 				"for two external resource gpu and fpga. The <resource_name> will be used to splice related config options for " +
 				"external resource. Only the <resource_name> defined here will go into effect by external resource framework.");
 
-	/**
-	 * Defines the factory class name for the external resource identified by &gt;resource_name&lt;. The factory will be used
-	 * to instantiate the {@link org.apache.flink.api.common.externalresource.ExternalResourceDriver} at the TaskExecutor side.
-	 *
-	 * <p>It is intentionally included into user docs while unused.
-	 */
 	@SuppressWarnings("unused")
 	public static final ConfigOption<String> EXTERNAL_RESOURCE_DRIVER_FACTORY_CLASS =
 		key(genericKeyWithSuffix(EXTERNAL_RESOURCE_DRIVER_FACTORY_SUFFIX))
@@ -141,9 +135,6 @@ public class ExternalResourceOptions {
 		return keyWithResourceNameAndSuffix(resourceName, suffix);
 	}
 
-	/**
-	 * Generate the config option key for the factory class name of {@link org.apache.flink.api.common.externalresource.ExternalResourceDriver}.
-	 */
 	public static String getExternalResourceDriverFactoryConfigOptionForResource(String resourceName) {
 		return keyWithResourceNameAndSuffix(resourceName, EXTERNAL_RESOURCE_DRIVER_FACTORY_SUFFIX);
 	}
