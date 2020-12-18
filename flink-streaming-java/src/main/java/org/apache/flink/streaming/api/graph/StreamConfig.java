@@ -26,7 +26,6 @@ import org.apache.flink.runtime.jobgraph.OperatorID;
 import org.apache.flink.runtime.operators.util.CorruptConfigurationException;
 import org.apache.flink.runtime.state.StateBackend;
 import org.apache.flink.runtime.util.ClassLoaderUtil;
-import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.collector.selector.OutputSelector;
 import org.apache.flink.streaming.api.operators.SimpleOperatorFactory;
@@ -100,7 +99,6 @@ public class StreamConfig implements Serializable {
 	// ------------------------------------------------------------------------
 
 	private static final long DEFAULT_TIMEOUT = 100;
-	private static final CheckpointingMode DEFAULT_CHECKPOINTING_MODE = CheckpointingMode.EXACTLY_ONCE;
 
 	private static final double DEFAULT_MANAGED_MEMORY_FRACTION = 0.0;
 
@@ -392,15 +390,6 @@ public class StreamConfig implements Serializable {
 
 	public boolean isCheckpointingEnabled() {
 		return config.getBoolean(CHECKPOINTING_ENABLED, false);
-	}
-
-	public CheckpointingMode getCheckpointMode() {
-		int ordinal = config.getInteger(CHECKPOINT_MODE, -1);
-		if (ordinal >= 0) {
-			return CheckpointingMode.values()[ordinal];
-		} else {
-			return DEFAULT_CHECKPOINTING_MODE;
-		}
 	}
 
 	public void setOutEdgesInOrder(List<StreamEdge> outEdgeList) {
