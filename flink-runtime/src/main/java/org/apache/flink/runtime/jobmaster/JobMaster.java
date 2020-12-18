@@ -527,33 +527,8 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 	}
 
 	@Override
-	public CompletableFuture<ArchivedExecutionGraph> requestJob(Time timeout) {
-		return CompletableFuture.completedFuture(schedulerNG.requestJob());
-	}
-
-	@Override
 	public void notifyAllocationFailure(AllocationID allocationID, Exception cause) {
 		internalFailAllocation(allocationID, cause);
-	}
-
-	@Override
-	public CompletableFuture<Object> updateGlobalAggregate(String aggregateName, Object aggregand, byte[] serializedAggregateFunction) {
-
-		AggregateFunction aggregateFunction = null;
-		try {
-			aggregateFunction = InstantiationUtil.deserializeObject(serializedAggregateFunction, userCodeLoader);
-		} catch (Exception e) {
-			log.error("Error while attempting to deserialize user AggregateFunction.");
-			return FutureUtils.completedExceptionally(e);
-		}
-
-		Object accumulator = accumulators.get(aggregateName);
-		if (null == accumulator) {
-			accumulator = aggregateFunction.createAccumulator();
-		}
-		accumulator = aggregateFunction.add(aggregand, accumulator);
-		accumulators.put(aggregateName, accumulator);
-		return CompletableFuture.completedFuture(aggregateFunction.getResult(accumulator));
 	}
 
 	//----------------------------------------------------------------------------------------------

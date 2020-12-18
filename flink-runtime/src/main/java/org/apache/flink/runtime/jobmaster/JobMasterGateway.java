@@ -180,10 +180,6 @@ public interface JobMasterGateway extends
 
 	CompletableFuture<JobStatus> requestJobStatus(@RpcTimeout Time timeout);
 
-	CompletableFuture<ArchivedExecutionGraph> requestJob(@RpcTimeout Time timeout);
-
 	void notifyAllocationFailure(AllocationID allocationID, Exception cause);
-
-	CompletableFuture<Object> updateGlobalAggregate(String aggregateName, Object aggregand, byte[] serializedAggregationFunction);
 
 }
