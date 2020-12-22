@@ -161,18 +161,6 @@ public class ValueTypeInfo<T extends Value> extends TypeInformation<T> implement
 		if (BooleanValue.class.isAssignableFrom(type)) {
 			return (TypeComparator<T>) new BooleanValueComparator(sortOrderAscending);
 		}
-		else if (ByteValue.class.isAssignableFrom(type)) {
-			return (TypeComparator<T>) new ByteValueComparator(sortOrderAscending);
-		}
-		else if (CharValue.class.isAssignableFrom(type)) {
-			return (TypeComparator<T>) new CharValueComparator(sortOrderAscending);
-		}
-		else if (DoubleValue.class.isAssignableFrom(type)) {
-			return (TypeComparator<T>) new DoubleValueComparator(sortOrderAscending);
-		}
-		else if (FloatValue.class.isAssignableFrom(type)) {
-			return (TypeComparator<T>) new FloatValueComparator(sortOrderAscending);
-		}
 		else if (IntValue.class.isAssignableFrom(type)) {
 			return (TypeComparator<T>) new IntValueComparator(sortOrderAscending);
 		}
