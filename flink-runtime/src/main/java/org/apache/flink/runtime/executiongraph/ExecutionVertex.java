@@ -662,24 +662,6 @@ public class ExecutionVertex implements AccessExecutionVertex, Archiveable<Archi
 		}
 	}
 
-	private boolean isAnyInputConsumable() {
-		for (int inputNumber = 0; inputNumber < inputEdges.length; inputNumber++) {
-			if (isInputConsumable(inputNumber)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	boolean isInputConsumable(int inputNumber) {
-		for (ExecutionEdge executionEdge : inputEdges[inputNumber]) {
-			if (executionEdge.getSource().isConsumable()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	// --------------------------------------------------------------------------------------------
 	//   Notifications from the Execution Attempt
 	// --------------------------------------------------------------------------------------------

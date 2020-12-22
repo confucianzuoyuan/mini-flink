@@ -59,22 +59,4 @@ public interface TaskLocalStateStore {
 	 */
 	@Nonnull
 	LocalRecoveryConfig getLocalRecoveryConfig();
-
-	/**
-	 * Notifies that the checkpoint with the given id was confirmed as complete. This prunes the checkpoint history
-	 * and removes all local states with a checkpoint id that is smaller than the newly confirmed checkpoint id.
-	 */
-	void confirmCheckpoint(long confirmedCheckpointId);
-
-	/**
-	 * Notifies that the checkpoint with the given id was confirmed as aborted. This prunes the checkpoint history
-	 * and removes states with a checkpoint id that is equal to the newly aborted checkpoint id.
-	 */
-	void abortCheckpoint(long abortedCheckpointId);
-
-	/**
-	 * Remove all checkpoints from the store that match the given predicate.
-	 * @param matcher the predicate that selects the checkpoints for pruning.
-	 */
-	void pruneMatchingCheckpoints(LongPredicate matcher);
 }

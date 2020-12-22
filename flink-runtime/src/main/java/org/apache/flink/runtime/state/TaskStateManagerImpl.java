@@ -105,8 +105,6 @@ public class TaskStateManagerImpl implements TaskStateManager {
 		TaskStateSnapshot localStateSnapshot =
 			localStateStore.retrieveLocalState(restoreCheckpointId);
 
-		localStateStore.pruneMatchingCheckpoints((long checkpointId) -> checkpointId != restoreCheckpointId);
-
 		List<OperatorSubtaskState> alternativesByPriority = Collections.emptyList();
 
 		if (localStateSnapshot != null) {

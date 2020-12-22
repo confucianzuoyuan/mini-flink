@@ -60,15 +60,4 @@ public final class NoOpTaskLocalStateStoreImpl implements OwnedTaskLocalStateSto
 		return null;
 	}
 
-	@Override
-	public void confirmCheckpoint(long confirmedCheckpointId) {
-	}
-
-	@Override
-	public void abortCheckpoint(long abortedCheckpointId) {
-	}
-
-	@Override
-	public void pruneMatchingCheckpoints(LongPredicate matcher) {
-	}
 }

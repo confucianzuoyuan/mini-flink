@@ -198,35 +198,6 @@ public class TaskLocalStateStoreImpl implements OwnedTaskLocalStateStore {
 		return localRecoveryConfig;
 	}
 
-	@Override
-	public void confirmCheckpoint(long confirmedCheckpointId) {
-
-		LOG.debug("Received confirmation for checkpoint {} in subtask ({} - {} - {}). Starting to prune history.",
-			confirmedCheckpointId, jobID, jobVertexID, subtaskIndex);
-
-		pruneCheckpoints(
-			(snapshotCheckpointId) -> snapshotCheckpointId < confirmedCheckpointId,
-			true);
-
-	}
-
-	@Override
-	public void abortCheckpoint(long abortedCheckpointId) {
-
-		LOG.debug("Received abort information for checkpoint {} in subtask ({} - {} - {}). Starting to prune history.",
-			abortedCheckpointId, jobID, jobVertexID, subtaskIndex);
-
-		pruneCheckpoints(snapshotCheckpointId -> snapshotCheckpointId == abortedCheckpointId, false);
-	}
-
-	@Override
-	public void pruneMatchingCheckpoints(@Nonnull LongPredicate matcher) {
-
-		pruneCheckpoints(
-			matcher,
-			false);
-	}
-
 	/**
 	 * Disposes the state of all local snapshots managed by this object.
 	 */

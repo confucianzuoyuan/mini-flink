@@ -263,17 +263,9 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 	}
 
 	private BiFunction<LogicalSlot, Throwable, Void> assignResourceOrHandleError(final DeploymentHandle deploymentHandle) {
-		final ExecutionVertexVersion requiredVertexVersion = deploymentHandle.getRequiredVertexVersion();
 		final ExecutionVertexID executionVertexId = deploymentHandle.getExecutionVertexId();
 
 		return (logicalSlot, throwable) -> {
-			if (executionVertexVersioner.isModified(requiredVertexVersion)) {
-				log.debug("Refusing to assign slot to execution vertex {} because this deployment was " +
-					"superseded by another deployment", executionVertexId);
-				releaseSlotIfPresent(logicalSlot);
-				return null;
-			}
-
 			if (throwable == null) {
 				final ExecutionVertex executionVertex = getExecutionVertex(executionVertexId);
 				final boolean sendScheduleOrUpdateConsumerMessage = deploymentHandle.getDeploymentOption().sendScheduleOrUpdateConsumerMessage();
@@ -286,12 +278,6 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 			}
 			return null;
 		};
-	}
-
-	private void releaseSlotIfPresent(@Nullable final LogicalSlot logicalSlot) {
-		if (logicalSlot != null) {
-			logicalSlot.releaseSlot(null);
-		}
 	}
 
 	private void handleTaskDeploymentFailure(final ExecutionVertexID executionVertexId, final Throwable error) {
