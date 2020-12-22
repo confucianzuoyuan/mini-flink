@@ -46,17 +46,6 @@ public class ValueTypeInfo<T extends Value> extends TypeInformation<T> implement
 
 	private static final long serialVersionUID = 1L;
 
-	public static final ValueTypeInfo<BooleanValue> BOOLEAN_VALUE_TYPE_INFO = new ValueTypeInfo<>(BooleanValue.class);
-	public static final ValueTypeInfo<ByteValue> BYTE_VALUE_TYPE_INFO = new ValueTypeInfo<>(ByteValue.class);
-	public static final ValueTypeInfo<CharValue> CHAR_VALUE_TYPE_INFO = new ValueTypeInfo<>(CharValue.class);
-	public static final ValueTypeInfo<DoubleValue> DOUBLE_VALUE_TYPE_INFO = new ValueTypeInfo<>(DoubleValue.class);
-	public static final ValueTypeInfo<FloatValue> FLOAT_VALUE_TYPE_INFO = new ValueTypeInfo<>(FloatValue.class);
-	public static final ValueTypeInfo<IntValue> INT_VALUE_TYPE_INFO = new ValueTypeInfo<>(IntValue.class);
-	public static final ValueTypeInfo<LongValue> LONG_VALUE_TYPE_INFO = new ValueTypeInfo<>(LongValue.class);
-	public static final ValueTypeInfo<NullValue> NULL_VALUE_TYPE_INFO = new ValueTypeInfo<>(NullValue.class);
-	public static final ValueTypeInfo<ShortValue> SHORT_VALUE_TYPE_INFO = new ValueTypeInfo<>(ShortValue.class);
-	public static final ValueTypeInfo<StringValue> STRING_VALUE_TYPE_INFO = new ValueTypeInfo<>(StringValue.class);
-
 	private final Class<T> type;
 
 	@PublicEvolving
@@ -115,29 +104,11 @@ public class ValueTypeInfo<T extends Value> extends TypeInformation<T> implement
 	@SuppressWarnings("unchecked")
 	@PublicEvolving
 	public TypeSerializer<T> createSerializer(ExecutionConfig executionConfig) {
-		if (BooleanValue.class.isAssignableFrom(type)) {
-			return (TypeSerializer<T>) BooleanValueSerializer.INSTANCE;
-		}
-		else if (ByteValue.class.isAssignableFrom(type)) {
-			return (TypeSerializer<T>) ByteValueSerializer.INSTANCE;
-		}
-		else if (CharValue.class.isAssignableFrom(type)) {
+		if (CharValue.class.isAssignableFrom(type)) {
 			return (TypeSerializer<T>) CharValueSerializer.INSTANCE;
 		}
 		else if (DoubleValue.class.isAssignableFrom(type)) {
 			return (TypeSerializer<T>) DoubleValueSerializer.INSTANCE;
-		}
-		else if (FloatValue.class.isAssignableFrom(type)) {
-			return (TypeSerializer<T>) FloatValueSerializer.INSTANCE;
-		}
-		else if (IntValue.class.isAssignableFrom(type)) {
-			return (TypeSerializer<T>) IntValueSerializer.INSTANCE;
-		}
-		else if (LongValue.class.isAssignableFrom(type)) {
-			return (TypeSerializer<T>) LongValueSerializer.INSTANCE;
-		}
-		else if (NullValue.class.isAssignableFrom(type)) {
-			return (TypeSerializer<T>) NullValueSerializer.INSTANCE;
 		}
 		else if (ShortValue.class.isAssignableFrom(type)) {
 			return (TypeSerializer<T>) ShortValueSerializer.INSTANCE;
