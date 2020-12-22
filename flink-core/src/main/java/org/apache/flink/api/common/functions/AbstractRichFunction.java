@@ -54,17 +54,6 @@ public abstract class AbstractRichFunction implements RichFunction, Serializable
 		}
 	}
 
-	@Override
-	public IterationRuntimeContext getIterationRuntimeContext() {
-		if (this.runtimeContext == null) {
-			throw new IllegalStateException("The runtime context has not been initialized.");
-		} else if (this.runtimeContext instanceof IterationRuntimeContext) {
-			return (IterationRuntimeContext) this.runtimeContext;
-		} else {
-			throw new IllegalStateException("This stub is not part of an iteration step function.");
-		}
-	}
-
 	// --------------------------------------------------------------------------------------------
 	//  Default life cycle methods
 	// --------------------------------------------------------------------------------------------
