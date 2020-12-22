@@ -123,15 +123,6 @@ public class TypeExtractor {
 		registeredTypeInfoFactories.put(t, factory);
 	}
 
-	// --------------------------------------------------------------------------------------------
-	//  Function specific methods
-	// --------------------------------------------------------------------------------------------
-
-	@PublicEvolving
-	public static <IN, OUT> TypeInformation<OUT> getMapReturnTypes(MapFunction<IN, OUT> mapInterface, TypeInformation<IN> inType) {
-		return getMapReturnTypes(mapInterface, inType, null, false);
-	}
-
 	@PublicEvolving
 	public static <IN, OUT> TypeInformation<OUT> getMapReturnTypes(MapFunction<IN, OUT> mapInterface, TypeInformation<IN> inType,
 			String functionName, boolean allowMissing)
@@ -149,11 +140,6 @@ public class TypeExtractor {
 
 
 	@PublicEvolving
-	public static <IN, OUT> TypeInformation<OUT> getFlatMapReturnTypes(FlatMapFunction<IN, OUT> flatMapInterface, TypeInformation<IN> inType) {
-		return getFlatMapReturnTypes(flatMapInterface, inType, null, false);
-	}
-
-	@PublicEvolving
 	public static <IN, OUT> TypeInformation<OUT> getFlatMapReturnTypes(FlatMapFunction<IN, OUT> flatMapInterface, TypeInformation<IN> inType,
 			String functionName, boolean allowMissing)
 	{
@@ -163,42 +149,6 @@ public class TypeExtractor {
 			0,
 			1,
 			new int[]{1, 0},
-			inType,
-			functionName,
-			allowMissing);
-	}
-
-	@PublicEvolving
-	public static <IN, ACC> TypeInformation<ACC> getAggregateFunctionAccumulatorType(
-			AggregateFunction<IN, ACC, ?> function,
-			TypeInformation<IN> inType,
-			String functionName,
-			boolean allowMissing)
-	{
-		return getUnaryOperatorReturnType(
-			function,
-			AggregateFunction.class,
-			0,
-			1,
-			NO_INDEX,
-			inType,
-			functionName,
-			allowMissing);
-	}
-
-	@PublicEvolving
-	public static <IN, OUT> TypeInformation<OUT> getAggregateFunctionReturnType(
-			AggregateFunction<IN, ?, OUT> function,
-			TypeInformation<IN> inType,
-			String functionName,
-			boolean allowMissing)
-	{
-		return getUnaryOperatorReturnType(
-			function,
-			AggregateFunction.class,
-			0,
-			2,
-			NO_INDEX,
 			inType,
 			functionName,
 			allowMissing);
@@ -246,15 +196,6 @@ public class TypeExtractor {
 			allowMissing);
 	}
 
-
-	@SuppressWarnings("unchecked")
-	@PublicEvolving
-	public static <IN> TypeInformation<IN> getInputFormatTypes(InputFormat<IN, ?> inputFormatInterface) {
-		if (inputFormatInterface instanceof ResultTypeQueryable) {
-			return ((ResultTypeQueryable<IN>) inputFormatInterface).getProducedType();
-		}
-		return new TypeExtractor().privateCreateTypeInfo(InputFormat.class, inputFormatInterface.getClass(), 0, null, null);
-	}
 
 	// --------------------------------------------------------------------------------------------
 	//  Generic extraction methods
@@ -365,132 +306,6 @@ public class TypeExtractor {
 					validateInputType(baseClass, function.getClass(), inputTypeArgumentIndex, inType);
 				}
 				return new TypeExtractor().privateCreateTypeInfo(baseClass, function.getClass(), outputTypeArgumentIndex, inType, null);
-			}
-		}
-		catch (InvalidTypesException e) {
-			if (allowMissing) {
-				return (TypeInformation<OUT>) new MissingTypeInfo(functionName != null ? functionName : function.toString(), e);
-			} else {
-				throw e;
-			}
-		}
-	}
-
-	/**
-	 * Returns the binary operator's return type.
-	 *
-	 * <p>This method can extract a type in 4 different ways:
-	 *
-	 * <p>1. By using the generics of the base class like MyFunction<X, Y, Z, IN, OUT>.
-	 *    This is what outputTypeArgumentIndex (in this example "4") is good for.
-	 *
-	 * <p>2. By using input type inference SubMyFunction<T, String, String, String, T>.
-	 *    This is what inputTypeArgumentIndex (in this example "0") and inType is good for.
-	 *
-	 * <p>3. By using the static method that a compiler generates for Java lambdas.
-	 *    This is what lambdaOutputTypeArgumentIndices is good for. Given that MyFunction has
-	 *    the following single abstract method:
-	 *
-	 * <pre>
-	 * <code>
-	 * void apply(IN value, Collector<OUT> value)
-	 * </code>
-	 * </pre>
-	 *
-	 * <p> Lambda type indices allow the extraction of a type from lambdas. To extract the
-	 *     output type <b>OUT</b> from the function one should pass {@code new int[] {1, 0}}.
-	 *     "1" for selecting the parameter and 0 for the first generic in this type.
-	 *     Use {@code TypeExtractor.NO_INDEX} for selecting the return type of the lambda for
-	 *     extraction or if the class cannot be a lambda because it is not a single abstract
-	 *     method interface.
-	 *
-	 * <p>4. By using interfaces such as {@link TypeInfoFactory} or {@link ResultTypeQueryable}.
-	 *
-	 * <p>See also comments in the header of this class.
-	 *
-	 * @param function Function to extract the return type from
-	 * @param baseClass Base class of the function
-	 * @param input1TypeArgumentIndex Index of first input generic type in the class specification (ignored if in1Type is null)
-	 * @param input2TypeArgumentIndex Index of second input generic type in the class specification (ignored if in2Type is null)
-	 * @param outputTypeArgumentIndex Index of output generic type in the class specification
-	 * @param lambdaOutputTypeArgumentIndices Table of indices of the type argument specifying the output type. See example.
-	 * @param in1Type Type of the left side input elements (In case of an iterable, it is the element type)
-	 * @param in2Type Type of the right side input elements (In case of an iterable, it is the element type)
-	 * @param functionName Function name
-	 * @param allowMissing Can the type information be missing (this generates a MissingTypeInfo for postponing an exception)
-	 * @param <IN1> Left side input type
-	 * @param <IN2> Right side input type
-	 * @param <OUT> Output type
-	 * @return TypeInformation of the return type of the function
-	 */
-	@SuppressWarnings("unchecked")
-	@PublicEvolving
-	public static <IN1, IN2, OUT> TypeInformation<OUT> getBinaryOperatorReturnType(
-		Function function,
-		Class<?> baseClass,
-		int input1TypeArgumentIndex,
-		int input2TypeArgumentIndex,
-		int outputTypeArgumentIndex,
-		int[] lambdaOutputTypeArgumentIndices,
-		TypeInformation<IN1> in1Type,
-		TypeInformation<IN2> in2Type,
-		String functionName,
-		boolean allowMissing) {
-
-		Preconditions.checkArgument(in1Type == null || input1TypeArgumentIndex >= 0, "Input 1 type argument index was not provided");
-		Preconditions.checkArgument(in2Type == null || input2TypeArgumentIndex >= 0, "Input 2 type argument index was not provided");
-		Preconditions.checkArgument(outputTypeArgumentIndex >= 0, "Output type argument index was not provided");
-		Preconditions.checkArgument(
-			lambdaOutputTypeArgumentIndices != null,
-			"Indices for output type arguments within lambda not provided");
-
-		// explicit result type has highest precedence
-		if (function instanceof ResultTypeQueryable) {
-			return ((ResultTypeQueryable<OUT>) function).getProducedType();
-		}
-
-		// perform extraction
-		try {
-			final LambdaExecutable exec;
-			try {
-				exec = checkAndExtractLambda(function);
-			} catch (TypeExtractionException e) {
-				throw new InvalidTypesException("Internal error occurred.", e);
-			}
-			if (exec != null) {
-
-				final Method sam = TypeExtractionUtils.getSingleAbstractMethod(baseClass);
-				final int baseParametersLen = sam.getParameterTypes().length;
-
-				// parameters must be accessed from behind, since JVM can add additional parameters e.g. when using local variables inside lambda function
-				final int paramLen = exec.getParameterTypes().length;
-
-				final Type output;
-				if (lambdaOutputTypeArgumentIndices.length > 0) {
-					output = TypeExtractionUtils.extractTypeFromLambda(
-						baseClass,
-						exec,
-						lambdaOutputTypeArgumentIndices,
-						paramLen,
-						baseParametersLen);
-				} else {
-					output = exec.getReturnType();
-					TypeExtractionUtils.validateLambdaType(baseClass, output);
-				}
-
-				return new TypeExtractor().privateCreateTypeInfo(
-					output,
-					in1Type,
-					in2Type);
-			}
-			else {
-				if (in1Type != null) {
-					validateInputType(baseClass, function.getClass(), input1TypeArgumentIndex, in1Type);
-				}
-				if (in2Type != null) {
-					validateInputType(baseClass, function.getClass(), input2TypeArgumentIndex, in2Type);
-				}
-				return new TypeExtractor().privateCreateTypeInfo(baseClass, function.getClass(), outputTypeArgumentIndex, in1Type, in2Type);
 			}
 		}
 		catch (InvalidTypesException e) {
@@ -1135,22 +950,6 @@ public class TypeExtractor {
 		}
 	}
 
-	private static void validateInputContainsExecutable(LambdaExecutable exec, TypeInformation<?> typeInfo) {
-		List<Method> methods = getAllDeclaredMethods(typeInfo.getTypeClass());
-		for (Method method : methods) {
-			if (exec.executablesEquals(method)) {
-				return;
-			}
-		}
-		Constructor<?>[] constructors = typeInfo.getTypeClass().getDeclaredConstructors();
-		for (Constructor<?> constructor : constructors) {
-			if (exec.executablesEquals(constructor)) {
-				return;
-			}
-		}
-		throw new InvalidTypesException("Type contains no executable '" + exec.getName() + "'.");
-	}
-
 	// --------------------------------------------------------------------------------------------
 	//  Utility methods
 	// --------------------------------------------------------------------------------------------
@@ -1178,19 +977,6 @@ public class TypeExtractor {
 
 		// instantiate
 		return (TypeInfoFactory<OUT>) InstantiationUtil.instantiate(factoryClass);
-	}
-
-	/**
-	 * @return number of items with equal type or same raw type
-	 */
-	private static int countTypeInHierarchy(ArrayList<Type> typeHierarchy, Type type) {
-		int count = 0;
-		for (Type t : typeHierarchy) {
-			if (t == type || (isClassType(type) && t == typeToClass(type)) || (isClassType(t) && typeToClass(t) == type)) {
-				count++;
-			}
-		}
-		return count;
 	}
 
 	/**

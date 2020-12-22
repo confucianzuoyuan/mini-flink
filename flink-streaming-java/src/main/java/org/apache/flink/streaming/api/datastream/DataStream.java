@@ -128,33 +128,11 @@ public class DataStream<T> {
 		return environment.getConfig();
 	}
 
-	/**
-	 * It creates a new {@link KeyedStream} that uses the provided key for partitioning
-	 * its operator states.
-	 *
-	 * @param key
-	 *            The KeySelector to be used for extracting the key for partitioning
-	 * @return The {@link DataStream} with partitioned state (i.e. KeyedStream)
-	 */
 	public <K> KeyedStream<T, K> keyBy(KeySelector<T, K> key) {
 		Preconditions.checkNotNull(key);
 		return new KeyedStream<>(this, clean(key));
 	}
 
-	/**
-	 * Applies a Map transformation on a {@link DataStream}. The transformation
-	 * calls a {@link MapFunction} for each element of the DataStream. Each
-	 * MapFunction call returns exactly one element. The user can also extend
-	 * {@link RichMapFunction} to gain access to other features provided by the
-	 * {@link org.apache.flink.api.common.functions.RichFunction} interface.
-	 *
-	 * @param mapper
-	 *            The MapFunction that is called for each element of the
-	 *            DataStream.
-	 * @param <R>
-	 *            output type
-	 * @return The transformed {@link DataStream}.
-	 */
 	public <R> SingleOutputStreamOperator<R> map(MapFunction<T, R> mapper) {
 
 		TypeInformation<R> outType = TypeExtractor.getMapReturnTypes(clean(mapper), getType(),
@@ -163,42 +141,10 @@ public class DataStream<T> {
 		return map(mapper, outType);
 	}
 
-	/**
-	 * Applies a Map transformation on a {@link DataStream}. The transformation
-	 * calls a {@link MapFunction} for each element of the DataStream. Each
-	 * MapFunction call returns exactly one element. The user can also extend
-	 * {@link RichMapFunction} to gain access to other features provided by the
-	 * {@link org.apache.flink.api.common.functions.RichFunction} interface.
-	 *
-	 * @param mapper
-	 *            The MapFunction that is called for each element of the
-	 *            DataStream.
-	 * @param outputType {@link TypeInformation} for the result type of the function.
-	 *
-	 * @param <R>
-	 *            output type
-	 * @return The transformed {@link DataStream}.
-	 */
 	public <R> SingleOutputStreamOperator<R> map(MapFunction<T, R> mapper, TypeInformation<R> outputType) {
 		return transform("Map", outputType, new StreamMap<>(clean(mapper)));
 	}
 
-	/**
-	 * Applies a FlatMap transformation on a {@link DataStream}. The
-	 * transformation calls a {@link FlatMapFunction} for each element of the
-	 * DataStream. Each FlatMapFunction call can return any number of elements
-	 * including none. The user can also extend {@link RichFlatMapFunction} to
-	 * gain access to other features provided by the
-	 * {@link org.apache.flink.api.common.functions.RichFunction} interface.
-	 *
-	 * @param flatMapper
-	 *            The FlatMapFunction that is called for each element of the
-	 *            DataStream
-	 *
-	 * @param <R>
-	 *            output type
-	 * @return The transformed {@link DataStream}.
-	 */
 	public <R> SingleOutputStreamOperator<R> flatMap(FlatMapFunction<T, R> flatMapper) {
 
 		TypeInformation<R> outType = TypeExtractor.getFlatMapReturnTypes(clean(flatMapper),
@@ -207,44 +153,11 @@ public class DataStream<T> {
 		return flatMap(flatMapper, outType);
 	}
 
-	/**
-	 * Applies a FlatMap transformation on a {@link DataStream}. The
-	 * transformation calls a {@link FlatMapFunction} for each element of the
-	 * DataStream. Each FlatMapFunction call can return any number of elements
-	 * including none. The user can also extend {@link RichFlatMapFunction} to
-	 * gain access to other features provided by the
-	 * {@link org.apache.flink.api.common.functions.RichFunction} interface.
-	 *
-	 * @param flatMapper
-	 *            The FlatMapFunction that is called for each element of the
-	 *            DataStream
-	 * @param outputType {@link TypeInformation} for the result type of the function.
-	 *
-	 * @param <R>
-	 *            output type
-	 * @return The transformed {@link DataStream}.
-	 */
 	public <R> SingleOutputStreamOperator<R> flatMap(FlatMapFunction<T, R> flatMapper, TypeInformation<R> outputType) {
 		return transform("Flat Map", outputType, new StreamFlatMap<>(clean(flatMapper)));
 
 	}
 
-
-
-	/**
-	 * Applies a Filter transformation on a {@link DataStream}. The
-	 * transformation calls a {@link FilterFunction} for each element of the
-	 * DataStream and retains only those element for which the function returns
-	 * true. Elements for which the function returns false are filtered. The
-	 * user can also extend {@link RichFilterFunction} to gain access to other
-	 * features provided by the
-	 * {@link org.apache.flink.api.common.functions.RichFunction} interface.
-	 *
-	 * @param filter
-	 *            The FilterFunction that is called for each element of the
-	 *            DataStream.
-	 * @return The filtered DataStream.
-	 */
 	public SingleOutputStreamOperator<T> filter(FilterFunction<T> filter) {
 		return transform("Filter", getType(), new StreamFilter<>(clean(filter)));
 	}
