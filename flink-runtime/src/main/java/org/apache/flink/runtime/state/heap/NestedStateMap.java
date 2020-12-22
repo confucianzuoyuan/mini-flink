@@ -144,16 +144,6 @@ public class NestedStateMap<K, N, S> extends StateMap<K, N, S> {
 		return keyMap != null ? keyMap.size() : 0;
 	}
 
-	@Nonnull
-	@Override
-	public StateMapSnapshot<K, N, S, ? extends StateMap<K, N, S>> stateSnapshot() {
-		return new NestedStateMapSnapshot<>(this);
-	}
-
-	public Map<N, Map<K, S>> getNamespaceMap() {
-		return namespaceMap;
-	}
-
 	/**
 	 * Iterator over state entries in a {@link NestedStateMap}.
 	 */

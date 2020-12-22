@@ -141,15 +141,6 @@ public abstract class StateMap<K, N, S> implements Iterable<StateEntry<K, N, S>>
 	public abstract InternalKvState.StateIncrementalVisitor<K, N, S> getStateIncrementalVisitor(int recommendedMaxNumberOfReturnedRecords);
 
 	/**
-	 * Creates a snapshot of this {@link StateMap}, to be written in checkpointing. Users should call
-	 * {@link #releaseSnapshot(StateMapSnapshot)} after using the returned object.
-	 *
-	 * @return a snapshot from this {@link StateMap}, for checkpointing.
-	 */
-	@Nonnull
-	public abstract StateMapSnapshot<K, N, S, ? extends StateMap<K, N, S>> stateSnapshot();
-
-	/**
 	 * Releases a snapshot for this {@link StateMap}. This method should be called once a snapshot is no more needed.
 	 *
 	 * @param snapshotToRelease the snapshot to release, which was previously created by this state map.

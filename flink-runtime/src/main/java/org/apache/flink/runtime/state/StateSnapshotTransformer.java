@@ -46,26 +46,6 @@ public interface StateSnapshotTransformer<T> {
 	@Nullable
 	T filterOrTransform(@Nullable T value);
 
-	/** Collection state specific transformer which says how to transform entries of the collection. */
-	interface CollectionStateSnapshotTransformer<T> extends StateSnapshotTransformer<T> {
-		enum TransformStrategy {
-			/** Transform all entries. */
-			TRANSFORM_ALL,
-
-			/**
-			 * Skip first null entries.
-			 *
-			 * <p>While traversing collection entries, as optimisation, stops transforming
-			 * if encounters first non-null included entry and returns it plus the rest untouched.
-			 */
-			STOP_ON_FIRST_INCLUDED
-		}
-
-		default TransformStrategy getFilterStrategy() {
-			return TransformStrategy.TRANSFORM_ALL;
-		}
-	}
-
 	/**
 	 * This factory creates state transformers depending on the form of values to transform.
 	 *
