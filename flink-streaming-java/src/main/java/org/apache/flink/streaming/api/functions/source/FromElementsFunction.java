@@ -1,7 +1,6 @@
 package org.apache.flink.streaming.api.functions.source;
 
 import org.apache.flink.annotation.PublicEvolving;
-import org.apache.flink.api.common.state.ListState;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.core.memory.DataInputView;
 import org.apache.flink.core.memory.DataInputViewStreamWrapper;
@@ -33,8 +32,6 @@ public class FromElementsFunction<T> implements SourceFunction<T> {
 
 	/** Flag to make the source cancelable. */
 	private volatile boolean isRunning = true;
-
-	private transient ListState<Integer> checkpointedState;
 
 	public FromElementsFunction(TypeSerializer<T> serializer, Iterable<T> elements) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
