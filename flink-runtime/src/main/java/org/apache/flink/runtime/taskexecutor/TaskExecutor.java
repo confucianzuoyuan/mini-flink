@@ -1152,11 +1152,8 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 			JobTable.Job job,
 			ResourceID resourceID,
 			JobMasterGateway jobMasterGateway) {
-		checkNotNull(resourceID);
-		checkNotNull(jobMasterGateway);
 
 		TaskManagerActions taskManagerActions = new TaskManagerActionsImpl(jobMasterGateway);
-
 
 		ResultPartitionConsumableNotifier resultPartitionConsumableNotifier = new RpcResultPartitionConsumableNotifier(
 			jobMasterGateway,
@@ -1164,8 +1161,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 			taskManagerConfiguration.getTimeout());
 
 		PartitionProducerStateChecker partitionStateChecker = new RpcPartitionStateChecker(jobMasterGateway);
-
-		registerQueryableState(job.getJobId(), jobMasterGateway);
 
 		return job.connect(
 			resourceID,
@@ -1206,25 +1201,6 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
 				.thenRunAsync(() -> {
 					partitionTracker.stopTrackingAndReleaseJobPartitionsFor(jobId);
 				}, getMainThreadExecutor());
-		}
-	}
-
-	private void registerQueryableState(JobID jobId, JobMasterGateway jobMasterGateway) {
-		final KvStateServer kvStateServer = kvStateService.getKvStateServer();
-		final KvStateRegistry kvStateRegistry = kvStateService.getKvStateRegistry();
-
-		if (kvStateServer != null && kvStateRegistry != null) {
-			kvStateRegistry.registerListener(
-				jobId,
-				new RpcKvStateRegistryListener(
-					jobMasterGateway,
-					kvStateServer.getServerAddress()));
-		}
-
-		final KvStateClientProxy kvStateProxy = kvStateService.getKvStateClientProxy();
-
-		if (kvStateProxy != null) {
-			kvStateProxy.updateKvStateLocationOracle(jobId, jobMasterGateway);
 		}
 	}
 

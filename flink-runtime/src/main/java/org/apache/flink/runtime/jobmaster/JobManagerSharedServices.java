@@ -125,13 +125,6 @@ public class JobManagerSharedServices {
 				Hardware.getNumberCPUCores(),
 				new ExecutorThreadFactory("jobmanager-future"));
 
-		final int cleanUpInterval = config.getInteger(WebOptions.BACKPRESSURE_CLEANUP_INTERVAL);
-
-//		futureExecutor.scheduleWithFixedDelay(
-//			cleanUpInterval,
-//			cleanUpInterval,
-//			TimeUnit.MILLISECONDS);
-
 		return new JobManagerSharedServices(
 			futureExecutor,
 			libraryCacheManager,
