@@ -119,7 +119,4 @@ public abstract class LocationPreferenceSlotSelectionStrategy implements SlotSel
 		return new DefaultLocationPreferenceSlotSelectionStrategy();
 	}
 
-	public static LocationPreferenceSlotSelectionStrategy createEvenlySpreadOut() {
-		return new EvenlySpreadOutLocationPreferenceSlotSelectionStrategy();
-	}
 }

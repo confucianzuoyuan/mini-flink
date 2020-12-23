@@ -44,21 +44,11 @@ public class DefaultSchedulerFactory implements SchedulerFactory {
 
 	@Nonnull
 	private static SlotSelectionStrategy selectSlotSelectionStrategy(@Nonnull Configuration configuration) {
-		final boolean evenlySpreadOutSlots = configuration.getBoolean(ClusterOptions.EVENLY_SPREAD_OUT_SLOTS_STRATEGY);
-
 		final SlotSelectionStrategy locationPreferenceSlotSelectionStrategy;
 
-		if (evenlySpreadOutSlots) {
-			locationPreferenceSlotSelectionStrategy = LocationPreferenceSlotSelectionStrategy.createEvenlySpreadOut();
-		} else {
-			locationPreferenceSlotSelectionStrategy = LocationPreferenceSlotSelectionStrategy.createDefault();
-		}
+		locationPreferenceSlotSelectionStrategy = LocationPreferenceSlotSelectionStrategy.createDefault();
 
-		if (configuration.getBoolean(CheckpointingOptions.LOCAL_RECOVERY)) {
-			return PreviousAllocationSlotSelectionStrategy.create(locationPreferenceSlotSelectionStrategy);
-		} else {
-			return locationPreferenceSlotSelectionStrategy;
-		}
+		return locationPreferenceSlotSelectionStrategy;
 	}
 
 	public static DefaultSchedulerFactory fromConfiguration(

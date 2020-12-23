@@ -551,8 +551,4 @@ public class SchedulerImpl implements Scheduler {
 		}
 	}
 
-	@Override
-	public boolean requiresPreviousExecutionGraphAllocations() {
-		return slotSelectionStrategy instanceof PreviousAllocationSlotSelectionStrategy;
-	}
 }
