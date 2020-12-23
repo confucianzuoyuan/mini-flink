@@ -18,14 +18,8 @@
 
 package org.apache.flink.runtime.state;
 
-import org.apache.flink.util.LambdaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.RunnableFuture;
 
 /**
  * Helpers for {@link StateObject} related code.
@@ -45,17 +39,5 @@ public class StateUtil {
 	 */
 	public static long getStateSize(StateObject handle) {
 		return handle == null ? 0 : handle.getStateSize();
-	}
-
-	/**
-	 * Iterates through the passed state handles and calls discardState() on each handle that is not null. All
-	 * occurring exceptions are suppressed and collected until the iteration is over and emitted as a single exception.
-	 *
-	 * @param handlesToDiscard State handles to discard. Passed iterable is allowed to deliver null values.
-	 * @throws Exception exception that is a collection of all suppressed exceptions that were caught during iteration
-	 */
-	public static void bestEffortDiscardAllStateObjects(
-		Iterable<? extends StateObject> handlesToDiscard) throws Exception {
-		LambdaUtil.applyToAllWhileSuppressingExceptions(handlesToDiscard, StateObject::discardState);
 	}
 }

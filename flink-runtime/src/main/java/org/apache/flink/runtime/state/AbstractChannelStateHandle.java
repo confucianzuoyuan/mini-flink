@@ -59,7 +59,6 @@ public abstract class AbstractChannelStateHandle<Info> implements StateObject {
 
 	@Override
 	public void discardState() throws Exception {
-		delegate.discardState();
 	}
 
 	@Override

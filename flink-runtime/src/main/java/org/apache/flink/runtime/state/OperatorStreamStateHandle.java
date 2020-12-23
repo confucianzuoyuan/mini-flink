@@ -54,7 +54,6 @@ public class OperatorStreamStateHandle implements OperatorStateHandle {
 
 	@Override
 	public void discardState() throws Exception {
-		delegateStateHandle.discardState();
 	}
 
 	@Override

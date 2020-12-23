@@ -106,7 +106,6 @@ public class TaskStateSnapshot implements CompositeStateHandle {
 
 	@Override
 	public void discardState() throws Exception {
-		StateUtil.bestEffortDiscardAllStateObjects(subtaskStatesByOperatorID.values());
 	}
 
 	@Override

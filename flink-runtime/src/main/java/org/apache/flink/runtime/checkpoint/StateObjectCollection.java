@@ -129,7 +129,6 @@ public class StateObjectCollection<T extends StateObject> implements Collection<
 
 	@Override
 	public void discardState() throws Exception {
-		StateUtil.bestEffortDiscardAllStateObjects(stateObjects);
 	}
 
 	@Override
