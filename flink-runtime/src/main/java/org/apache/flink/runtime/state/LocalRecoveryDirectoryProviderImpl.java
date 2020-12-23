@@ -85,36 +85,6 @@ public class LocalRecoveryDirectoryProviderImpl implements LocalRecoveryDirector
 	}
 
 	@Override
-	public File allocationBaseDirectory(long checkpointId) {
-		return selectAllocationBaseDirectory((((int) checkpointId) & Integer.MAX_VALUE) % allocationBaseDirs.length);
-	}
-
-	@Override
-	public File subtaskBaseDirectory(long checkpointId) {
-		return new File(allocationBaseDirectory(checkpointId), subtaskDirString());
-	}
-
-	@Override
-	public File subtaskSpecificCheckpointDirectory(long checkpointId) {
-		return new File(subtaskBaseDirectory(checkpointId), checkpointDirString(checkpointId));
-	}
-
-	@Override
-	public File selectAllocationBaseDirectory(int idx) {
-		return allocationBaseDirs[idx];
-	}
-
-	@Override
-	public File selectSubtaskBaseDirectory(int idx) {
-		return new File(selectAllocationBaseDirectory(idx), subtaskDirString());
-	}
-
-	@Override
-	public int allocationBaseDirsCount() {
-		return allocationBaseDirs.length;
-	}
-
-	@Override
 	public String toString() {
 		return "LocalRecoveryDirectoryProvider{" +
 			"rootDirectories=" + Arrays.toString(allocationBaseDirs) +

@@ -45,18 +45,6 @@ import java.util.concurrent.Executors;
  */
 public class TaskManagerRunner implements FatalErrorHandler, AutoCloseableAsync {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TaskManagerRunner.class);
-
-	private static final long FATAL_ERROR_SHUTDOWN_TIMEOUT_MS = 10000L;
-
-	private static final int STARTUP_FAILURE_RETURN_CODE = 1;
-
-	public static final int RUNTIME_FAILURE_RETURN_CODE = 2;
-
-	private final Object lock = new Object();
-
-	private boolean shutdown;
-
 	@Override
 	public CompletableFuture<Void> closeAsync() {
 		return new CompletableFuture<>();

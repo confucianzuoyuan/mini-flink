@@ -35,9 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-/**
- * This class holds the all {@link TaskLocalStateStoreImpl} objects for a task executor (manager).
- */
 public class TaskExecutorLocalStateStoresManager {
 
 	/** Logger for this class. */
@@ -134,19 +131,7 @@ public class TaskExecutorLocalStateStoresManager {
 				LocalRecoveryConfig localRecoveryConfig =
 					new LocalRecoveryConfig(localRecoveryEnabled, directoryProvider);
 
-				taskLocalStateStore = localRecoveryConfig.isLocalRecoveryEnabled() ?
-
-						// Real store implementation if local recovery is enabled
-						new TaskLocalStateStoreImpl(
-							jobId,
-							allocationID,
-							jobVertexID,
-							subtaskIndex,
-							localRecoveryConfig,
-							discardExecutor) :
-
-						// NOP implementation if local recovery is disabled
-						new NoOpTaskLocalStateStoreImpl(localRecoveryConfig);
+				taskLocalStateStore = new NoOpTaskLocalStateStoreImpl(localRecoveryConfig);
 
 				taskStateManagers.put(taskKey, taskLocalStateStore);
 

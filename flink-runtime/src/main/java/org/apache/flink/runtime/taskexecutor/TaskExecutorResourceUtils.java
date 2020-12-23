@@ -18,7 +18,6 @@
 
 package org.apache.flink.runtime.taskexecutor;
 
-import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.resources.CPUResource;
 import org.apache.flink.configuration.*;
 import org.apache.flink.runtime.clusterframework.types.ResourceProfile;
@@ -116,11 +115,6 @@ public class TaskExecutorResourceUtils {
 			.setManagedMemory(taskExecutorResourceSpec.getManagedMemorySize())
 			.setNetworkMemory(taskExecutorResourceSpec.getNetworkMemSize())
 			.build();
-	}
-
-	@VisibleForTesting
-	public static TaskExecutorResourceSpec resourceSpecFromConfigForLocalExecution(Configuration config) {
-		return resourceSpecFromConfig(adjustForLocalExecution(config));
 	}
 
 	public static Configuration adjustForLocalExecution(Configuration config) {
