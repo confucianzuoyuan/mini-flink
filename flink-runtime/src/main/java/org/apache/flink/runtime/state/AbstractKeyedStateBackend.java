@@ -224,9 +224,6 @@ public abstract class AbstractKeyedStateBackend<K> implements
 	public <N, S extends State, V> S getOrCreateKeyedState(
 			final TypeSerializer<N> namespaceSerializer,
 			StateDescriptor<S, V> stateDescriptor) throws Exception {
-		checkNotNull(namespaceSerializer, "Namespace serializer");
-		checkNotNull(keySerializer, "State key serializer has not been configured in the config. " +
-				"This operation cannot use partitioned state.");
 
 		InternalKvState<K, ?, ?> kvState = keyValueStatesByName.get(stateDescriptor.getName());
 		if (kvState == null) {
@@ -235,21 +232,8 @@ public abstract class AbstractKeyedStateBackend<K> implements
 			}
 			kvState = this.createInternalState(namespaceSerializer, stateDescriptor);
 			keyValueStatesByName.put(stateDescriptor.getName(), kvState);
-			publishQueryableStateIfEnabled(stateDescriptor, kvState);
 		}
 		return (S) kvState;
-	}
-
-	private void publishQueryableStateIfEnabled(
-		StateDescriptor<?, ?> stateDescriptor,
-		InternalKvState<?, ?, ?> kvState) {
-		if (stateDescriptor.isQueryable()) {
-			if (kvStateRegistry == null) {
-				throw new IllegalStateException("State backend has not been initialized for job.");
-			}
-			String name = stateDescriptor.getQueryableStateName();
-			kvStateRegistry.registerKvState(keyGroupRange, name, kvState);
-		}
 	}
 
 	/**
