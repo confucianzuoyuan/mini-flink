@@ -107,9 +107,6 @@ public class ValueTypeInfo<T extends Value> extends TypeInformation<T> implement
 		if (CharValue.class.isAssignableFrom(type)) {
 			return (TypeSerializer<T>) CharValueSerializer.INSTANCE;
 		}
-		else if (ShortValue.class.isAssignableFrom(type)) {
-			return (TypeSerializer<T>) ShortValueSerializer.INSTANCE;
-		}
 		else if (StringValue.class.isAssignableFrom(type)) {
 			return (TypeSerializer<T>) StringValueSerializer.INSTANCE;
 		}
@@ -137,9 +134,6 @@ public class ValueTypeInfo<T extends Value> extends TypeInformation<T> implement
 		}
 		else if (NullValue.class.isAssignableFrom(type)) {
 			return (TypeComparator<T>) NullValueComparator.getInstance();
-		}
-		else if (ShortValue.class.isAssignableFrom(type)) {
-			return (TypeComparator<T>) new ShortValueComparator(sortOrderAscending);
 		}
 		else if (StringValue.class.isAssignableFrom(type)) {
 			return (TypeComparator<T>) new StringValueComparator(sortOrderAscending);
