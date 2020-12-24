@@ -107,9 +107,6 @@ public class ValueTypeInfo<T extends Value> extends TypeInformation<T> implement
 		if (CharValue.class.isAssignableFrom(type)) {
 			return (TypeSerializer<T>) CharValueSerializer.INSTANCE;
 		}
-		else if (DoubleValue.class.isAssignableFrom(type)) {
-			return (TypeSerializer<T>) DoubleValueSerializer.INSTANCE;
-		}
 		else if (ShortValue.class.isAssignableFrom(type)) {
 			return (TypeSerializer<T>) ShortValueSerializer.INSTANCE;
 		}

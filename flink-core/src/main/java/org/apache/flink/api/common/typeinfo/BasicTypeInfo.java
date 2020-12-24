@@ -1,21 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.flink.api.common.typeinfo;
 
 import org.apache.flink.annotation.Public;
@@ -34,10 +16,6 @@ import java.util.*;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-/**
- * Type information for primitive types (int, long, double, byte, ...), String, Date, Void,
- * BigInteger, and BigDecimal.
- */
 @Public
 public class BasicTypeInfo<T> extends TypeInformation<T> implements AtomicType<T> {
 
@@ -49,10 +27,7 @@ public class BasicTypeInfo<T> extends TypeInformation<T> implements AtomicType<T
 	public static final BasicTypeInfo<Short> SHORT_TYPE_INFO = new IntegerTypeInfo<>(Short.class, new Class<?>[]{Integer.class, Long.class, Float.class, Double.class, Character.class}, ShortSerializer.INSTANCE, ShortComparator.class);
 	public static final BasicTypeInfo<Integer> INT_TYPE_INFO = new IntegerTypeInfo<>(Integer.class, new Class<?>[]{Long.class, Float.class, Double.class, Character.class}, IntSerializer.INSTANCE, IntComparator.class);
 	public static final BasicTypeInfo<Long> LONG_TYPE_INFO = new IntegerTypeInfo<>(Long.class, new Class<?>[]{Float.class, Double.class, Character.class}, LongSerializer.INSTANCE, LongComparator.class);
-	public static final BasicTypeInfo<Float> FLOAT_TYPE_INFO = new FractionalTypeInfo<>(Float.class, new Class<?>[]{Double.class}, FloatSerializer.INSTANCE, FloatComparator.class);
-	public static final BasicTypeInfo<Double> DOUBLE_TYPE_INFO = new FractionalTypeInfo<>(Double.class, new Class<?>[]{}, DoubleSerializer.INSTANCE, DoubleComparator.class);
 	public static final BasicTypeInfo<Character> CHAR_TYPE_INFO = new BasicTypeInfo<>(Character.class, new Class<?>[]{}, CharSerializer.INSTANCE, CharComparator.class);
-	public static final BasicTypeInfo<Date> DATE_TYPE_INFO = new BasicTypeInfo<>(Date.class, new Class<?>[]{}, DateSerializer.INSTANCE, DateComparator.class);
 	public static final BasicTypeInfo<Void> VOID_TYPE_INFO = new BasicTypeInfo<>(Void.class, new Class<?>[]{}, VoidSerializer.INSTANCE, null);
 	public static final BasicTypeInfo<BigInteger> BIG_INT_TYPE_INFO = new BasicTypeInfo<>(BigInteger.class, new Class<?>[]{}, BigIntSerializer.INSTANCE, BigIntComparator.class);
 	public static final BasicTypeInfo<BigDecimal> BIG_DEC_TYPE_INFO = new BasicTypeInfo<>(BigDecimal.class, new Class<?>[]{}, BigDecSerializer.INSTANCE, BigDecComparator.class);
@@ -75,22 +50,6 @@ public class BasicTypeInfo<T> extends TypeInformation<T> implements AtomicType<T
 		this.serializer = checkNotNull(serializer);
 		// comparator can be null as in VOID_TYPE_INFO
 		this.comparatorClass = comparatorClass;
-	}
-
-	// --------------------------------------------------------------------------------------------
-
-	/**
-	 * Returns whether this type should be automatically casted to
-	 * the target type in an arithmetic operation.
-	 */
-	@PublicEvolving
-	public boolean shouldAutocastTo(BasicTypeInfo<?> to) {
-		for (Class<?> possibleTo: possibleCastTargetTypes) {
-			if (possibleTo.equals(to.getTypeClass())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override
@@ -214,13 +173,8 @@ public class BasicTypeInfo<T> extends TypeInformation<T> implements AtomicType<T
 		TYPES.put(int.class, INT_TYPE_INFO);
 		TYPES.put(Long.class, LONG_TYPE_INFO);
 		TYPES.put(long.class, LONG_TYPE_INFO);
-		TYPES.put(Float.class, FLOAT_TYPE_INFO);
-		TYPES.put(float.class, FLOAT_TYPE_INFO);
-		TYPES.put(Double.class, DOUBLE_TYPE_INFO);
-		TYPES.put(double.class, DOUBLE_TYPE_INFO);
 		TYPES.put(Character.class, CHAR_TYPE_INFO);
 		TYPES.put(char.class, CHAR_TYPE_INFO);
-		TYPES.put(Date.class, DATE_TYPE_INFO);
 		TYPES.put(Void.class, VOID_TYPE_INFO);
 		TYPES.put(void.class, VOID_TYPE_INFO);
 		TYPES.put(BigInteger.class, BIG_INT_TYPE_INFO);

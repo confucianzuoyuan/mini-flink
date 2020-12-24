@@ -58,62 +58,10 @@ public class Types {
 	public static final TypeInformation<Void> VOID = BasicTypeInfo.VOID_TYPE_INFO;
 
 	/**
-	 * Returns type information for {@link java.lang.String}. Supports a null value.
-	 */
-	public static final TypeInformation<String> STRING = BasicTypeInfo.STRING_TYPE_INFO;
-
-	/**
-	 * Returns type information for both a primitive <code>byte</code> and {@link java.lang.Byte}.
-	 * Does not support a null value.
-	 */
-	public static final TypeInformation<Byte> BYTE = BasicTypeInfo.BYTE_TYPE_INFO;
-
-	/**
-	 * Returns type information for both a primitive <code>boolean</code> and {@link java.lang.Boolean}.
-	 * Does not support a null value.
-	 */
-	public static final TypeInformation<Boolean> BOOLEAN = BasicTypeInfo.BOOLEAN_TYPE_INFO;
-
-	/**
-	 * Returns type information for both a primitive <code>short</code> and {@link java.lang.Short}.
-	 * Does not support a null value.
-	 */
-	public static final TypeInformation<Short> SHORT = BasicTypeInfo.SHORT_TYPE_INFO;
-
-	/**
 	 * Returns type information for both a primitive <code>int</code> and {@link java.lang.Integer}.
 	 * Does not support a null value.
 	 */
 	public static final TypeInformation<Integer> INT = BasicTypeInfo.INT_TYPE_INFO;
-
-	/**
-	 * Returns type information for both a primitive <code>long</code> and {@link java.lang.Long}.
-	 * Does not support a null value.
-	 */
-	public static final TypeInformation<Long> LONG = BasicTypeInfo.LONG_TYPE_INFO;
-
-	/**
-	 * Returns type information for both a primitive <code>float</code> and {@link java.lang.Float}.
-	 * Does not support a null value.
-	 */
-	public static final TypeInformation<Float> FLOAT = BasicTypeInfo.FLOAT_TYPE_INFO;
-
-	/**
-	 * Returns type information for both a primitive <code>double</code> and {@link java.lang.Double}.
-	 * Does not support a null value.
-	 */
-	public static final TypeInformation<Double> DOUBLE = BasicTypeInfo.DOUBLE_TYPE_INFO;
-
-	/**
-	 * Returns type information for both a primitive <code>char</code> and {@link java.lang.Character}.
-	 * Does not support a null value.
-	 */
-	public static final TypeInformation<Character> CHAR = BasicTypeInfo.CHAR_TYPE_INFO;
-
-	/**
-	 * Returns type information for {@link java.math.BigDecimal}. Supports a null value.
-	 */
-	public static final TypeInformation<BigDecimal> BIG_DEC = BasicTypeInfo.BIG_DEC_TYPE_INFO;
 
 	/**
 	 * Returns type information for {@link java.math.BigInteger}. Supports a null value.
