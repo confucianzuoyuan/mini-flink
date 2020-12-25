@@ -242,14 +242,6 @@ public class StreamGraph implements Pipeline {
 			// sets the output type which must be know at StreamGraph creation time
 			operatorFactory.setOutputType(outTypeInfo, executionConfig);
 		}
-
-		if (operatorFactory.isInputTypeConfigurable()) {
-			operatorFactory.setInputType(inTypeInfo, executionConfig);
-		}
-
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Vertex: {}", vertexID);
-		}
 	}
 
 	protected StreamNode addNode(

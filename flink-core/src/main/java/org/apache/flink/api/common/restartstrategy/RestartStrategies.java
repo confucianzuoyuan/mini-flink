@@ -268,41 +268,4 @@ public class RestartStrategies {
 		}
 	}
 
-	/**
-	 * Reads a {@link RestartStrategyConfiguration} from a given {@link ReadableConfig}.
-	 *
-	 * @param configuration configuration object to retrieve parameters from
-	 * @return {@link Optional#empty()} when no restart strategy parameters provided
-	 */
-	public static Optional<RestartStrategyConfiguration> fromConfiguration(ReadableConfig configuration) {
-		return configuration.getOptional(RestartStrategyOptions.RESTART_STRATEGY)
-			.map(confName -> parseConfiguration(confName, configuration));
-	}
-
-	private static RestartStrategyConfiguration parseConfiguration(
-			String restartstrategyKind,
-			ReadableConfig configuration) {
-		switch (restartstrategyKind.toLowerCase()) {
-			case "none":
-			case "off":
-			case "disable":
-				return noRestart();
-			case "fixeddelay":
-			case "fixed-delay":
-				int attempts = configuration.get(RestartStrategyOptions.RESTART_STRATEGY_FIXED_DELAY_ATTEMPTS);
-				Duration delay = configuration.get(RestartStrategyOptions.RESTART_STRATEGY_FIXED_DELAY_DELAY);
-				return fixedDelayRestart(attempts, delay.toMillis());
-			case "failurerate":
-			case "failure-rate":
-				int maxFailures = configuration.get(RestartStrategyOptions.RESTART_STRATEGY_FAILURE_RATE_MAX_FAILURES_PER_INTERVAL);
-				Duration failureRateInterval = configuration.get(RestartStrategyOptions.RESTART_STRATEGY_FAILURE_RATE_FAILURE_RATE_INTERVAL);
-				Duration failureRateDelay = configuration.get(RestartStrategyOptions.RESTART_STRATEGY_FAILURE_RATE_DELAY);
-				return failureRateRestart(
-					maxFailures,
-					Time.milliseconds(failureRateInterval.toMillis()),
-					Time.milliseconds(failureRateDelay.toMillis()));
-			default:
-				throw new IllegalArgumentException("Unknown restart strategy " + restartstrategyKind + ".");
-		}
-	}
 }

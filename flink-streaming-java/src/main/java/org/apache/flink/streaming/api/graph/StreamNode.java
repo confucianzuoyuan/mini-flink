@@ -136,26 +136,6 @@ public class StreamNode implements Serializable {
 		return inEdges;
 	}
 
-	public List<Integer> getOutEdgeIndices() {
-		List<Integer> outEdgeIndices = new ArrayList<Integer>();
-
-		for (StreamEdge edge : outEdges) {
-			outEdgeIndices.add(edge.getTargetId());
-		}
-
-		return outEdgeIndices;
-	}
-
-	public List<Integer> getInEdgeIndices() {
-		List<Integer> inEdgeIndices = new ArrayList<Integer>();
-
-		for (StreamEdge edge : inEdges) {
-			inEdgeIndices.add(edge.getSourceId());
-		}
-
-		return inEdgeIndices;
-	}
-
 	public int getId() {
 		return id;
 	}
@@ -197,14 +177,6 @@ public class StreamNode implements Serializable {
 	public void setResources(ResourceSpec minResources, ResourceSpec preferredResources) {
 		this.minResources = minResources;
 		this.preferredResources = preferredResources;
-	}
-
-	public void setManagedMemoryWeight(int managedMemoryWeight) {
-		this.managedMemoryWeight = managedMemoryWeight;
-	}
-
-	public int getManagedMemoryWeight() {
-		return managedMemoryWeight;
 	}
 
 	public long getBufferTimeout() {

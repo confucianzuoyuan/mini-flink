@@ -8,7 +8,6 @@ import org.apache.flink.runtime.jobgraph.ScheduleMode;
 import org.apache.flink.runtime.state.KeyGroupRangeAssignment;
 import org.apache.flink.runtime.state.StateBackend;
 import org.apache.flink.streaming.api.TimeCharacteristic;
-import org.apache.flink.streaming.api.operators.InputFormatOperatorFactory;
 import org.apache.flink.streaming.api.transformations.LegacySourceTransformation;
 import org.apache.flink.streaming.api.transformations.OneInputTransformation;
 import org.apache.flink.streaming.api.transformations.PartitionTransformation;
@@ -58,10 +57,6 @@ public class StreamGraphGenerator {
 
 	// This is used to assign a unique ID to iteration source/sink
 	protected static Integer iterationIdCounter = 0;
-	public static int getNewIterationNodeId() {
-		iterationIdCounter--;
-		return iterationIdCounter;
-	}
 
 	private StreamGraph streamGraph;
 
@@ -140,8 +135,6 @@ public class StreamGraphGenerator {
 			return alreadyTransformed.get(transform);
 		}
 
-		LOG.debug("Transforming " + transform);
-
 		Collection<Integer> transformedIds;
 		if (transform instanceof OneInputTransformation<?, ?>) {
 			transformedIds = transformOneInputTransform((OneInputTransformation<?, ?>) transform);
@@ -189,7 +182,7 @@ public class StreamGraphGenerator {
 	 * Transforms a {@code LegacySourceTransformation}.
 	 */
 	private <T> Collection<Integer> transformLegacySource(LegacySourceTransformation<T> source) {
-		String slotSharingGroup = determineSlotSharingGroup(source.getSlotSharingGroup(), Collections.emptyList());
+		String slotSharingGroup = "default";
 
 		streamGraph.addLegacySource(source.getId(),
 				slotSharingGroup,
@@ -198,10 +191,6 @@ public class StreamGraphGenerator {
 				null,
 				source.getOutputType(),
 				"Source: " + source.getName());
-		if (source.getOperatorFactory() instanceof InputFormatOperatorFactory) {
-			streamGraph.setInputFormat(source.getId(),
-					((InputFormatOperatorFactory<T>) source.getOperatorFactory()).getInputFormat());
-		}
 		int parallelism = source.getParallelism() != ExecutionConfig.PARALLELISM_DEFAULT ?
 			source.getParallelism() : executionConfig.getParallelism();
 		streamGraph.setParallelism(source.getId(), parallelism);
@@ -216,7 +205,7 @@ public class StreamGraphGenerator {
 
 		Collection<Integer> inputIds = transform(sink.getInput());
 
-		String slotSharingGroup = determineSlotSharingGroup(sink.getSlotSharingGroup(), inputIds);
+		String slotSharingGroup = "default";
 
 		streamGraph.addSink(sink.getId(),
 				slotSharingGroup,
@@ -256,7 +245,7 @@ public class StreamGraphGenerator {
 			return alreadyTransformed.get(transform);
 		}
 
-		String slotSharingGroup = determineSlotSharingGroup(transform.getSlotSharingGroup(), inputIds);
+		String slotSharingGroup = "default";
 
 		streamGraph.addOperator(transform.getId(),
 				slotSharingGroup,
