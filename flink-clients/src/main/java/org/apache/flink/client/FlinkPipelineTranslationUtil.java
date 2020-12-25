@@ -39,22 +39,11 @@ public final class FlinkPipelineTranslationUtil {
 			int defaultParallelism) {
 
 		// 获取StreamGraph到JobGraph的翻译器
-		FlinkPipelineTranslator pipelineTranslator = getPipelineTranslator(pipeline);
+		FlinkPipelineTranslator pipelineTranslator = new StreamGraphTranslator();
 
 		return pipelineTranslator.translateToJobGraph(pipeline,
 				optimizerConfiguration,
 				defaultParallelism);
 	}
 
-	private static FlinkPipelineTranslator getPipelineTranslator(Pipeline pipeline) {
-
-		StreamGraphTranslator streamGraphTranslator = new StreamGraphTranslator();
-
-		if (streamGraphTranslator.canTranslate(pipeline)) {
-			return streamGraphTranslator;
-		}
-
-		throw new RuntimeException("Translator " + streamGraphTranslator + " cannot translate "
-			+ "the given pipeline " + pipeline + ".");
-	}
 }

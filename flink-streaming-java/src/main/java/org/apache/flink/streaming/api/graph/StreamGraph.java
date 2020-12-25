@@ -399,14 +399,6 @@ public class StreamGraph implements Pipeline {
 		getStreamNode(vertexID).setSerializerOut(outType.createSerializer(executionConfig));
 	}
 
-	public void setInputFormat(Integer vertexID, InputFormat<?, ?> inputFormat) {
-		getStreamNode(vertexID).setInputFormat(inputFormat);
-	}
-
-	public void setOutputFormat(Integer vertexID, OutputFormat<?> outputFormat) {
-		getStreamNode(vertexID).setOutputFormat(outputFormat);
-	}
-
 	public StreamNode getStreamNode(Integer vertexID) {
 		return streamNodes.get(vertexID);
 	}

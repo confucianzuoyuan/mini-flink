@@ -205,6 +205,7 @@ public class StreamGraphGenerator {
 
 		Collection<Integer> inputIds = transform(sink.getInput());
 
+		// 将任务槽放在一个组里面，任务槽可以分组。
 		String slotSharingGroup = "default";
 
 		streamGraph.addSink(sink.getId(),
@@ -271,33 +272,4 @@ public class StreamGraphGenerator {
 
 		return Collections.singleton(transform.getId());
 	}
-
-	/**
-	 * Determines the slot sharing group for an operation based on the slot sharing group set by
-	 * the user and the slot sharing groups of the inputs.
-	 *
-	 * <p>If the user specifies a group name, this is taken as is. If nothing is specified and
-	 * the input operations all have the same group name then this name is taken. Otherwise the
-	 * default group is chosen.
-	 *
-	 * @param specifiedGroup The group specified by the user.
-	 * @param inputIds The IDs of the input operations.
-	 */
-	private String determineSlotSharingGroup(String specifiedGroup, Collection<Integer> inputIds) {
-		if (specifiedGroup != null) {
-			return specifiedGroup;
-		} else {
-			String inputGroup = null;
-			for (int id: inputIds) {
-				String inputGroupCandidate = streamGraph.getSlotSharingGroup(id);
-				if (inputGroup == null) {
-					inputGroup = inputGroupCandidate;
-				} else if (!inputGroup.equals(inputGroupCandidate)) {
-					return DEFAULT_SLOT_SHARING_GROUP;
-				}
-			}
-			return inputGroup == null ? DEFAULT_SLOT_SHARING_GROUP : inputGroup;
-		}
-	}
-
 }

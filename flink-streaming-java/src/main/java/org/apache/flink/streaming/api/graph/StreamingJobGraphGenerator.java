@@ -488,6 +488,7 @@ public class StreamingJobGraphGenerator {
 		}
 	}
 
+	// 并行度一样，one-to-one，可以做任务链优化
 	public static boolean isChainable(StreamEdge edge, StreamGraph streamGraph) {
 		StreamNode upStreamVertex = streamGraph.getSourceVertex(edge);
 		StreamNode downStreamVertex = streamGraph.getTargetVertex(edge);
