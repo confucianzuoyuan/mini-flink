@@ -42,7 +42,6 @@ import org.apache.flink.runtime.shuffle.ShuffleMaster;
 import org.apache.flink.util.ExceptionUtils;
 import org.slf4j.Logger;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;

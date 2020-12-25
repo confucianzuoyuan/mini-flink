@@ -25,11 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.flink.runtime.checkpoint.StateObjectCollection.emptyIfNull;
-import static org.apache.flink.runtime.state.AbstractChannelStateHandle.collectUniqueDelegates;
 
 public class OperatorSubtaskState implements CompositeStateHandle {
 

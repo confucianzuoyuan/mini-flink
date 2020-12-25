@@ -19,7 +19,6 @@ package org.apache.flink.streaming.api.datastream;
 
 import org.apache.flink.annotation.Public;
 import org.apache.flink.annotation.PublicEvolving;
-import org.apache.flink.api.common.operators.util.OperatorValidationUtils;
 import org.apache.flink.api.dag.Transformation;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.operators.ChainingStrategy;
@@ -72,14 +71,9 @@ public class SingleOutputStreamOperator<T> extends DataStream<T> {
 	 * @return The operator with set parallelism.
 	 */
 	public SingleOutputStreamOperator<T> setParallelism(int parallelism) {
-		OperatorValidationUtils.validateParallelism(parallelism, canBeParallel());
 		transformation.setParallelism(parallelism);
 
 		return this;
-	}
-
-	private boolean canBeParallel() {
-		return !nonParallel;
 	}
 
 

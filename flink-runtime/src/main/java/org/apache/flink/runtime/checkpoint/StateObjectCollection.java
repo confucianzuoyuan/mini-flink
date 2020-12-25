@@ -20,7 +20,6 @@ package org.apache.flink.runtime.checkpoint;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.flink.runtime.state.StateObject;
-import org.apache.flink.runtime.state.StateUtil;
 
 import java.util.*;
 import java.util.function.Predicate;

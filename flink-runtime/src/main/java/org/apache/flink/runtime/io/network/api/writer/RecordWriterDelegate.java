@@ -19,10 +19,7 @@
 package org.apache.flink.runtime.io.network.api.writer;
 
 import org.apache.flink.core.io.IOReadableWritable;
-import org.apache.flink.runtime.event.AbstractEvent;
 import org.apache.flink.runtime.io.AvailabilityProvider;
-
-import java.io.IOException;
 
 /**
  * The record writer delegate provides the availability function for task processor, and it might represent

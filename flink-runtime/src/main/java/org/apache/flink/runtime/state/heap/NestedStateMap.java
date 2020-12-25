@@ -22,7 +22,6 @@ import org.apache.flink.runtime.state.StateEntry;
 import org.apache.flink.runtime.state.StateTransformationFunction;
 import org.apache.flink.runtime.state.internal.InternalKvState;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Stream;
 

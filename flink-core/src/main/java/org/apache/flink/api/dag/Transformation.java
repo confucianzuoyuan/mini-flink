@@ -21,7 +21,6 @@ package org.apache.flink.api.dag;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.common.functions.InvalidTypesException;
 import org.apache.flink.api.common.operators.ResourceSpec;
-import org.apache.flink.api.common.operators.util.OperatorValidationUtils;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.typeutils.MissingTypeInfo;
 import org.apache.flink.util.Preconditions;
@@ -211,7 +210,6 @@ public abstract class Transformation<T> {
 	 * @param parallelism The new parallelism to set on this {@code Transformation}.
 	 */
 	public void setParallelism(int parallelism) {
-		OperatorValidationUtils.validateParallelism(parallelism);
 		this.parallelism = parallelism;
 	}
 
@@ -225,23 +223,12 @@ public abstract class Transformation<T> {
 	}
 
 	/**
-	 * Sets the maximum parallelism for this stream transformation.
-	 *
-	 * @param maxParallelism Maximum parallelism for this stream transformation.
-	 */
-	public void setMaxParallelism(int maxParallelism) {
-		OperatorValidationUtils.validateMaxParallelism(maxParallelism, UPPER_BOUND_MAX_PARALLELISM);
-		this.maxParallelism = maxParallelism;
-	}
-
-	/**
 	 * Sets the minimum and preferred resources for this stream transformation.
 	 *
 	 * @param minResources The minimum resource of this transformation.
 	 * @param preferredResources The preferred resource of this transformation.
 	 */
 	public void setResources(ResourceSpec minResources, ResourceSpec preferredResources) {
-		OperatorValidationUtils.validateResourceRequirements(minResources, preferredResources, managedMemoryWeight);
 		this.minResources = checkNotNull(minResources);
 		this.preferredResources = checkNotNull(preferredResources);
 	}
@@ -276,7 +263,6 @@ public abstract class Transformation<T> {
 	 * @throws IllegalArgumentException Thrown, if non-UNKNOWN resources are already set to this transformation
 	 */
 	public void setManagedMemoryWeight(int managedMemoryWeight) {
-		OperatorValidationUtils.validateResourceRequirements(minResources, preferredResources, managedMemoryWeight);
 		this.managedMemoryWeight = managedMemoryWeight;
 	}
 

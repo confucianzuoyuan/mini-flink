@@ -19,7 +19,6 @@
 package org.apache.flink.runtime.concurrent;
 
 import akka.dispatch.OnComplete;
-import org.apache.flink.api.common.time.Deadline;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.runtime.util.ExecutorThreadFactory;
 import org.apache.flink.runtime.util.FatalExitExceptionHandler;

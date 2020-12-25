@@ -23,7 +23,6 @@ import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.LongPredicate;
 
 /**
  * This class implements a {@link TaskLocalStateStore} with no functionality and is used when local recovery is

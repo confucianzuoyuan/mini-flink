@@ -18,7 +18,6 @@
 package org.apache.flink.streaming.api.datastream;
 
 import org.apache.flink.annotation.Public;
-import org.apache.flink.api.common.operators.util.OperatorValidationUtils;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.operators.StreamSource;
@@ -53,7 +52,6 @@ public class DataStreamSource<T> extends SingleOutputStreamOperator<T> {
 
 	@Override
 	public DataStreamSource<T> setParallelism(int parallelism) {
-		OperatorValidationUtils.validateParallelism(parallelism, isParallel);
 		super.setParallelism(parallelism);
 		return this;
 	}

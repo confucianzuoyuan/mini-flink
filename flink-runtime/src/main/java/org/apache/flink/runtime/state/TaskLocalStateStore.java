@@ -24,7 +24,6 @@ import org.apache.flink.runtime.checkpoint.TaskStateSnapshot;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.LongPredicate;
 
 /**
  * Classes  that implement this interface serve as a task-manager-level local storage for local checkpointed state.

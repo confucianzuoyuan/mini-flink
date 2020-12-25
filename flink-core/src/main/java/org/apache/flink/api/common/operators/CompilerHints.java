@@ -22,7 +22,6 @@ package org.apache.flink.api.common.operators;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.common.operators.util.FieldSet;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -111,64 +110,8 @@ public class CompilerHints {
 		return this.uniqueFields;
 	}
 	
-	/**
-	 * Adds a FieldSet to be unique
-	 * 
-	 * @param uniqueFieldSet The unique FieldSet
-	 */
-	public void addUniqueField(FieldSet uniqueFieldSet) {
-		if (this.uniqueFields == null) {
-			this.uniqueFields = new HashSet<FieldSet>();
-		}
-		this.uniqueFields.add(uniqueFieldSet);
-	}
-	
-	/**
-	 * Adds a field as having only unique values.
-	 * 
-	 * @param field The field with unique values.
-	 */
-	public void addUniqueField(int field) {
-		if (this.uniqueFields == null) {
-			this.uniqueFields = new HashSet<FieldSet>();
-		}
-		this.uniqueFields.add(new FieldSet(field));
-	}
-	
-	/**
-	 * Adds multiple FieldSets to be unique
-	 * 
-	 * @param uniqueFieldSets A set of unique FieldSet
-	 */
-	public void addUniqueFields(Set<FieldSet> uniqueFieldSets) {
-		if (this.uniqueFields == null) {
-			this.uniqueFields = new HashSet<FieldSet>();
-		}
-		this.uniqueFields.addAll(uniqueFieldSets);
-	}
-	
 	public void clearUniqueFields() {
 		this.uniqueFields = null;
 	}
 	
-	// --------------------------------------------------------------------------------------------
-	//  Miscellaneous
-	// --------------------------------------------------------------------------------------------
-	
-	protected void copyFrom(CompilerHints source) {
-		this.outputSize = source.outputSize;
-		this.outputCardinality = source.outputCardinality;
-		this.avgOutputRecordSize = source.avgOutputRecordSize;
-		this.filterFactor = source.filterFactor;
-		
-		if (source.uniqueFields != null && source.uniqueFields.size() > 0) {
-			if (this.uniqueFields == null) {
-				this.uniqueFields = new HashSet<FieldSet>();
-			} else {
-				this.uniqueFields.clear();
-			}
-			
-			this.uniqueFields.addAll(source.uniqueFields);
-		}
-	}
 }
