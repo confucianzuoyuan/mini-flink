@@ -190,7 +190,7 @@ public class StreamExecutionEnvironment {
 
 		boolean isParallel = function instanceof ParallelSourceFunction;
 
-		clean(function);
+//		clean(function);
 
 		final StreamSource<OUT, ?> sourceOperator = new StreamSource<>(function);
 		return new DataStreamSource<>(this, resolvedTypeInfo, sourceOperator, isParallel, sourceName);
