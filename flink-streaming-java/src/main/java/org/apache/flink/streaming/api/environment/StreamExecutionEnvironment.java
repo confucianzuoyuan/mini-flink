@@ -174,8 +174,6 @@ public class StreamExecutionEnvironment {
 	}
 
 	public <OUT> DataStreamSource<OUT> fromCollection(Collection<OUT> data, TypeInformation<OUT> typeInfo) {
-		Preconditions.checkNotNull(data, "Collection must not be null");
-
 		SourceFunction<OUT> function;
 		try {
 			function = new FromElementsFunction<>(typeInfo.createSerializer(getConfig()), data);

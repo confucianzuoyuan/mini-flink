@@ -52,8 +52,8 @@ public class DataStream<T> {
 	 * @param environment The StreamExecutionEnvironment
 	 */
 	public DataStream(StreamExecutionEnvironment environment, Transformation<T> transformation) {
-		this.environment = Preconditions.checkNotNull(environment, "Execution Environment must not be null.");
-		this.transformation = Preconditions.checkNotNull(transformation, "Stream Transformation must not be null.");
+		this.environment = environment;
+		this.transformation = transformation;
 	}
 
 	/**
@@ -155,7 +155,6 @@ public class DataStream<T> {
 
 	public <R> SingleOutputStreamOperator<R> flatMap(FlatMapFunction<T, R> flatMapper, TypeInformation<R> outputType) {
 		return transform("Flat Map", outputType, new StreamFlatMap<>(clean(flatMapper)));
-
 	}
 
 	public SingleOutputStreamOperator<T> filter(FilterFunction<T> filter) {
@@ -184,43 +183,6 @@ public class DataStream<T> {
 		return addSink(printFunction).name("Print to Std. Out");
 	}
 
-
-
-	/**
-	 * Writes a DataStream to the standard output stream (stdout).
-	 *
-	 * <p>For each element of the DataStream the result of {@link Object#toString()} is written.
-	 *
-	 * <p>NOTE: This will print to stdout on the machine where the code is executed, i.e. the Flink
-	 * worker.
-	 *
-	 * @param sinkIdentifier The string to prefix the output with.
-	 * @return The closed DataStream.
-	 */
-	@PublicEvolving
-	public DataStreamSink<T> print(String sinkIdentifier) {
-		PrintSinkFunction<T> printFunction = new PrintSinkFunction<>(sinkIdentifier, false);
-		return addSink(printFunction).name("Print to Std. Out");
-	}
-
-
-
-
-	/**
-	 * Method for passing user defined operators along with the type
-	 * information that will transform the DataStream.
-	 *
-	 * @param operatorName
-	 *            name of the operator, for logging purposes
-	 * @param outTypeInfo
-	 *            the output type of the operator
-	 * @param operator
-	 *            the object containing the transformation logic
-	 * @param <R>
-	 *            type of the return stream
-	 * @return the data stream constructed
-	 * @see #transform(String, TypeInformation, OneInputStreamOperatorFactory)
-	 */
 	@PublicEvolving
 	public <R> SingleOutputStreamOperator<R> transform(
 			String operatorName,
@@ -228,27 +190,6 @@ public class DataStream<T> {
 			OneInputStreamOperator<T, R> operator) {
 
 		return doTransform(operatorName, outTypeInfo, SimpleOperatorFactory.of(operator));
-	}
-
-	/**
-	 * Method for passing user defined operators created by the given factory along with the type information that will
-	 * transform the DataStream.
-	 *
-	 * <p>This method uses the rather new operator factories and should only be used when custom factories are needed.
-	 *
-	 * @param operatorName name of the operator, for logging purposes
-	 * @param outTypeInfo the output type of the operator
-	 * @param operatorFactory the factory for the operator.
-	 * @param <R> type of the return stream
-	 * @return the data stream constructed.
-	 */
-	@PublicEvolving
-	public <R> SingleOutputStreamOperator<R> transform(
-			String operatorName,
-			TypeInformation<R> outTypeInfo,
-			OneInputStreamOperatorFactory<T, R> operatorFactory) {
-
-		return doTransform(operatorName, outTypeInfo, operatorFactory);
 	}
 
 	protected <R> SingleOutputStreamOperator<R> doTransform(

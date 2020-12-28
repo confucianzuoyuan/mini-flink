@@ -42,24 +42,6 @@ public class StreamGraphHasherV2 implements StreamGraphHasher {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StreamGraphHasherV2.class);
 
-	/**
-	 * Returns a map with a hash for each {@link StreamNode} of the {@link
-	 * StreamGraph}. The hash is used as the {@link JobVertexID} in order to
-	 * identify nodes across job submissions if they didn't change.
-	 *
-	 * <p>The complete {@link StreamGraph} is traversed. The hash is either
-	 * computed from the transformation's user-specified id (see
-	 * {@link Transformation#getUid()}) or generated in a deterministic way.
-	 *
-	 * <p>The generated hash is deterministic with respect to:
-	 * <ul>
-	 *   <li>node-local properties (node ID),
-	 *   <li>chained output nodes, and
-	 *   <li>input nodes hashes
-	 * </ul>
-	 *
-	 * @return A map from {@link StreamNode#id} to hash as 16-byte array.
-	 */
 	@Override
 	public Map<Integer, byte[]> traverseStreamGraphAndGenerateHashes(StreamGraph streamGraph) {
 		// The hash function used to generate the hash
@@ -251,14 +233,6 @@ public class StreamGraphHasherV2 implements StreamGraphHasher {
 		return hash;
 	}
 
-	/**
-	 * Applies the {@link Hasher} to the {@link StreamNode} . The hasher encapsulates
-	 * the current state of the hash.
-	 *
-	 * <p>The specified ID is local to this node. We cannot use the
-	 * {@link StreamNode#id}, because it is incremented in a static counter.
-	 * Therefore, the IDs for identical jobs will otherwise be different.
-	 */
 	private void generateNodeLocalHash(Hasher hasher, int id) {
 		// This resolves conflicts for otherwise identical source nodes. BUT
 		// the generated hash codes depend on the ordering of the nodes in the

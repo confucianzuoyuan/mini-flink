@@ -14,10 +14,8 @@ public class WordCount {
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
 		env.setParallelism(1);
-		// get input data
-		DataStream<String> text = env.fromElements("hello world", "hello world");
 
-		DataStream<Tuple2<String, Integer>> counts = text
+		env.fromElements("hello world", "hello world")
 			.flatMap(new Tokenizer())
 			.setParallelism(1)
 			.filter(r -> r.f0.equals("hello"))
@@ -31,9 +29,8 @@ public class WordCount {
 					}
 				}
 			)
-			.setParallelism(2);
-
-		counts.print();
+			.setParallelism(2)
+		.print();
 
 		env.execute("Streaming WordCount");
 	}
@@ -42,10 +39,8 @@ public class WordCount {
 
 		@Override
 		public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
-			// normalize and split the line
 			String[] tokens = value.toLowerCase().split("\\W+");
 
-			// emit the pairs
 			for (String token : tokens) {
 				if (token.length() > 0) {
 					out.collect(new Tuple2<>(token, 1));

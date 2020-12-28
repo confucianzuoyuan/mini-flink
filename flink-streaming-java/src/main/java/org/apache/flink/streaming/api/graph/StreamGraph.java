@@ -61,12 +61,6 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 @Internal
 public class StreamGraph implements Pipeline {
 
-	private static final Logger LOG = LoggerFactory.getLogger(StreamGraph.class);
-
-	public static final String ITERATION_SOURCE_NAME_PREFIX = "IterationSource";
-
-	public static final String ITERATION_SINK_NAME_PREFIX = "IterationSink";
-
 	private String jobName;
 
 	private final ExecutionConfig executionConfig;
@@ -294,25 +288,6 @@ public class StreamGraph implements Pipeline {
 		}
 
 		virtualPartitionNodes.put(virtualId, new Tuple3<>(originalId, partitioner, shuffleMode));
-	}
-
-	/**
-	 * Determines the slot sharing group of an operation across virtual nodes.
-	 */
-	public String getSlotSharingGroup(Integer id) {
-		if (virtualSideOutputNodes.containsKey(id)) {
-			Integer mappedId = virtualSideOutputNodes.get(id).f0;
-			return getSlotSharingGroup(mappedId);
-		} else if (virtualSelectNodes.containsKey(id)) {
-			Integer mappedId = virtualSelectNodes.get(id).f0;
-			return getSlotSharingGroup(mappedId);
-		} else if (virtualPartitionNodes.containsKey(id)) {
-			Integer mappedId = virtualPartitionNodes.get(id).f0;
-			return getSlotSharingGroup(mappedId);
-		} else {
-			StreamNode node = getStreamNode(id);
-			return node.getSlotSharingGroup();
-		}
 	}
 
 	public void addEdge(Integer upStreamVertexID, Integer downStreamVertexID, int typeNumber) {
