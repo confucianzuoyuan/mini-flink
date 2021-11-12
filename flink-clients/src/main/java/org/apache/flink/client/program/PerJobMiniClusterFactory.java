@@ -77,6 +77,7 @@ public final class PerJobMiniClusterFactory {
 		miniCluster.start();
 
 		return miniCluster
+			// 提交JobGraph
 			.submitJob(jobGraph)
 			.thenApply(result -> new PerJobMiniClusterJobClient(result.getJobID(), miniCluster))
 			.whenComplete((ignored, throwable) -> {})

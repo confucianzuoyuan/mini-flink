@@ -44,5 +44,4 @@ public class LocalExecutor implements PipelineExecutor {
 		// 本地执行时，每一个作业启动一个MiniCluster
 		return PerJobMiniClusterFactory.createWithFactory(effectiveConfig, miniClusterFactory).submitJob(jobGraph);
 	}
-
 }

@@ -182,6 +182,7 @@ public class StreamingJobGraphGenerator {
 			StreamNode currentNode = streamGraph.getStreamNode(currentNodeId);
 
 			for (StreamEdge outEdge : currentNode.getOutEdges()) {
+				// isChainable方法判断上下游的算子是不是one-to-one且并行度相同
 				if (isChainable(outEdge, streamGraph)) {
 					chainableOutputs.add(outEdge);
 				} else {
@@ -496,8 +497,10 @@ public class StreamingJobGraphGenerator {
 		return downStreamVertex.getInEdges().size() == 1
 				&& upStreamVertex.isSameSlotSharingGroup(downStreamVertex)
 				&& areOperatorsChainable(upStreamVertex, downStreamVertex, streamGraph)
+			    // one-to-one
 				&& (edge.getPartitioner() instanceof ForwardPartitioner)
 				&& edge.getShuffleMode() != ShuffleMode.BATCH
+			    // 并行度必须一样
 				&& upStreamVertex.getParallelism() == downStreamVertex.getParallelism()
 				&& streamGraph.isChainingEnabled();
 	}

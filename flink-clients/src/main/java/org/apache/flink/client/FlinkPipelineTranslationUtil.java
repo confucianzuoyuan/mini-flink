@@ -45,5 +45,4 @@ public final class FlinkPipelineTranslationUtil {
 				optimizerConfiguration,
 				defaultParallelism);
 	}
-
 }
